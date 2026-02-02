@@ -1,0 +1,67 @@
+# Distribuição Weibull
+
+A função densidade de probabilidade associada a variável aleatória tempo até o evento $T$, possui uma grande variedade de formas, sendo sua função densidade, possuindo uma propriedade básica: a função taxa de falha sendo monótona, ou seja, crescente, decrescente ou constante.
+
+Com distribuição Weibull é dada por:
+
+$$
+f(t) = \frac{\gamma}{\alpha^{\gamma}}\cdot t^{(\gamma-1)} \cdot exp\left[-\left(\frac{t}{\alpha}\right)^{\gamma} \right], \ t\geqslant0 
+$$
+
+Os parâmetros de escala e forma, $\alpha$ e $\gamma$ são positivos. O parâmetro $\alpha$ tem mesma medida de unidade de $t$ e $\gamma$ não tendo unidade de medida.
+
+## Função de verossimilhança é dada por:
+
+$$ 
+L(\hat{\theta}) = \prod_{i = 1}^{n} \left[\frac{\gamma}{\alpha^{\gamma}}\cdot t_{i}^{(\gamma-1)} \cdot exp\left[-  \left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]\right]^{\delta_{i}} =
+$$
+
+$$
+= \left[\frac{\gamma}{\alpha^{\gamma}}\cdot t_{i}^{(\gamma-1)} \cdot exp\left[-\left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]\right]^{\delta_{i}}\cdot\left[ exp\left[- \left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]\right]^{1-\delta_{i}} =
+$$
+
+$$
+= \left(\frac{\gamma^{n}}{\alpha^{ n \cdot\gamma}}\right)^{\delta_{i}} \cdot \prod_{i=1}^{n}t_{i}^{\delta_{i}(\gamma - 1)} \cdot exp\left[-  \frac{1}{\alpha^{\gamma}} \cdot \sum_{i=1}^{n} (t_{i})^{\gamma}\right] 
+$$
+
+Reescrevendo, teremos:
+
+$$ 
+= \gamma^{n\cdot \delta_{i}} \cdot \alpha^{-n\cdot \delta \cdot \gamma} \cdot \prod_{i=1}^{n}t_{i}^{\delta_{i}(\gamma - 1)} \cdot exp\left[-\frac{1}{\alpha^{\gamma}} \cdot \sum_{i=1}^{n} (t_{i})^{\gamma}\right]
+$$
+
+## Log-verossimilhança da Weibull:
+
+$$
+l[L\hat{\theta}] = \log \left[\gamma^{n\cdot \delta_{i}} \cdot \alpha^{-n\cdot \delta \cdot \gamma} \cdot  \prod_{i=1}^{n}t_{i}^{\delta_{i}(\gamma - 1)} \cdot exp\left[-\frac{1}{\alpha^{\gamma}} \cdot \sum_{i=1}^{n} (t_{i})^{\gamma}\right] \right] =
+$$
+
+$$
+= n \cdot \delta_{i}\log{(\gamma)} - n \cdot \delta_{i} \cdot \gamma\log{(\alpha)}+ \delta_{i}(\gamma-1)\sum_{i=1}^{n} \log{(t_{i})} - \alpha^{-\gamma}\cdot \ \sum_{i=1}^{n} (t_{i})^{\gamma}
+$$
+
+Derivando em relação a $\gamma$, temos:
+
+$$
+\frac{\partial l[L(\hat{\theta} | t_{i})]}{\partial \gamma} = \frac{n \cdot \delta_{i}}{\gamma}-n \cdot \delta_{i} \cdot \log{(\alpha)} +\delta_{i} \sum_{i=1}^{n} \log(t_{i})+\alpha^{-\gamma} \cdot \ln(\alpha) \cdot \sum_{i=1}^{n}(t_{i})^{\gamma}-\alpha^{-\gamma} \cdot \sum_{i=1}^{n}(t_{i})^{\gamma} \cdot \ln{(t_{i})}
+$$
+
+Aplicando $\delta_{i}={1}$, teremos:
+
+$$
+\frac{\partial l[L(\hat{\theta} | t_{i})]}{\partial \gamma} = \frac{n}{\gamma} - n \cdot \log{(\alpha)} +\sum_{i=1}^{n} \log(t_{i}) + \alpha^{-\gamma} \cdot \ln(\alpha) \cdot \sum_{i=1}^{n}(t_{i})^{\gamma}- \alpha^{-\gamma} \cdot \sum_{i=1}^{n} (t_{i})^{\gamma} \cdot \ln{(t_{i})} =
+$$
+
+$$
+=n \cdot \left(\frac{1}{\gamma}-\log(\alpha)\right) +\sum_{i=1}^{n} \log(t_{i}) + \frac{\sum_{i=1}^{n} (t_{i})^{\gamma}}{\alpha^{\gamma}} \cdot \left(\ln{(\alpha)} - \ln{(t_{i})}\right)
+$$
+
+Derivando em relação a $\alpha$, temos:
+
+$$
+\frac{\partial l[L(\hat{\theta} | t_{i})]}{\partial \alpha} = - \frac{n \cdot \gamma}{\alpha} + \gamma \cdot \alpha^{-\gamma - 1} \sum_{i=1}^{n} (t_{i})^{\gamma} = 
+$$
+
+$$
+=\gamma \cdot \left(\frac{n}{\alpha} +\frac{1}{\alpha^{\gamma+1}} \cdot \sum_{i=1}^{n} (t_{i})^{\gamma} \right)
+$$
