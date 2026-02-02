@@ -1,0 +1,155 @@
+---
+title: "survival"
+format: html
+---
+
+
+```{r include=FALSE}
+library(survival)
+library(knitr)
+library(dplyr)
+library(ggplot2)
+library(tibble)
+library(ggsurvfit)
+```
+
+# Sobre os dados
+
+O banco de dados possui 815 observações de transplante composto por 6 variáveis.
+
+Age (idade).
+Sex (Masculino ou Feminino).
+Abo (Tipo sanguíneo).
+Year (Ano): ano em que entraram na lista de espera.
+Futime: tempo de entrada até o dispositivo final.
+Event (evento): dispositivo final (censurado, morte, ltx (*liver transplant ou tranplante de fígado*) ou whitdraw *Retirada*).
+
+**Whitdraw**
+
+O que significa: O paciente foi removido ou retirado da lista de espera antes de receber o transplante ou morrer. Isso pode acontecer por diversas razões:
+
+Melhora da saúde: O paciente ficou clinicamente bem o suficiente para não precisar mais do transplante.
+
+Piora da saúde: O paciente ficou muito doente (e não elegível) para sobreviver à cirurgia.
+
+Transferência: O paciente mudou para uma lista em outro centro de transplante.
+
+Decisão do paciente: O paciente ou sua família optou por não realizar mais o procedimento.
+
+# Descrição
+
+Sujeitos em lista de espera para transplante de fígado entre 1990 e 1999 e suas respectivas características: receberam o transplante, morreram enquanto aguardavam, foram retirados da lista ou foram censurados.
+
+Isso representa a experiência de transplante em uma região específica, ao longo de um período em que o transplante de fígado se tornou muito mais amplamente reconhecido como uma modalidade de tratamento viável. 
+
+O número de transplantes de fígado aumentou ao longo do período, mas o número de indivíduos adicionados à lista de espera para transplante de fígado cresceu muito mais rapidamente. Questões importantes abordadas pelos dados são a mudança no tempo de espera, quem espera e se houve um consequente aumento de mortes enquanto estava na lista.
+
+
+O tipo sanguíneo é uma consideração importante. Fígados de doadores de indivíduos com tipo sanguíneo O podem ser usados
+por pacientes com tipos sanguíneos A, B, AB ou 0, enquanto um fígado AB só pode ser usado por um receptor AB. Assim, indivíduos do tipo O na lista de espera estão em desvantagem, uma vez que o grupo de concorrentes é maior para fígados de doadores do tipo O.
+
+Esses dados são de interesse histórico e fornecem um exemplo útil de riscos concorrentes, mas têm pouca relevância para a prática atual. As políticas de alocação de fígado evoluíram e agora dependem diretamente do risco e da necessidade de cada paciente, cujas avaliações são atualizadas regularmente enquanto o paciente está na lista de espera. No entanto, a escassez geral de órgãos permanece aguda.
+
+O conjunto de dados de transplante foi uma versão usada no início da análise, o transplante2 tem várias adições e correções, foi o conjunto de dados final e corresponde ao artigo.
+
+
+```{r echo =FALSE}
+head(transplant)
+
+transplant <- transplant %>%
+  mutate(
+    event_ltx = case_when(
+      # Se o evento original for 'ltx', o novo evento é 1 (Evento Ocorrido)
+      event == "ltx" ~ 1,
+      # Se for qualquer outra coisa (morte, withdraw, censurado), o novo evento é 0 (Censura)
+      TRUE ~ 0
+    )
+  )
+
+pfit <- survfit(Surv(futime, event_ltx) ~ abo, transplant)
+
+# tem o objetivo de estimar e ajustar curvas de sobrevivência usando o estimador de Kaplan-Meier (o padrão para survfit quando não há covariáveis numéricas), e resumir esses resultados em um objeto de classe survfit. 
+
+#O til (~) indica que a curva de sobrevivência deve ser estimada separadamente para cada categoria (nível) da variável abo.
+
+#abo (provavelmente o grupo sanguíneo AB0) é a variável preditora ou de agrupamento. O resultado serão múltiplas curvas de Kaplan-Meier, uma para cada grupo sanguíneo (A, B, AB, O), permitindo a comparação visual e estatística da sobrevivência entre eles.
+
+Surv(transplant$futime, transplant$event)[1:10]
+
+pfit[,2]  #tempo para transplante de fígado, por tipo sanguíneo
+```
+
+n	O número inicial de indivíduos no grupo de risco (tamanho da amostra) para cada grupo sanguíneo (abo).
+
+nevent	O número total de indivíduos que atingiram o estado ou transição descrita naquela linha.
+
+rmean	O Tempo Médio Restrito no Estado (restricted mean time in state). Este é o resultado principal. Ele representa o tempo médio que um indivíduo do grupo passou no estado especificado, restrito ao tempo máximo de seguimento (neste caso, 2055).
+
+se(rmean)	O erro padrão (standard error) do rmean, usado para calcular intervalos de confiança.
+
+
+```{r echo = FALSE}
+# Utilizando o ggplot2
+survfit2(Surv(futime, event_ltx) ~ abo, transplant) %>% 
+  ggsurvfit() +
+  labs(
+    x = "Dias de acompanhamento",
+    y = "Eventos"
+  )
+```
+O gráfico plota a Probabilidade de sobrevivência ao longo do tempo - dias de acompanhamento.
+
+No eixo Y (evento): temos a probabilidade de não ocorrer o evento de interesse - o paciente receber o transplante de fígado, este eixo mostra a probabilidade deste paciente pesmanecer na lista de espera sem ter rece
+
+
+```{r echo =FALSE}
+
+# Utilizando o pacote básico
+
+plot(pfit[,2], mark.time=FALSE, col=1:4, lwd=2, xmax=735,
+       xscale=30.5, xlab="Meses", ylab="Fração transplantado",
+       xaxt = 'n')
+temp <- c(0, 6, 12, 18, 24)
+axis(1, temp*30.5, temp)
+legend(450, .35, levels(transplant$abo), lty=1, col=1:4, lwd=2)
+
+summary(survfit(Surv(futime, event) ~ abo, transplant), times = 365.25)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Referência
+
+Kim WR, Therneau TM, Benson JT, Kremers WK, Rosen CB, Gores GJ, Dickson ER. Deaths on the liver transplant waiting list: An analysis of competing risks. Hepatology 2006 Feb; 43(2):345-51.

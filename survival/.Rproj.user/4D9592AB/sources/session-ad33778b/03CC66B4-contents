@@ -1,0 +1,17 @@
+# Distribuição Log-logística
+
+A função densidade de probabilidade associada a variável aleatória tempo até o evento $T$ com distribuição log-logística é dada por:
+
+$$
+f(t) = \frac{\gamma}{\alpha^{\gamma}}\cdot t_{i}^{(\gamma -1)}\cdot \left[1- \left(\frac{t}{\alpha}\right)^{\gamma}  \right]^{-2} \ t > 0
+$$
+
+## Função verossimilhança
+
+$$
+L(\theta|t_{i}) = \prod_{i=1}^{n} \left[\frac{\gamma}{\alpha^{\gamma}}\cdot t_{i}^{(\gamma -1)}\cdot \left[1- \left(\frac{t_{i}}{\alpha}\right)^{\gamma}  \right]^{-2} \right]
+$$
+
+$$
+= \left(\gamma \cdot \alpha^{-\gamma}  \right)^{n} \cdot \prod_{i=1}^{n} t_{i}^{(\gamma -1)} \cdot \left[1 + \left(\frac{t_{i}}{\alpha}\right)^{\gamma} \right]^{-2}
+$$

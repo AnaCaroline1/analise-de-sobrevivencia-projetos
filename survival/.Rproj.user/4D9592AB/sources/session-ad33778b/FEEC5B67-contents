@@ -1,0 +1,268 @@
+---
+title: "dados_epidemiologicos"
+format: html
+---
+
+
+2023 - ESUS - SIVEP - Covid -19 BH
+
+Os dados epidemiológicos disponíveis são gerados a partir das bases de dados dos sistemas oficiais de notificação do Ministério da Saúde. 
+
+Sendo o “e-SUS Notifica”, o sistema de informação onde são notificados todos os casos suspeitos de síndrome gripal por Covid19, e o SIVEP-Gripe, o sistema de informação onde são notificados todos os casos de Síndrome Respiratória Aguda Grave (SRAG). 
+
+Para a produção desses dados ocorre um tratamento contínuo dos registros de cada sistema e entre os sistemas, bem como é reprocessada a classificação final dos casos, de acordo com os critérios definidos pelo Ministério da Saúde. 
+
+Dessa forma o número de casos está em constante mudança devido ás alterações relativas à qualificação e investigação epidemiológica dos casos. A série histórica é anualizada. 
+
+Observe que os recursos são atualizados às segundas e quintas-feiras completando as informações do ano corrente. Ao iniciar um novo ano, os dados dos anos anteriores ficam congelados.
+
+```{r include=FALSE}
+
+library(tidyverse)
+library(janitor)
+library(survival)
+library(ggplot2)
+library(ggfortify)
+library(tidycmprsk)
+
+#help("tidyverse")
+
+df <- read.csv("esus.sivep.covid19bh.2023_07-08-23.csv",header = TRUE,sep = ",")
+
+#summary(df)
+
+#str(df)
+
+#names(df)
+
+#dim(df) # um data frame de 132.804 observações e 11 variáveis.
+
+# Conversão de duas categorias que representam a mesma população, através do tidyverse com o sub pacote forcats é possível juntar em apenas uma a categoria dentro de uma coluna, que estava duplicada. É o que foi feito, 
+
+glimpse(df)
+
+table(df$classificacao)
+table(df$evolucao)
+table(df$dt_sin_pri)
+
+df <- df |>
+  ungroup() |> # Garante que não há grupos ativos que travam a coluna.
+  mutate(racacor = case_match(racacor,
+    c("Branca", "Branco") ~ "Branca",
+    .default = racacor # Mantém o valor originaç se não houver erro.
+  ))
+
+# Filtrando o banco de dados:
+
+
+df_fit1 <- df |>
+  select(-num_not,-dt_notific, -cep, -dt_nasc, -ano)
+
+```
+
+```{r include=FALSE}
+
+df_fit <- na.omit(df_fit1)
+glimpse(df_fit)
+```
+
+```{r include=FALSE}
+
+# Com o Janitor é possível ver a frequencia das categorias que mais aparecem, assim como o percentual.
+
+df_fit |>
+  tabyl(racacor)|>
+  adorn_pct_formatting()
+
+```
+
+```{r include=FALSE}
+status <- df_fit$evolucao
+
+table(status)
+
+table(df_fit$dt_sin_pri)
+
+tempo <- month(ymd(df_fit$dt_sin_pri))
+
+table(tempo)
+
+df_fit
+
+df
+```
+
+Para trabalha com o tempo para uma análise de sobrevivência é necessário identificar a variável em que se tem informação sobre os sintomas das formas da doença, principalmente em relação ao início de ocorrência. Pela natureza das datas, não é possível a priori trabalhar o tempo desta maneira, mas é possível transformar para uma forma em que seja estimado os tempos de sobrevivência. Com o pacote 'lubridate' se pode captar numéricamente os dias e agrupar o número de ocorrência de sintomas primários nos 12 meses.
+
+```{r}
+table(tempo)
+```
+
+Para o status, baseado na natureza e organização dos dados trabalhar com a variável 'evolucao' se torna um desafio entender, a princípio para identificar e estimar as falhas como evento de interesse. Por isso, eu criei 3 tipos de status, tomando como falhas: cura, óbito e óbito por outras causas. Os casos tidos como 'Em investigação' e 'Em monitoramento', seram tratados como censura, uma vez que o paciente não apresentou os eventos de interesse apresentados.  
+
+Há também a variável 'classificao', sendo interessante para identificar a quantidade de casos confirmados e estimar as falhas de interesse, bem como identificar os casos suspeitos e descartados para quantificar e entender quantos desses foram apresentaram os eventos de interesse e se existe conflito entre os eventos de 'óbito' e 'óbitos por outras causas'. 
+
+
+
+
+```{r include=FALSE}
+
+# Aqui estou criando uma nova variável para fazer a análise do tempo de 
+# sobrevivência até a cura de determinado paciente.
+
+df_fit <- df_fit |>
+  mutate(status_1 = case_when(
+    evolucao == "Cura" ~ 1,
+    evolucao %in% c("Em investigação","Em monitoramento","Óbito","Óbito.outras.causas") ~ 0,
+  ))
+# Aqui estou criando uma nova variável para fazer a análise do tempo de 
+# sobrevivência até o óbito de determinado paciente.
+
+df_fit <- df_fit |>
+  mutate(status_2 = case_when(
+    evolucao == "Óbito" ~ 1,
+    evolucao %in% c("Em investigação","Em monitoramento","Cura","Óbito.outras.causas") ~ 0,
+  ))
+# Aqui estou criando uma nova variável para fazer a análise do tempo de 
+# sobrevivência até o óbito por outros motivos de determinado paciente.
+df_fit <- df_fit |>
+  mutate(status_3 = case_when(
+    evolucao == "Óbito.outras.causas" ~ 1,
+    evolucao %in% c("Em investigação","Em monitoramento","Óbito","Cura") ~ 0,
+  ))
+
+#df_fit <- df_fit |>
+#  mutate(status = case_when(
+#    evolucao == "Óbito" ~ 1,
+#    evolucao == "Óbito.outras.causas" ~ 2,
+#    TRUE ~ 0
+#  ))
+#status <- as.factor(df_fit$status)
+```
+
+
+O que queremos investigar: o tempo de vida de pacientes notificados com suspeita de Síndrome Gripal - SG e Sindrome Respiratória Agúda Grave - SRAG.
+
+Temos duas linhas de investigação: entender pela cura e entender pelos óbitos.
+
+Então seriam dois estimadores de Kaplan Meier.
+
+
+Segundo as informações do próprio repositório, o SG é por covid19.
+
+
+```{r}
+ekm1 <- survfit(Surv(tempo, status_1) ~ forma_doenca,df_fit)
+summary(ekm1)
+
+autoplot(ekm1)+
+  coord_cartesian(ylim = c(0.75, 1)) + # Foca na parte de cima do gráfico
+  scale_x_continuous(breaks = 1:12)+
+  labs(y = "Probabilidade de Sobrevivência", x = "Tempo (dias)",color = NULL,fill=NULL)+
+  theme_bw()
+
+ekm_class <- survfit(Surv(tempo, status_1) ~ classificacao,df_fit)
+summary(ekm_class)
+
+autoplot(ekm_class)+
+  coord_cartesian(ylim = c(0.85, 1)) + # Foca na parte de cima do gráfico
+  scale_x_continuous(breaks = 1:12)+
+  labs(y = "Probabilidade de Sobrevivência", x = "Tempo (dias)",color = NULL,fill=NULL)+
+  theme_bw()
+```
+
+
+
+```{r}
+ekm2 <- survfit(Surv(tempo, status_2) ~ forma_doenca,df_fit)
+summary(ekm2)
+
+autoplot(ekm2)+
+  coord_cartesian(ylim = c(0,1))+
+  scale_x_continuous(breaks = seq(0,12,by=1))+
+  labs(y = "Probabilidade de Sobrevivência", x = "Tempo (dias)",color = NULL,fill=NULL)+
+  theme_bw()
+
+ekm_class2 <- survfit(Surv(tempo, status_2) ~ classificacao,df_fit)
+summary(ekm_class2)
+
+autoplot(ekm_class2)+
+  coord_cartesian(ylim = c(0.95, 1)) + # Foca na parte de cima do gráfico
+  scale_x_continuous(breaks = 1:12)+
+  labs(y = "Probabilidade de Sobrevivência", x = "Tempo (dias)",color = NULL,fill=NULL)+
+  theme_bw()
+
+
+```
+
+```{r}
+ekm3 <- survfit(Surv(tempo, status_3) ~ forma_doenca,df_fit)
+summary(ekm3)
+
+autoplot(ekm3)+
+  coord_cartesian(ylim = c(0,1))+
+  scale_x_continuous(breaks = seq(0,12,by=1))+
+  labs(y = "Probabilidade de Sobrevivência", x = "Tempo (dias)",color = NULL,fill=NULL)+
+  theme_bw()
+
+ekm_class3 <- survfit(Surv(tempo, status_3) ~ classificacao,df_fit)
+summary(ekm_class3)
+
+autoplot(ekm_class3)+
+  coord_cartesian(ylim = c(0.5, 1)) + # Foca na parte de cima do gráfico
+  scale_x_continuous(breaks = 1:12)+
+  labs(y = "Probabilidade de Sobrevivência", x = "Tempo (dias)",color = NULL,fill=NULL)+
+  theme_bw()
+
+```
+
+
+### Hipótese testadas para o estimador Kaplan-Meier pela família de testes Harrington-Fleming.
+
+```{r echo=FALSE}
+
+log_rank <- survdiff(Surv(tempo, status_1) ~ forma_doenca, data = df_fit, rho = 0)
+log_rank
+
+```
+
+$H_{0}$: A probabilidade de sobrevivência é igual entre os pacientes com Síndrome Gripal (SG) ou Síndrome Respiratória Aguda Grave (SRAG) ao longo de 1 ano de acompanhamento.
+
+$H_{1}$ A probabilidade de sobrevivência é diferente em pelo menos um dos pacientes com Síndrome Gripal (SG) ou Síndrome Respiratória Aguda Grave (SRAG) em algum ponto de tempo ao longo de 1 ano de acompanhamento.
+
+Conclusão: p < 0.05, logo se rejeita $H_{0}$, portanto a probabilidade de sobrevivência (cura) é diferente em pelo menos um dos paciente com SG e SRAG em algum poto de tempo ao longo de 1 ano de acompanhamente.
+
+$H_{0}$: A probabilidade de sobrevivência é igual entre os pacientes classificados como casos (confirmados, suspeito e descartados) ao longo de 1 ano de acompanhamento.
+
+$H_{1}$: A probabilidade de sobrevivência é diferente em pelo menos um dos pacientes classificados como casos (confirmados, suspeitos e descartados) em algum ponto de tempo ao longo de 1 ano de acompanhamento.
+
+$H_{0}$
+
+$H_{1}$
+
+
+$H_{0}$
+
+$H_{1}$
+
+```{r}
+log_rank <- survdiff(Surv(tempo, status_1) ~ forma_doenca, data = df_fit, rho = 0)
+
+long_class <- survdiff(Surv(tempo, status_1) ~ classificacao,df_fit)
+
+log_rank2 <- survdiff(Surv(tempo, status_2) ~ forma_doenca, data = df_fit, rho = 0)
+
+long_class2 <- survdiff(Surv(tempo, status_2) ~ classificacao,df_fit)
+
+log_rank3 <- survdiff(Surv(tempo, status_3) ~ forma_doenca, data = df_fit, rho = 0)
+
+long_class3 <- survdiff(Surv(tempo, status_3) ~ classificacao,df_fit)
+
+
+```
+
+
+
+
+
+

@@ -1,0 +1,512 @@
+cex.lab=1.5,cex.axis=1.3)
+abline(a=0,b=1)
+ajust1_cc_bx$coefficients[1]
+alpha<-exp(ajust1_cc_bx$coefficients[1])
+alpha
+alpha<- round(exp(ajust1_cc_bx$coefficients[1]),2 )
+alpha
+ste_cc_bx<-exp(-time/alpha)
+plot(st, ste_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1),
+xlab = "S(t): Kaplan-Meier", ylab="S(t): exponencial",
+cex.lab=1.5,cex.axis=1.3)
+abline(a=0,b=1)
+ekm_sg1 <- survfit(Surv(tempo_sg,status_sg1)~1)
+ekm_sg1
+time_sg1 <- ekm_sg1$time
+st_sg1 <- ekm_sg1$surv
+time_sg1
+st_sg1
+alpha_sg1 <-round(exp(ajust1_sg$coefficients[1]),2 )
+alpha_sg1
+ste_cc_bx<-exp(-time_sg1/alpha)
+ste_cc_bx
+ste_sg1<-exp(-time_sg1/alpha)
+ekm_sg1 <- survfit(Surv(tempo_sg,status_sg1)~1)
+time_sg1 <- ekm_sg1$time
+st_sg1 <- ekm_sg1$surv
+alpha_sg1 <-round(exp(ajust1_sg$coefficients[1]),2 )
+ste_sg1<-exp(-time_sg1/alpha)
+plot(st_sg1, ste_sg1, pch=16, ylim=c(0,1), xlim=c(0,1),
+xlab = "S(t): Kaplan-Meier", ylab="S(t): exponencial",
+cex.lab=1.5,cex.axis=1.3)
+abline(a=0,b=1)
+# Verificando como os dados do livro: câncer de bexiga
+ajust1_cc_bx <- survreg(Surv(tempos,cens)~1,dist = "exponential")
+ekm_cc_bx <- survfit(Surv(tempos,cens)~1)
+time <- ekm_cc_bx$time
+st <- ekm_cc_bx$surv
+alpha<- round(exp(ajust1_cc_bx$coefficients[1]),2 )
+ste_cc_bx<-exp(-time/alpha)
+plot(st, ste_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1),
+xlab = "S(t): Kaplan-Meier", ylab="S(t): exponencial",
+cex.lab=1.5,cex.axis=1.3)
+abline(a=0,b=1)
+plot(st, ste_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1),
+xlab = "S(t): Kaplan-Meier", ylab="S(t): exponencial",
+cex.lab=1.5,cex.axis=1.3)
+abline(a=0,b=1)
+plot(st_sg1, ste_sg1, pch=16, ylim=c(0,1), xlim=c(0,1),
+xlab = "S(t): Kaplan-Meier", ylab="S(t): exponencial",
+cex.lab=1.5,cex.axis=1.3)
+abline(a=0,b=1)
+ajust2_cc_bx <- survreg(Surv(tempos,cens)~1,dist = "weibull")
+alpha2<-  round(exp(ajust2_cc_bx$coefficients[1]),2 )
+gama2<-1/ajust2_cc_bx$scale
+stw_cc_bx<- exp(-(time/alpha2)^gama2)
+stw_cc_bx
+ajust1_cc_bx <- survreg(Surv(tempos,cens)~1,dist = "exponential")
+ajust2_cc_bx <- survreg(Surv(tempos,cens)~1,dist = "weibull")
+# Ekm  dos dados
+ekm_cc_bx <- survfit(Surv(tempos,cens)~1)
+time <- ekm_cc_bx$time
+st <- ekm_cc_bx$surv
+# Cálculo dos parâmetros estimados das distribuições
+alpha<- round(exp(ajust1_cc_bx$coefficients[1]),2 )
+alpha2<-  round(exp(ajust2_cc_bx$coefficients[1]),2 )
+gama2<-1/ajust2_cc_bx$scale
+ste_cc_bx<-exp(-time/alpha)
+stw_cc_bx<- exp(-(time/alpha2)^gama2)
+plot(st, ste_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1),
+xlab = "S(t): Kaplan-Meier", ylab="S(t): exponencial",
+cex.lab=1.5,cex.axis=1.3)
+abline(a=0,b=1)
+plot(st, stw_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1),
+xlab = "S(t): Kaplan-Meier", ylab="S(t): exponencial",
+cex.lab=1.5,cex.axis=1.3)
+abline(a=0,b=1)
+plot(st, stw_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1),
+xlab = "S(t): Kaplan-Meier", ylab="S(t): weibull",
+cex.lab=1.5,cex.axis=1.3)
+ajust3_cc_bx <- survreg(Surv(tempos,cens)~1,dist = "lognorm")
+alpha3 <-  round(exp(ajust3_cc_bx$coefficients[1]),2 )
+mi <- round(mean(ajust3_cc_bx$dist),2 )
+mi
+mi <- round(mean(ajust3_cc_bx$means),2 )
+mi
+alpha3
+alpha3 <-  round(sd(ajust3_cc_bx$coefficients[1]),2 )
+alpha3
+ajust3_cc_bx$coefficients
+alpha3 <-  round(ajust3_cc_bx$coefficients[1],2)
+mi
+mi <-  round(ajust3_cc_bx$coefficients[1],2)
+mi
+ajust3_cc_bx
+ajust2_cc_bx
+ajust3_cc_bx
+alpha3 <- round(ajust3_cc_bx$scale,2)
+alpha3
+plot(st, stw_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1),
+xlab = "S(t): Kaplan-Meier", ylab="S(t): weibull",
+cex.lab=1.5,cex.axis=1.3)
+abline(a=0,b=1)
+plot(st, stln_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1),
+xlab = "S(t): Kaplan-Meier", ylab="S(t): log-normal",
+cex.lab=1.5,cex.axis=1.3)
+stln_cc_bx<- pnorm((-log(time)+ mi)/alpha3)
+plot(st, stln_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1),
+xlab = "S(t): Kaplan-Meier", ylab="S(t): log-normal",
+cex.lab=1.5,cex.axis=1.3)
+abline(a=0,b=1)
+par(mfrow=c(1,3))
+plot(st, ste_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1),
+xlab = "S(t): Kaplan-Meier", ylab="S(t): exponencial",
+cex.lab=1.5,cex.axis=1.3)
+abline(a=0,b=1)
+plot(st, stw_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1),
+xlab = "S(t): Kaplan-Meier", ylab="S(t): weibull",
+cex.lab=1.5,cex.axis=1.3)
+abline(a=0,b=1)
+plot(st, stln_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1),
+xlab = "S(t): Kaplan-Meier", ylab="S(t): log-normal",
+cex.lab=1.5,cex.axis=1.3)
+abline(a=0,b=1)
+invst<-qnorm(st)
+plot(time,-log(st),pch=16,xlab="Tempo",ylab="-log(S(t))")
+plot(log(time),log(-log(st)),pch=16,xlab="log(Tempo)",ylab="log(-log(S(t)))")
+plot(log(time),invst,pch=16,xlab="log(Tempo)",ylab=expression(Phiˆ-1*(S(t))))
+plot(log(time),invst,pch=16,xlab="log(Tempo)",ylab=expression(Phiˆ(-1)*(S(t))))
+plot(log(time),invst,pch=16,xlab="log(Tempo)",ylab=expression(Phi^-1*(S(t))))
+par(mfrow=c(1,3),mar=c(5,5,2,2));
+invst<-qnorm(st)
+plot(time,-log(st),pch=16,xlab="Tempo",ylab="-log(S(t))")
+plot(log(time),log(-log(st)),pch=16,xlab="log(Tempo)",ylab="log(-log(S(t)))")
+plot(log(time),invst,pch=16,xlab="log(Tempo)",ylab=expression(Phi^-1*(S(t))))
+par(mfrow=c(1,2))
+plot(ekm_cc_bx,conf.int=F,xlab="Tempo",ylab="S(t)"); lines(c(0,time),c(1,stw_cc_bx),lty=2)
+legend(25,0.8,lty=c(1,2),c("Kaplan-Meier","Weibull"),bty="n",cex=0.9)
+plot(ekm_cc_bx,conf.int=F,xlab="Tempo",ylab="S(t)"); lines(c(0,time),c(1,stln_cc_bx),lty=2)
+legend(25,0.8,lty=c(1,2),c("Kaplan-Meier","Log-normal"),bty="n",cex=0.9)
+?survfit
+?survfit.formula
+?Surv
+log_verossimilhança_weibull <- function(theta,t){
+shape <- par[1] #gamma
+scale <- par[2] #alpha
+# Evitando parâmetros não-positivos durante a otimização
+if(shape <= 0 || scale <=0) return(Inf)
+# Log da densidade weibull
+log_link_w <- dweibull(t,shape=shape,scale=scale,log = T)
+return(-sum(log_link_w))
+}
+tempos
+install.packages("MASS")
+library(MASS)
+# Estimando parâmetros a partir dos meus dados como a função fitdistr do pacote MASS
+ajust_ini <- fitdistr(tempos, "weibull")
+par_weibull <- ajust_ini$estimate
+par_weibull
+log_verossimilhança_weibull(par_weibull,tempos)
+log_verossimilhança_weibull <- function(theta,t){
+gama <- theta[1]
+alpha <- theta[2] #gamma #alpha
+# Evitando parâmetros não-positivos durante a otimização
+if(gama <= 0 || alpha <=0) return(Inf)
+# Log da densidade weibull
+log_link_w <- dweibull(t,shape=gama,scale=alpha,log = T)
+return(-sum(log_link_w))
+}
+log_verossimilhança_weibull
+log_verossimilhança_weibull(par_weibull,tempos)
+fit <- optim(par = c(1,1),fn=log_verossimilhança_weibull,tempos)
+?optim
+fit <- optim(par =par_weibull,fn=log_verossimilhança_weibull,tempos)
+log_verossimilhança_weibull <- function(theta,t){
+gama <- theta[1]
+alpha <- theta[2] #gamma #alpha
+# Evitando parâmetros não-positivos durante a otimização
+if(gama <= 0 || alpha <=0) return(Inf)
+# Log da densidade weibull
+log_link_w <- dweibull(t,shape=gama,scale=alpha,log = T)
+return(-sum(log_link_w))
+}
+fit <- optim(par=par_weibull,fn=log_verossimilhança_weibull,tempos)
+fit <- optim(par=par_weibull,fn=log_verossimilhança_weibull, t = tempos)
+fit
+par_weibull
+fit <- optim(par=c(1,1),fn=log_verossimilhança_weibull, t = tempos)
+fit
+tempo_sg # Do banco de dados sobre Sg e Srag
+par_weibull1 <- ajust_ini$estimate
+ajust2 <- fitdistr(tempo_sg, "weibull")
+tempo_sg
+fitdistr(tempo_sg, "weibull")
+par_weibull2 <- ajust2$estimate
+par_weibull2
+log_verossimilhança_weibull(par_weibull2,tempos)
+log_verossimilhança_weibull(par_weibull2,tempo_sg)
+fit2 <- optim(par=c(1,1),fn=log_verossimilhança_weibull, t = tempo_sg)
+fit2
+plot(fit2)
+hist(fit2)
+fit2$message
+gama_est <- fit2$par[1]
+alph_est <- fit2$par[2]
+n <- length(tempo_sg) # tamanho da amostra
+x <- rweibull(n, shape=gama_est, scale = alph_est)
+gama_est <- fit2$par[1]
+alph_est <- fit2$par[2]
+n <- length(tempo_sg) # tamanho da amostra
+x <- rweibull(n, shape=gama_est, scale = alph_est)
+x_seq <- seq(min(tempo_sg), max(tempo_sg), length.out = 100)
+#length.out: gera uma sequência de 100 valores x igualmente espaçados entre o valor
+##mínimo e o valor máximo dos dados.
+densidade_weibull2 <- dweibull(x_seq, shape = gama_est, scale = alph_est)
+hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Weibull",
+freq = FALSE)
+lines(x_seq, densidade_weibull2, col = "red", lwd = 2)
+?lines
+lines(x_seq, densidade_weibull2, col = "red", lwd = 3)
+lines(x_seq, densidade_weibull2, col = "red", lwd = 10)
+lines(x_seq, densidade_weibull2, col = "red", lwd = 1)
+lines(x_seq, densidade_weibull2, col = "red", lwd = 1)
+hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Weibull",
+freq = FALSE)
+lines(x_seq, densidade_weibull2, col = "red", lwd = 1)
+lines(x_seq, densidade_weibull2, col = "red", lwd = 2)
+x_seq
+as.Date(tempos)
+tempos
+as.Date(tempo_sg )# Do banco de dados sobre Sg e Srag
+as.Date(tempo_sg)
+tempo_sg
+as.Date(df_srag_sg$dt_sin_pri)# Do banco de dados sobre Sg e Srag
+ymd(as.Date(df_srag_sg$dt_sin_pri))# Do banco de dados sobre Sg e Srag
+ymd(as.Date(df_srag_sg$dt_sin_pri))
+ymd(df_srag_sg$dt_sin_pri)# Do banco de dados sobre Sg e Srag
+day(ymd(df_srag_sg$dt_sin_pri))# Do banco de dados sobre Sg e Srag
+df
+glimpse(df)
+df <- read.csv("esus.sivep.covid19bh.2023_07-08-23.csv",header = TRUE,sep = ",")
+glimpse(df)
+table(df$classificacao)
+table(df$evolucao)
+table(df$dt_sin_pri)
+df_fit3
+df <- df |>
+ungroup() |> # Garante que não há grupos ativos que travam a coluna.
+mutate(racacor = case_match(racacor,
+c("Branca", "Branco") ~ "Branca",
+.default = racacor # Mantém o valor originaç se não houver erro.
+))
+df_fit1 <- df |>
+select(-num_not,-dt_notific, -cep, -dt_nasc, -ano)
+df
+df <- df |>
+ungroup() |> # Garante que não há grupos ativos que travam a coluna.
+mutate(racacor = case_match(racacor,
+c("Branca", "Branco") ~ "Branca",
+.default = racacor # Mantém o valor originaç se não houver erro.
+))
+df_fit1 <- df |>
+select(-num_not,-dt_notific, -cep, -dt_nasc, -ano)
+df_fit2  <-  df |>
+select(-cep,-dt_nasc,-ano)
+df <- read.csv("esus.sivep.covid19bh.2023_07-08-23.csv",header = TRUE,sep = ",")
+glimpse(df)
+table(df$classificacao)
+table(df$evolucao)
+table(df$dt_sin_pri)
+df <- df |>
+ungroup() |> # Garante que não há grupos ativos que travam a coluna.
+mutate(racacor = case_match(racacor,
+c("Branca", "Branco") ~ "Branca",
+.default = racacor # Mantém o valor originaç se não houver erro.
+))
+df_fit1 <- df |>
+select(-num_not,-dt_notific, -cep, -dt_nasc, -ano)
+library(tidyverse)
+library(janitor)
+library(survival)
+library(ggplot2)
+library(ggfortify)
+library(tidycmprsk)
+df <- df |>
+ungroup() |> # Garante que não há grupos ativos que travam a coluna.
+mutate(racacor = case_match(racacor,
+c("Branca", "Branco") ~ "Branca",
+.default = racacor # Mantém o valor originaç se não houver erro.
+))
+df_fit1 <- df |>
+select(-num_not,-dt_notific, -cep, -dt_nasc, -ano)
+glimpse(df)
+df <- df |>
+ungroup() |> # Garante que não há grupos ativos que travam a coluna.
+mutate(racacor = case_match(racacor,
+c("Branca", "Branco") ~ "Branca",
+.default = racacor # Mantém o valor originaç se não houver erro.
+))
+df_fit1 <- df |>
+select(-num_not,-dt_notific, -cep, -dt_nasc, -ano)
+densidade_weibull2 <- dweibull(x_seq, shape = gama_est, scale = alph_est)
+hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Weibull",
+freq = FALSE)
+lines(x_seq, densidade_weibull2, col = "red", lwd = 2)
+gama_est1 <- fit1$par[1]
+fit1 <- optim(par=c(1,1),fn=log_verossimilhança_weibull, t = tempos)
+gama_est1 <- fit1$par[1]
+alph_est1 <- fit2$par[2]
+n <- length(tempos) # tamanho da amostra
+x <- rweibull(n, shape=gama_est1, scale = alph_est1)
+x_seq <- seq(min(tempos), max(tempos), length.out = 10)
+#length.out: gera uma sequência de 100 valores x igualmente espaçados entre o valor
+##mínimo e o valor máximo dos dados.
+densidade_weibull1 <- dweibull(x_seq, shape = gama_est1, scale = alph_est1)
+hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Weibull",
+freq = FALSE)
+lines(x_seq, densidade_weibull1, col = "red", lwd = 2)
+x_seq <- seq(min(tempo_sg), max(tempo_sg), length.out = 10)
+hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Weibull",
+freq = FALSE)
+lines(x_seq, densidade_weibull2, col = "red", lwd = 2)
+gama_est <- fit2$par[1]
+alph_est <- fit2$par[2]
+n <- length(tempo_sg) # tamanho da amostra
+x <- rweibull(n, shape=gama_est, scale = alph_est)
+x_seq <- seq(min(tempo_sg), max(tempo_sg), length.out = 10)
+#length.out: gera uma sequência de 100 valores x igualmente espaçados entre o valor
+##mínimo e o valor máximo dos dados.
+densidade_weibull2 <- dweibull(x_seq, shape = gama_est, scale = alph_est)
+hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Weibull",
+freq = FALSE)
+lines(x_seq, densidade_weibull2, col = "red", lwd = 2)
+x_seq <- seq(min(tempo_sg), max(tempo_sg), length.out = 5)
+x_seq <- seq(min(tempo_sg), max(tempo_sg), length.out = 5)
+#length.out: gera uma sequência de 100 valores x igualmente espaçados entre o valor
+##mínimo e o valor máximo dos dados.
+densidade_weibull2 <- dweibull(x_seq, shape = gama_est, scale = alph_est)
+hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Weibull",
+freq = FALSE)
+lines(x_seq, densidade_weibull2, col = "red", lwd = 2)
+hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Weibull p/ bexiga",
+freq = FALSE)
+gama_est1 <- fit1$par[1]
+alph_est1 <- fit2$par[2]
+n <- length(tempos) # tamanho da amostra
+x <- rweibull(n, shape=gama_est1, scale = alph_est1)
+x_seq <- seq(min(tempos), max(tempos), length.out = 10)
+#length.out: gera uma sequência de 100 valores x igualmente espaçados entre o valor
+##mínimo e o valor máximo dos dados.
+densidade_weibull1 <- dweibull(x_seq, shape = gama_est1, scale = alph_est1)
+hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Weibull p/ bexiga",
+freq = FALSE)
+lines(x_seq, densidade_weibull1, col = "red", lwd = 2)
+# Estimando parâmetros com os bancos de dados.
+tempo_sg # Do banco de dados sobre Sg e Srag
+ajust2 <- fitdistr(tempo_sg, "weibull")
+par_weibull2 <- ajust2$estimate
+log_verossimilhança_weibull(par_weibull2,tempo_sg)
+fit2 <- optim(par=c(1,1),fn=log_verossimilhança_weibull, t = tempo_sg)
+gama_est <- fit2$par[1]
+alph_est <- fit2$par[2]
+n <- length(tempo_sg) # tamanho da amostra
+x <- rweibull(n, shape=gama_est, scale = alph_est)
+x_seq <- seq(min(tempo_sg), max(tempo_sg), length.out = 5)
+#length.out: gera uma sequência de 100 valores x igualmente espaçados entre o valor
+##mínimo e o valor máximo dos dados.
+densidade_weibull2 <- dweibull(x_seq, shape = gama_est, scale = alph_est)
+hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Weibull p/ srg",
+freq = FALSE)
+lines(x_seq, densidade_weibull2, col = "red", lwd = 2)
+par_est_1 <- fit1$par
+par_est_1 <- fit1$par
+s_weibull <- function(t) {
+p_shape <- par_est_1[1]
+p_scale <- par_est_1[2]
+return(exp(-(t / p_scale)^p_shape))
+}
+# Plotando
+tempos <- seq(0, max(tempos), length.out = 100)
+plot(tempos, s_weibull(tempos), type = "l", col = "blue", lwd = 2,
+main = "Curva de Sobrevivência Estimada (Weibull)",
+xlab = "Tempo", ylab = "S(t)")
+shape_final <- par_est_1[1]
+shape_final
+scale_final <- par_est_1[2]
+S_t <- function(tempo_alvo) {
+# pweibull dá a área à esquerda (F(t)),
+# então 1 - pweibull dá a área à direita (Sobrevivência)
+pweibull(tempo_alvo, shape = shape_final, scale = scale_final, lower.tail = FALSE)
+}
+S_t(30)
+log_verossimilhanca_censura <- function(theta, t, status) {
+gama <- theta[1]  # shape
+alpha <- theta[2] # scale
+if(gama <= 0 || alpha <= 0) return(Inf)
+# Contribuição de quem morreu (Densidade)
+# dweibull(..., log = T)
+f_t <- dweibull(t[status == 1], shape = gama, scale = alpha, log = TRUE)
+# Contribuição de quem foi censurado (Sobrevivência)
+# pweibull(..., lower.tail = F, log = T) é o log(S(t))
+S_t <- pweibull(t[status == 0], shape = gama, scale = alpha, lower.tail = FALSE, log.p = TRUE)
+# Log-verossimilhança total (negativa para o optim)
+return(-(sum(f_t) + sum(S_t)))
+}
+fit1 <- optim(par=c(1,1),fn=log_verossimilhanca_censura, t = tempos,status = cens )
+cens
+fit1
+log_verossimilhanca_censura(par_weibull,tempos,cens)
+fit1 <- optim(par=par_weibull1,fn=log_verossimilhanca_censura, t = tempos,status = cens)
+par_weibull1 <- ajust_ini$estimate
+fit1 <- optim(par=par_weibull1,fn=log_verossimilhanca_censura, t = tempos,status = cens)
+fit1 <- optim(par=par_weibull1,fn=log_verossimilhança_weibull, t = tempos)
+fit1 <- optim(par_weibull1,fn=log_verossimilhança_weibull, t = tempos)
+fit1 <- optim(par=c(1,1),fn=log_verossimilhanca_censura, t = tempos,status = cens)
+fit1 <- optim(par=par_weibull1,fn=log_verossimilhanca_censura, t = tempos,status = cens)
+fit1 <- optim(par=c(1,1),fn=log_verossimilhanca_censura, t = tempos,status = cens)
+fit1
+log_verossimilhança_weibull(par_weibull,tempos)
+fit1 <- optim(par=c(1,1),fn=log_verossimilhanca_censura, t = tempos,status = cens)
+log_verossimilhança_weibull <- function(theta,t){
+gama <- theta[1]
+alpha <- theta[2] #gamma #alpha
+# Evitando parâmetros não-positivos durante a otimização
+if(gama <= 0 || alpha <=0) return(Inf)
+# Log da densidade weibull
+log_link_w <- dweibull(t,shape=gama,scale=alpha,log = T)
+return(-sum(log_link_w))
+}
+# Nova função considerando censura
+log_verossimilhanca_censura <- function(theta, t, status) {
+gama <- theta[1]  # shape
+alpha <- theta[2] # scale
+if(gama <= 0 || alpha <= 0) return(Inf)
+# Evento de falha (Densidade)
+# dweibull(..., log = T)
+f_t <- dweibull(t[status == 1], shape = gama, scale = alpha, log = TRUE)
+# Evento de censura (Sobrevivência)
+# pweibull(..., lower.tail = F, log = T) é o log(S(t))
+S_t <- pweibull(t[status == 0], shape = gama, scale = alpha, lower.tail = FALSE, log.p = TRUE)
+# Log-verossimilhança total (negativa para o optim)
+return(-(sum(f_t) + sum(S_t)))
+}
+# Estimando parâmetros a partir dos meus dados como a função fitdistr do pacote MASS
+tempos # Do banco de dados sobre câncer de bexiga
+tempos # Do banco de dados sobre câncer de bexiga
+library(survival)
+library(ggplot2)
+library(ggfortify)
+library(tidyverse)
+library(janitor)
+library(knitr)
+# Precisa do pacote arrow
+#install.packages("arrow")
+library(arrow)
+library(readxl)
+library(MASS)
+# Salva o arquivo tratado
+tempos<-c(3,5,6,7,8,9,10,10,12,15,15,18,19,20,22,25,28,30,40,45)
+cens<-c(1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0)
+df_cc_bx <- data.frame(tempos, cens)
+#write_parquet(df_final, "df_srag_sg.parquet")
+# Lê o arquivo
+df_srag_sg <- read_parquet("df_srag_sg.parquet")
+df_cc_pl <- read.table("cancer_de_pele.txt", header = T)
+i<-order(df_cc_pl$survtime)
+df_cc_pl<-df_cc_pl[i,]
+attach(df_cc_pl)
+tempos
+cens
+ajust_ini1
+ajust_ini1 <- fitdistr(tempos, "weibull")
+par_weibull1 <- ajust_ini$estimate
+par_weibull1 <- ajust_ini1$estimate
+par_weibull1
+log_verossimilhança_weibull(par_weibull1,tempos)
+fit1 <- optim(par=c(1,1),fn=log_verossimilhanca_censura, t = tempos,status = cens)
+fit1
+log_verossimilhanca_censura(par_weibull1, tempos, cens)
+gama_est1 <- fit1$par[1]
+alph_est1 <- fit1$par[2]
+n <- length(tempos) # tamanho da amostra
+x <- rweibull(n, shape=gama_est1, scale = alph_est1)
+x_seq <- seq(min(tempos), max(tempos), length.out = 10)
+#length.out: gera uma sequência de 100 valores x igualmente espaçados entre o valor
+##mínimo e o valor máximo dos dados.
+densidade_weibull1 <- dweibull(x_seq, shape = gama_est1, scale = alph_est1)
+hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Weibull p/ bexiga",
+freq = FALSE)
+lines(x_seq, densidade_weibull1, col = "red", lwd = 2)
+tempo_sg
+tempo_sg<- df_srag_sg$dt_sin_pri # Do banco de dados sobre Sg e Srag
+ajust2 <- fitdistr(tempo_sg, "weibull")
+tempo_sg
+library(tidyverse)
+library(janitor)
+library(survival)
+library(ggplot2)
+library(ggfortify)
+library(tidycmprsk)
+df <- read.csv("esus.sivep.covid19bh.2023_07-08-23.csv",header = TRUE,sep = ",")
+glimpse(df)
+table(df$classificacao)
+table(df$evolucao)
+table(df$dt_sin_pri)
+df <- df |>
+ungroup() |> # Garante que não há grupos ativos que travam a coluna.
+mutate(racacor = case_match(racacor,
+c("Branca", "Branco") ~ "Branca",
+.default = racacor # Mantém o valor originaç se não houver erro.
+))
+df_fit1 <- df |>
+select(-num_not,-dt_notific, -cep, -dt_nasc, -ano)

@@ -1,0 +1,15 @@
+# Sobre o banco de dados
+
+## 2023 - ESUS - SIVEP - Covid -19 BH
+
+Os dados epidemiológicos disponíveis são gerados a partir das bases de dados dos sistemas oficiais de notificação do Ministério da Saúde.
+
+Sendo o “e-SUS Notifica”, o sistema de informação onde são notificados todos os casos suspeitos de síndrome gripal por Covid19, e o SIVEP-Gripe, o sistema de informação onde são notificados todos os casos de Síndrome Respiratória Aguda Grave (SRAG).
+
+Para a produção desses dados ocorre um tratamento contínuo dos registros de cada sistema e entre os sistemas, bem como é reprocessada a classificação final dos casos, de acordo com os critérios definidos pelo Ministério da Saúde.
+
+Dessa forma o número de casos está em constante mudança devido ás alterações relativas à qualificação e investigação epidemiológica dos casos. A série histórica é anualizada.
+
+Observe que os recursos são atualizados às segundas e quintas-feiras completando as informações do ano corrente. Ao iniciar um novo ano, os dados dos anos anteriores ficam congelados.
+
+[Acesso ao banco de dados abertos do Gov](https://dados.gov.br/dados/conjuntos-dados/esus-sisep-dados-epidemiologicos-covid-19)

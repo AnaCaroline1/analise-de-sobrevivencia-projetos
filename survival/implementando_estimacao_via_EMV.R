@@ -12,10 +12,51 @@ log_verossimilhança_weibull <- function(theta,t){
   return(-sum(log_link_w))
 }
 
+# Nova função considerando censura
+log_verossimilhanca_censura <- function(theta, t, status) {
+  gama <- theta[1]  # shape
+  alpha <- theta[2] # scale
+  
+  if(gama <= 0 || alpha <= 0) return(Inf)
+  
+  # Evento de falha (Densidade)
+  # dweibull(..., log = T)
+  f_t <- dweibull(t[status == 1], shape = gama, scale = alpha, log = TRUE)
+  
+  # Evento de censura (Sobrevivência)
+  # pweibull(..., lower.tail = F, log = T) é o log(S(t))
+  
+  S_t <- pweibull(t[status == 0], shape = gama, scale = alpha, lower.tail = FALSE, log.p = TRUE)
+  
+  # Log-verossimilhança total (negativa para o optim)
+  return(-(sum(f_t) + sum(S_t)))
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Estimando parâmetros a partir dos meus dados como a função fitdistr do pacote MASS
 
 tempos # Do banco de dados sobre câncer de bexiga
-
+cens
 ajust_ini1 <- fitdistr(tempos, "weibull")
 
 par_weibull1 <- ajust_ini$estimate
@@ -25,7 +66,7 @@ log_verossimilhança_weibull(par_weibull,tempos)
 
 # Aplicando a optimização
 
-fit1 <- optim(par=c(1,1),fn=log_verossimilhança_weibull, t = tempos)
+fit1 <- optim(par=c(1,1),fn=log_verossimilhanca_censura, t = tempos,status = cens)
 
 gama_est1 <- fit1$par[1]
 alph_est1 <- fit2$par[2]
@@ -68,4 +109,30 @@ densidade_weibull2 <- dweibull(x_seq, shape = gama_est, scale = alph_est)
 hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Weibull p/ srg",
      freq = FALSE)
 lines(x_seq, densidade_weibull2, col = "red", lwd = 2)
-?lines
+
+
+
+#############################################
+
+par_est_1 <- fit1$par
+shape_final <- par_est_1[1]
+scale_final <- par_est_1[2]
+s_weibull <- function(t) {
+  p_shape <- par_est_1[1]
+  p_scale <- par_est_1[2]
+  return(exp(-(t / p_scale)^p_shape))
+}
+
+# Plotando
+tempos <- seq(0, max(tempos), length.out = 100)
+plot(tempos, s_weibull(tempos), type = "l", col = "blue", lwd = 2,
+     main = "Curva de Sobrevivência Estimada (Weibull)",
+     xlab = "Tempo", ylab = "S(t)")
+
+S_t <- function(tempo_alvo) {
+  # pweibull dá a área à esquerda (F(t)), 
+  # então 1 - pweibull dá a área à direita (Sobrevivência)
+  pweibull(tempo_alvo, shape = shape_final, scale = scale_final, lower.tail = FALSE)
+}
+
+S_t(30)

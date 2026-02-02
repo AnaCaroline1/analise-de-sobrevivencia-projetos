@@ -1,0 +1,5 @@
+"0","write_parquet(df_fit, ""df_srag_sg.parquet"")
+"
+"2","Error in write_parquet(df_fit, ""df_srag_sg.parquet"") : 
+  não foi possível encontrar a função ""write_parquet""
+"
