@@ -1,0 +1,26 @@
+{
+    "id": "7C0EDD12",
+    "path": "~/sobrevivencia_emv/survivel/_common.R",
+    "project_path": "_common.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": true,
+    "created": 1769994787700.0,
+    "source_on_save": false,
+    "relative_order": 6,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source2",
+        "cursorPosition": "11,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1769994847,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1770000144254,
+    "read_only": false,
+    "read_only_alternatives": []
+}

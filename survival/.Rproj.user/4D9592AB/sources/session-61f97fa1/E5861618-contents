@@ -1,0 +1,405 @@
+---
+title: "Métodos Computacionais em Estatítica: Prova Prática"
+author: 
+  - name: Ana Caroline Alexandre P.
+    affiliations:
+      - name: Faculdade de Estatística - FAEST
+      - name: Universidade Federal do Pará - UFPA
+        department: Instituto de Ciências Exatas e Naturais - ICEN
+    email: ana.pantoja@icen.ufpa.br
+format: 
+  html:
+      theme: cosmo
+  pdf:
+      documentclass: article
+      papersize: a4
+      fontsize: 10pt
+  latex:
+    documentclass: report
+lang: pt
+editor: visual
+---
+
+```{r include=FALSE}
+library(survival)
+```
+
+## Para cada distribuição, fazer:
+
+a.  Apresentar as expressões, resultados:
+
+<!-- -->
+
+1.  Função de verossimilhança;
+2.  Log-verossimilhança;
+3.  Vetor Score;
+4.  Matriz Hessiana;
+
+<!-- -->
+
+b.  Criar um código que retorne as estimativas de máxima verossimilhança, feito pelo método de Newton-Rephson ou o Método BFGS da Função $optim$ ou $opitimize$.
+c.  Compare através de um histograma dos dados como o modelo estimado.
+
+## Banco dados do livro, capítulo 3:
+
+# Pacientes com câncer de bexiga
+
+Para vinte pacientes com câncer de bexiga submetidos à cirurgia de ressecção transuretral,registrando os tempos, em meses.
+
+### As distribuições dadas:
+
+## 1. Weibull:
+
+A função densidade é dada por:
+
+$$
+f(t) = \frac{\gamma}{\alpha^{\gamma}}\cdot t^{(\gamma-1)} \cdot exp\left[-\left(\frac{t}{\alpha}\right)^{\gamma} \right], \ t\geqslant0 
+$$
+
+em que os parâmetros de escala e forma, $\alpha$ e $\gamma$ são positivos.
+
+#### Função de verossimilhança é dada por:
+
+\$\$ L(\hat{\theta}) = \prod\*{i = 1}\^{n}\* \left(\frac{\gamma}{\alpha^{\gamma}}\cdot t{i}\^{(\gamma-1)} \cdot exp\left[- \sum_{i=1}^{n} \left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]\right)\^{\delta\_{i}}
+
+\cdot
+
+\left(exp\left[- \sum_{i=1}^{n} \left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]\right)\^{1-\delta\_{i}} \$\$
+
+*Reescrevendo, teremos:*
+
+$$ 
+L(\hat{\theta}) = \prod_{i = 1}^{n}\left(\frac{\gamma^{n}}{\alpha^{n \cdot \gamma}}\cdot t_{i}^{(\gamma-1)} \right)^{\delta_{i}} \cdot exp\left[- \sum_{i=1}^{n} \left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]
+$$
+
+#### Log-verossimilhança da Weibull:
+
+$$
+l[L\hat{\theta}] = \log \left[ \prod_{i = 1}^{n}\left(\frac{\gamma^{n}}{\alpha^{n \cdot \gamma}}\cdot t_{i}^{(\gamma-1)} \right)^{\delta_{i}} \cdot exp\left[- \sum_{i=1}^{n} \left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right] \right]
+$$
+
+*logo, temos:*
+
+$$
+= \sum_{i=1}^{n} \delta_{i}\log{(\gamma)} - \sum_{i=1}^{n} \delta_{i}\gamma\log{(\alpha)}+(\gamma_{i}-1)\sum_{i=1}^{n} \delta_{i}\log{(t_{i})}-\left(\frac{t_{i}}{\alpha}\right)^{\gamma}
+$$
+
+$$
+= r\log{(\gamma)} - r\gamma\log{(\alpha)}+(\gamma_{i}-1)\sum_{i=1}^{n} \delta_{i}\log{(t_{i})}- \alpha^{-\gamma}\cdot \ \sum_{i=1}^{n} t_{i}^{\gamma} 
+$$
+
+Sendo $\hat{\theta} = (\hat{\gamma}, \hat{\alpha})$
+
+$$
+\hat{\gamma} = \frac{n}{\gamma} -n \cdot \log{\alpha} - \gamma \cdot \sum_{i=1}^{n} \frac{t_{i}}{\alpha} \ \hat{\alpha} =1
+$$
+
+```{r, echo=FALSE}
+# Pacientes com câncer de bexiga
+
+ekm<-survfit(Surv(tempos,cens)~1,df) # Kaplan-Meier
+summary(ekm)
+
+par(mfrow=c(1,1))
+plot(ekm,lty=c(2,1),xlab="Tempo (em meses)",ylab="S(t) estimada", mark.time=F)
+
+
+```
+
+### Implementando para Weibull:
+
+Para implementar, pegaremos nossa amostra:
+
+```{r, include = FALSE, warning = FALSE}
+
+# Implementando o método: 
+
+theta0 <- c(shape = 1, scale = mean(df$tempos)) # Chute inicial
+dif <- 1 #diferença
+erro <- 10^(-6) #tolerância
+i <- 1 # contador
+
+
+tempo <- df$tempos
+
+log_verossimilhanca_weibull <- function(theta, tempo) {
+  gama <- theta[1]
+  alpha <- theta[2]
+  n <- length(df)
+  x <- df
+
+  l <- n * log(gama) - n * gama * log(alpha) + (gama - 1) * sum(log(x)) - sum((x / alpha)^gama)
+  
+  control = list(fnscale = -1)
+ # Retorna o negativo para minimização
+}
+
+# Usar optim com limites para os parâmetros
+fit <- optim(theta0, fn = log_verossimilhanca_weibull, gr = NULL, method = "L-BFGS-B", lower = 0.001,hessian = TRUE, tempo)
+
+# Verificação rápida
+if(fit$convergence == 0){
+  cat("Convergiu com sucesso!\n")
+} else {
+  cat("Erro na convergência. Código:", fit$convergence, "\n")
+}
+
+# Verificação da estabilidade (Erros padrão)
+# Se isso aqui der erro, a convergência foi instável
+erros_padrao <- sqrt(diag(solve(fit$hessian)))
+print(erros_padrao)
+
+
+ekm<-survreg(Surv(tempos,cens)~1,df,dist = "weibull") 
+
+
+ 
+ 
+```
+
+```{r, include = FALSE}
+gama_est1 <- fit$par[1]
+alph_est1 <- fit$par[2]
+
+n <- length(df_x) # tamanho da amostra
+x <- rweibull(n, shape=gama_est1, scale = alph_est1)
+
+hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma como Ajuste: Weibull", freq = FALSE)
+```
+
+```{r}
+# Função Weibull:
+
+# Implementando o método: 
+
+theta0 <- c(5,5) # Chute inicial
+dif <- 1 #diferença
+erro <- 10^(-6) #tolerância
+i <- 1 # contador
+
+
+log_verossimilhanca_weibull <- function(theta, df_x) {
+  gama <- theta[1]
+  alpha <- theta[2]
+  n <- length(df_x)
+  x <- df_x
+  
+  l <- n * log(gama) - n * gama * log(alpha) + (gama - 1) * sum(log(x)) - sum((x / alpha)^gama)
+
+  return(-l) # Retorna o negativo para minimização
+}
+
+# Usar optim com limites para os parâmetros
+fit <- optim(par = theta0, fn = log_verossimilhanca_weibull, gr = NULL, method = "L-BFGS-B", 
+             hessian = TRUE, df_x = df_x, lower = c(1e-10, 1e-10))
+
+print(fit)
+```
+
+Optou-se por utilizar o método "L-BFGS-B" (*Limited-memory Broyden-Fletcher-Goldfarb-Shanno with box constraints*)" que é uma variação do método "BFGS", possibilitando limites para os parâmetros. Pois foi necessário definir limites para $\alpha$ e $\gamma$, uma vez que o algoritmo anterior ficou tentando valores zero ou negativos, causando NaNs na função log-verossimilhança.
+
+Agora, analisando os resultados teremos que:
+
+1.  Os parâmetros estimados para $\gamma$ (forma) e $\alpha$ (escala), respectivamente, são: 1.959737, 1.490362;
+
+2.  O ponto que máximo alcançado: 1007.194;
+
+3.  Houve convergencia.
+
+Observemos graficamente o resultado estimado para os parâmetros:
+
+```{r}
+gama_est <- fit$par[1]
+alph_est <- fit$par[2]
+
+n <- length(df_x) # tamanho da amostra
+x <- rweibull(n, shape=gama_est, scale = alph_est)
+
+x_seq <- seq(min(df_x), max(df_x), length.out = 100)
+#length.out: gera uma sequência de 100 valores x igualmente espaçados entre o valor
+##mínimo e o valor máximo dos dados.
+densidade_weibull <- dweibull(x_seq, shape = gama_est, scale = alph_est) 
+
+hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Weibull",
+     freq = FALSE)
+lines(x_seq, densidade_weibull, col = "red", lwd = 2)
+```
+
+## 2. Log-Normal:
+
+A função densidade é dada por:
+
+$$
+f(t) = \frac{1}{\sqrt{2\pi} \cdot t_{i} \cdot \sigma}\cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \left(\log(t_{i}) - \mu\right)^{2} \right], \ t_{i}\geqslant 0 
+$$
+
+com média $\mu$ e desvio-padrão $\sigma$.
+
+#### Função de verossimilhança é dada por:
+
+$$ 
+L(\hat{\theta}|t) = \prod_{i=1}^{n}\frac{1}{\sqrt{2\pi} \cdot t_{i} \cdot \sigma}\cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \left(\log(t_{i}) - \mu\right)^{2} \right] 
+$$
+
+$$ 
+L(\hat{\theta}|t_{i}) = \frac{1}{(\sqrt{2\pi})^{n} \cdot t_{i} \cdot \sigma^{n}} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right] 
+$$
+
+*Reescrevendo, teremos:*
+
+$$ 
+L(\hat{\theta}|t_{i}) = (2\pi)^{\left(-\frac{n}{2}\right)}\cdot \sigma^{-n} \cdot \prod_{i=1}^{n} t_{i}^{-1} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right]
+$$
+
+#### Log-verossimilhança da Log-Normal:
+
+$$
+l[L\hat{\theta}] = \log \left[ (2\pi)^{\left(-\frac{n}{2}\right)}\cdot \sigma^{-n} \cdot \prod_{i=1}^{n} t_{i}^{-1} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right]\right]
+$$
+
+*logo, temos:*
+
+$$
+= -\frac{n}{2} \cdot \left[\log(2) + log(\pi)\right]-n\cdot \log(\sigma) \cdot -\sum_{i=1}^{n} \log(t_{i}) -\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n}\left( \log(t_{i}) - \mu\right)^{2}
+$$
+
+Sendo os estimadores $\hat{\theta} = (\hat{\mu} , \hat{\sigma})$:
+
+$$
+\hat{\mu} = \sum_{i=1}^{n} \frac{log(t_{i})}{n}, \ \hat{\sigma}=\sum_{i=1}^{n} \frac{\left(log(t_{i})- \hat{\mu}\right )^{2}}{n}
+$$
+
+### Implementando para a Log-Normal:
+
+```{r}
+
+mu <- sum(log(ti))/length(ti)
+
+sigma2 <- sum(log(ti)-mu)^2/length(ti)
+
+log_norm <- 1/(srt(2*pi)*ti*sqrt(sigma2))*exp(-1/(2*sigma2))
+
+log_verossimilhanca_logNorm <- function(theta, df_x) {
+  mi <- theta[1]
+  sigma <- theta[2]
+  n <- length(df_x)
+  x <- df_x
+  
+  l <- -n/2 * log(2*pi) - n * log(sigma) - sum(log(x)) - 1/(2*sigma^2) * sum((log(x) - mi)^2)
+
+  return(-l) # Retorna o negativo para minimização
+}
+
+# Usando optim com limites para os parâmetros
+
+fit <- optim(par = theta0, fn = log_verossimilhanca_logNorm, gr = NULL, method = "L-BFGS-B", 
+             hessian = TRUE, df_x = df_x, lower = c(1e-10, 1e-10))
+?optim
+print(fit)
+
+
+```
+
+Agora, analisando os resultados teremos que:
+
+1.  Os parâmetros estimados para $\mu$ e $\sigma$, respectivamente, são: 0.1062326 0.6461255;
+
+2.  O ponto que máximo alcançado: 1088.421;
+
+3.  Houve convergencia.
+
+Observemos graficamente o resultado estimado para os parâmetros:
+
+```{r}
+mi_est <- fit$par[1]
+sig_est <- fit$par[2]
+
+n <- length(df_x) # tamanho da amostra
+x <- rlnorm(n, meanlog = mi_est, sdlog = sig_est) #o máximo dos comprimentos \\ dos argumentos numéricos.
+
+x_seq <- seq(min(df_x), max(df_x), length.out = 100)
+densidade_logNorm <-  dlnorm(x_seq, m = mi_est, s = sig_est) 
+
+hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Log-Normal", 
+     freq = FALSE)
+lines(x_seq,densidade_logNorm, col = "red", lwd = 2)
+```
+
+## 3. Gama Generalizada:
+
+A função densidade é dada por:
+
+$$
+f(x) = \frac{\gamma}{\varGamma{(s)\cdot \alpha ^{\left( s \cdot \gamma\right)}}} \cdot x^{\left( s \cdot \gamma -1\right)} \cdot exp\left[- \left(\frac{x}{\alpha} \right)^{\gamma} \right], \ x\geqslant0 
+$$
+
+com parâmetros de escala $\alpha$ e $\gamma$ e $s$ de forma.
+
+#### Função de verossimilhança é dada por:
+
+$$ 
+L(\hat{\theta}|x) = \frac{\gamma^{n}}{\varGamma{(s)\cdot \alpha ^{n\left( s \cdot \gamma\right)}}} \cdot \prod_{i=1}^{n} x^{\left( s \cdot \gamma -1\right)} \cdot exp\left[- \sum_{i=1}^{n}\left(\frac{x}{\alpha} \right)^{\gamma} \right], \ x\geqslant0 
+$$
+
+#### Log-verossimilhança da Gama Generalizada:
+
+$$
+l[L\hat{\theta}] = \log \left[ \frac{\gamma^{n}}{\varGamma{(s)\cdot \alpha ^{n\left( s \cdot \gamma\right)}}} \cdot \prod_{i=1}^{n} x^{\left( s \cdot \gamma -1\right)} \cdot exp\left[- \sum_{i=1}^{n}\left(\frac{x}{\alpha} \right)^{\gamma} \right]\right]
+$$
+
+*logo, temos:*
+
+$$
+= n\cdot \log(\gamma) -n(s\gamma)\cdot\log(\alpha) + \log(\varGamma{(s)}) + (s\gamma-1) \cdot \sum_{i=1}^{n}\log(x_i) - \sum_{i=1}^{n} \left( \frac{x_i}{\alpha}\right)^{\gamma}
+$$
+
+### Implementando para a Gama Generalizada:
+
+```{r}
+log_verossimilhanca_gamaGe <- function(theta, df_x) {
+  alfa <- theta[1]
+  beta <- theta[2]
+  s <- theta[3]
+  x <- df_x
+
+  log_gam <- sum(log(s) - log(beta) - log(gamma(alfa)) + (alfa * s - 1)
+                 * log(x / beta) - (x / beta)^s)
+
+  return(-log_gam) # Retorna o negativo para minimização
+}
+# Usando optim com limites para os parâmetros
+
+theta0 <- c(1,1,1) # Chute inicial
+
+fit <- optim(par = theta0, fn = log_verossimilhanca_gamaGe, gr = NULL, method = "L-BFGS-B", 
+             hessian = TRUE, df_x = df_x, lower = c(1e-10, 1e-10, 1e-10))
+
+print(fit)
+
+```
+
+```{r}
+alfa_es <- fit$par[1]
+beta_es <- fit$par[2]
+s_es <- fit$par[3]
+q <- c(beta_es,s_es)
+
+n <- length(df_x) # tamanho da amostra
+x <- rgengamma(n, sigma = alfa_es, Q = q)
+
+x_seq <- seq(min(df_x), max(df_x), length.out = 100)
+densidade_gamaGe <-  dgengamma(x_seq, sigma = alfa_es, Q = q) 
+
+hist(x, ylab = "Frequência", xlab = "Valores dos dados", 
+     main = "Histograma com ajuste: Gama Generalizada", freq = FALSE)
+
+lines(x_seq,densidade_gamaGe, col = "red", lwd = 2)
+```
+
+Analisando os resultados, temos:
+
+1.  Os parâmetros estimados para $\alpha$, $\gamma$,$s$ respectivamente, são: 1.094547 1.403183 1.856360;
+
+2.  O ponto máximo foi: 1007.04;
+
+3.  Houve convergência para os parâmetros estimados;

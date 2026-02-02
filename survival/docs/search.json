@@ -1,0 +1,72 @@
+[
+  {
+    "objectID": "dist_weibull.html",
+    "href": "dist_weibull.html",
+    "title": "2  Distribuição Weibull",
+    "section": "",
+    "text": "2.1 Função de verossimilhança é dada por:\nA função densidade de probabilidade associada a variável aleatória tempo até o evento \\(T\\), possui uma grande variedade de formas, sendo sua função densidade, possuindo uma propriedade básica: a função taxa de falha sendo monótona, ou seja, crescente, decrescente ou constante.\nCom distribuição Weibull é dada por:\n\\[\nf(t) = \\frac{\\gamma}{\\alpha^{\\gamma}}\\cdot t^{(\\gamma-1)} \\cdot exp\\left[-\\left(\\frac{t}{\\alpha}\\right)^{\\gamma} \\right], \\ t\\geqslant0\n\\]\nOs parâmetros de escala e forma, \\(\\alpha\\) e \\(\\gamma\\) são positivos. O parâmetro \\(\\alpha\\) tem mesma medida de unidade de \\(t\\) e \\(\\gamma\\) não tendo unidade de medida.\n\\[\nL(\\hat{\\theta}) = \\prod_{i = 1}^{n} \\left[\\frac{\\gamma}{\\alpha^{\\gamma}}\\cdot t_{i}^{(\\gamma-1)} \\cdot exp\\left[-  \\left(\\frac{t_{i}}{\\alpha}\\right)^{\\gamma}\\right]\\right]^{\\delta_{i}} =\n\\]\n\\[\n= \\left[\\frac{\\gamma}{\\alpha^{\\gamma}}\\cdot t_{i}^{(\\gamma-1)} \\cdot exp\\left[-\\left(\\frac{t_{i}}{\\alpha}\\right)^{\\gamma}\\right]\\right]^{\\delta_{i}}\\cdot\\left[\\frac{\\gamma}{\\alpha^{\\gamma}}\\cdot t_{i}^{(\\gamma-1)} \\cdot exp\\left[- \\left(\\frac{t_{i}}{\\alpha}\\right)^{\\gamma}\\right]\\right]^{1-\\delta_{i}} =\n\\]\n\\[\n= \\left(\\frac{\\gamma^{n}}{\\alpha^{ n \\cdot\\gamma}}\\right)^{\\delta_{i}} \\cdot \\prod_{i=1}^{n}t_{i}^{\\delta_{i}(\\gamma - 1)} \\cdot exp\\left[-  \\frac{1}{\\alpha^{\\gamma}} \\cdot \\sum_{i=1}^{n} (t_{i})^{\\gamma}\\right]\n\\]\nReescrevendo, teremos:\n\\[\n= \\gamma^{n\\cdot \\delta_{i}} \\cdot \\alpha^{-n\\cdot \\delta \\cdot \\gamma} \\cdot \\prod_{i=1}^{n}t_{i}^{\\delta_{i}(\\gamma - 1)} \\cdot exp\\left[-\\frac{1}{\\alpha^{\\gamma}} \\cdot \\sum_{i=1}^{n} (t_{i})^{\\gamma}\\right]\n\\]",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Distribuição Weibull</span>"
+    ]
+  },
+  {
+    "objectID": "dist_weibull.html#log-verossimilhança-da-weibull",
+    "href": "dist_weibull.html#log-verossimilhança-da-weibull",
+    "title": "2  Distribuição Weibull",
+    "section": "2.2 Log-verossimilhança da Weibull:",
+    "text": "2.2 Log-verossimilhança da Weibull:\n\\[\nl[L\\hat{\\theta}] = \\log \\left[\\gamma^{n\\cdot \\delta_{i}} \\cdot \\alpha^{-n\\cdot \\delta \\cdot \\gamma} \\cdot  \\prod_{i=1}^{n}t_{i}^{\\delta_{i}(\\gamma - 1)} \\cdot exp\\left[-\\frac{1}{\\alpha^{\\gamma}} \\cdot \\sum_{i=1}^{n} (t_{i})^{\\gamma}\\right] \\right] =\n\\]\n\\[\n= n \\cdot \\delta_{i}\\log{(\\gamma)} - n \\cdot \\delta_{i} \\cdot \\gamma\\log{(\\alpha)}+ \\delta_{i}(\\gamma-1)\\sum_{i=1}^{n} \\log{(t_{i})} - \\alpha^{-\\gamma}\\cdot \\ \\sum_{i=1}^{n} (t_{i})^{\\gamma}\n\\]\nDerivando em relação a \\(\\gamma\\), temos:\n\\[\n\\frac{\\partial l[L(\\hat{\\theta} | t_{i})]}{\\partial \\gamma} = \\frac{n \\cdot \\delta_{i}}{\\gamma}-n \\cdot \\delta_{i} \\cdot \\log{(\\alpha)} +\\delta_{i} \\sum_{i=1}^{n} \\log(t_{i})+\\alpha^{-\\gamma} \\cdot \\ln(\\alpha) \\cdot \\sum_{i=1}^{n}(t_{i})^{\\gamma}-\\alpha^{-\\gamma} \\cdot \\sum_{i=1}^{n}(t_{i})^{\\gamma} \\cdot \\ln{(t_{i})}\n\\]\nAplicando \\(\\delta_{i}={1}\\), teremos:\n\\[\n\\frac{\\partial l[L(\\hat{\\theta} | t_{i})]}{\\partial \\gamma} = \\frac{n}{\\gamma} - n \\cdot \\log{(\\alpha)} +\\sum_{i=1}^{n} \\log(t_{i}) + \\alpha^{-\\gamma} \\cdot \\ln(\\alpha) \\cdot \\sum_{i=1}^{n}(t_{i})^{\\gamma}- \\alpha^{-\\gamma} \\cdot \\sum_{i=1}^{n} (t_{i})^{\\gamma} \\cdot \\ln{(t_{i})} =\n\\]\n\\[\n=n \\cdot \\left(\\frac{1}{\\gamma}-\\log(\\alpha)\\right) +\\sum_{i=1}^{n} \\log(t_{i}) + \\frac{\\sum_{i=1}^{n} (t_{i})^{\\gamma}}{\\alpha^{\\gamma}} \\cdot \\left(\\ln{(\\alpha)} - \\ln{(t_{i})}\\right)\n\\]\nDerivando em relação a \\(\\alpha\\), temos:\n\\[\n\\frac{\\partial l[L(\\hat{\\theta} | t_{i})]}{\\partial \\alpha} = - \\frac{n \\cdot \\gamma}{\\alpha} + \\gamma \\cdot \\alpha^{-\\gamma - 1} \\sum_{i=1}^{n} (t_{i})^{\\gamma} =\n\\]\n\\[\n=\\gamma \\cdot \\left(\\frac{n}{\\alpha} +\\frac{1}{\\alpha^{\\gamma+1}} \\cdot \\sum_{i=1}^{n} (t_{i})^{\\gamma} \\right)\n\\]\nNão é possível…",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Distribuição Weibull</span>"
+    ]
+  },
+  {
+    "objectID": "dist_exponencial.html",
+    "href": "dist_exponencial.html",
+    "title": "1  Distribuição Exponencial",
+    "section": "",
+    "text": "1.1 Função de verossimilhança\nA função densidade de probabilidade associada a variável aleatória tempo até o evento \\(T\\) com distribuição exponencial é dada por:\n\\[\nf(t) = \\left[\\frac{1}{\\alpha} \\cdot exp\\left[-\\frac{t}{\\alpha}\\right]\\right]^{\\delta_{i}} \\ t \\geqslant 0\n\\]\nComo o parâmetro \\(\\alpha \\geqslant 0\\) correspondendo ao tempo médio de vida.\n\\[\nL(\\theta | t_{i}) = \\prod_{i = 1}^{n} \\left[\\frac{1}{\\alpha} \\cdot exp\\left[-\\frac{t_{i}}{\\alpha}\\right]\\right]^{\\delta_{i}}\n\\]\n\\[\n= \\left[\\frac{1}{\\alpha} \\cdot exp\\left[-\\frac{t_{1}}{\\alpha}\\right]\\right]^{\\delta_{i}} \\cdot \\left[\\frac{1}{\\alpha} \\cdot exp\\left[-\\frac{t_{2}}{\\alpha}\\right]\\right]^{1-\\delta_{i}}\n\\]\n\\[\n= \\left[\\frac{1}{\\alpha^{n}}\\right]^{\\delta_{i}} \\cdot exp\\left(-\\frac{\\sum_{i=1}^{n}ti}{\\alpha}\\right)\n\\]\nPodendo ser reescrita:\n\\[\n= 1^{\\delta_{i}} \\cdot \\alpha^{-n\\cdot\\delta_{i}} \\cdot exp\\left(-\\frac{\\sum_{i=1}^{n}ti}{\\alpha}\\right)\n\\]\nSabendo que \\(\\delta_{i}=\\{0,1\\}\\), se aplicado 0 não existe função densidade de probabilidade, logo, a função de verossimilhança será:\n\\[\n= \\alpha^{-n\\cdot\\delta_{i}} \\cdot exp\\left(-\\frac{\\sum_{i=1}^{n}ti}{\\alpha}\\right)\n\\]",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Distribuição Exponencial</span>"
+    ]
+  },
+  {
+    "objectID": "dist_exponencial.html#a-log-verossimilhança-da-exponencial",
+    "href": "dist_exponencial.html#a-log-verossimilhança-da-exponencial",
+    "title": "1  Distribuição Exponencial",
+    "section": "1.2 A Log-verossimilhança da exponencial",
+    "text": "1.2 A Log-verossimilhança da exponencial\n\\[\nl[L(\\hat{\\theta}|t_{i})] = \\log\\left[\\alpha^{-n\\cdot\\delta_{i}} \\cdot exp\\left(-\\frac{\\sum_{i=1}^{n}ti}{\\alpha}\\right) \\right] = -n\\cdot \\delta_{i}\\cdot \\log(\\alpha) -\\frac{\\sum_{i=1}^{n}t_{i}}{\\alpha}\n\\]\nDerivando em relação a \\(\\alpha\\) teremos que:\n\\[\n\\frac{\\partial l[L(\\hat{\\theta}|t_{i})]}{\\partial\\alpha} = \\frac{-n\\cdot\\delta_{i}}{\\alpha} + \\frac{\\sum_{i=1}^{n}t_{i}}{\\alpha^{2}} = 0\n\\]\n\\[\n\\frac{-n\\cdot\\delta_{i}}{\\alpha} + \\frac{\\sum_{i=1}^{n}t_{i}}{\\alpha^{2}} = 0 \\ \\cdot (\\alpha^{2})\n\\]\n\\[\n= -n\\cdot\\delta_{i}\\cdot \\alpha + \\sum_{i=1}^{n}t_{i} = 0\n\\]\n\\[\n\\sum_{i=1}^{n} t_{i} = n \\cdot \\delta_{i} \\cdot \\alpha\n\\]\n\\[\n\\hat{\\alpha} = \\frac{\\sum_{i=1}^{n}t_{i}}{n\\cdot\\delta_{i}}\n\\]\nComo o denominador deve ser sempre positivo, aplicando \\(\\delta_{i}={1}\\), teremos:\n\\[\n\\hat{\\alpha} = \\frac{\\sum_{i=1}^{n}t_{i}}{n}\n\\]",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Distribuição Exponencial</span>"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Análise de sobrevivência aplicado a dados epidemiológicos",
+    "section": "",
+    "text": "Objetivo\nVerificar comportamento de distribuições de probabilidade em dados para aplicação de análise de sobrevivência. Para tal, se deve obter estimadores de máximo verossimilhança utilizando as funções \\(optim\\) e \\(optimize\\) para identificar os valores dos parâmetros estimados, convergência dos dados sob a distribuição de interesse.\nAlém da aplicabilidade, se deve conhecer cada distribuição, seus pressupostos, características, propriedades e comportamento gráfico em relação aos dados.\nPara comparação, se utiliza-se os pacotes implementados do \\(R\\) para aplicar análise de sobrevivência com o \\(survival\\), vizualização gráfica com o pacote \\(ggplot2\\) e leitura de banco de dados com \\(readxl\\).\nAplicando a função de sobrevivência com funções criadas apartir dos resultados de convergência para certa distribuição.\nOs dados utilizados são:\n\ncancer_de_pele.txt\npacientes com câncer de bexiga\nesus.sivep.covid19bh.2023.csv\n\n\n1 e 2 foram bases retiradas do repositório dos autores do livro Análise de Sobrevivência, Colossimo & Giolo: Acesse aqui;\n3 foi retirado do banco de dados abertos do governo: Acesso ao banco de dados abertos do Gov",
+    "crumbs": [
+      "Objetivo"
+    ]
+  },
+  {
+    "objectID": "dist_log_norm.html",
+    "href": "dist_log_norm.html",
+    "title": "3  Distribuição Log-Normal",
+    "section": "",
+    "text": "3.1 Função de verossimilhança\nA função densidade de probabilidade associada a variável aleatória tempo até o evento \\(T\\) com distribuição log-normal é dada por:\n\\[\nf(t) = \\frac{1}{\\sqrt{2\\pi} \\cdot t \\cdot \\sigma} \\cdot exp\\left[ \\frac{1}{2\\sigma^{2}} \\cdot (\\log(t) - \\mu)^{2} \\right] \\ t &gt; 0\n\\]\n\\[\nL(\\theta|t_{i}) = \\prod_{i=1}^{n} \\left[\\frac{1}{\\sqrt{2\\pi} \\cdot t \\cdot \\sigma} \\cdot exp\\left[ \\frac{1}{2\\sigma^{2}} \\cdot (\\log(t) - \\mu)^{2} \\right] \\right]\n\\]\n\\[\nL(\\hat{\\theta}|t_{i}) = \\frac{1}{(\\sqrt{2\\pi})^{n} \\cdot t_{i} \\cdot \\sigma^{n}} \\cdot exp\\left[-\\frac{1}{2\\sigma^{2}} \\cdot \\sum_{i=1}^{n} \\left(\\log(t_{i}) - \\mu\\right)^{2} \\right]  \n\\]\nReescrevendo, teremos:\n\\[  \nL(\\hat{\\theta}|t_{i}) = (2\\pi)^{\\left(-\\frac{n}{2}\\right)}\\cdot \\sigma^{-n} \\cdot \\prod_{i=1}^{n} t_{i}^{-1} \\cdot exp\\left[-\\frac{1}{2\\sigma^{2}} \\cdot \\sum_{i=1}^{n} \\left(\\log(t_{i}) - \\mu\\right)^{2} \\right]\n\\]",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Distribuição Log-Normal</span>"
+    ]
+  },
+  {
+    "objectID": "dist_log_norm.html#log-verossimilhança-da-log-normal",
+    "href": "dist_log_norm.html#log-verossimilhança-da-log-normal",
+    "title": "3  Distribuição Log-Normal",
+    "section": "3.2 Log-verossimilhança da Log-Normal:",
+    "text": "3.2 Log-verossimilhança da Log-Normal:\n\\[\nl[L\\hat{\\theta}| t_{i}] = \\log \\left[ (2\\pi)^{\\left(-\\frac{n}{2}\\right)}\\cdot \\sigma^{-n} \\cdot \\prod_{i=1}^{n} t_{i}^{-1} \\cdot exp\\left[-\\frac{1}{2\\sigma^{2}} \\cdot \\sum_{i=1}^{n} \\left(\\log(t_{i}) - \\mu\\right)^{2} \\right]\\right]\n\\]\nlogo, temos:\n\\[\n= -\\frac{n}{2} \\cdot \\left[\\log(2) + log(\\pi)\\right]-n\\cdot \\log(\\sigma) \\cdot -\\sum_{i=1}^{n} \\log(t_{i}) -\\frac{1}{2\\sigma^{2}} \\cdot \\sum_{i=1}^{n}\\left( \\log(t_{i}) - \\mu\\right)^{2}\n\\]\nDerivando parcialmente \\(\\hat{\\theta}=(\\mu,\\alpha)\\) se obtem:\n\\[\n\\frac{\\partial l[L(\\hat{\\theta} | t_{i})]}{\\partial \\mu} = -\\frac{1}{2\\sigma^{2}}\\cdot \\sum_{i=1}^{n} (\\log(t_{i})-\\mu)^{2}=\n\\]\n\\[\n= -\\frac{1}{2\\sigma^{2}}\\cdot 2 \\cdot \\sum_{i=1}^{n} (\\log(t_{i})-\\mu) \\cdot (-1)=\n\\]\n\\[\n= \\frac{1}{\\sigma^{2}} \\cdot \\sum_{i=1}^{n} (\\log(t_{i})-\\mu)\n\\]\n\\[\n\\frac{\\partial l[L(\\hat{\\theta} | t_{i})]}{\\partial \\sigma} = \\frac{n}{\\sigma} - \\left[\\frac{1}{2} \\cdot (\\sigma^{-2})' \\cdot \\sum_{i=1}^{n} (\\log(t_i) - \\mu)^2 \\right] =\n\\]\n\\[\n=-\\frac{n}{\\sigma} - \\left[ -\\frac{2}{2} \\cdot \\sigma^{-3} \\cdot \\sum_{i=1}^{n} (\\log(t_i) - \\mu)^2 \\right] =\n\\]\n\\[\n= -\\frac{n}{\\sigma} + \\frac{1}{\\sigma^{3}} \\cdot \\sum_{i=1}^{n} (\\log(t_i) - \\mu)^2\n\\]\nCom \\(\\hat{\\mu}\\) e \\(\\hat{\\sigma}\\), respectivamente:\n\\[\n\\hat{\\mu} = \\frac{\\sum_{i=1}^{n} \\log(t_{i})}{n} \\ ; \\ \\hat{\\sigma}= \\frac{\\sum_{i=1}^{n} (\\log(t_{i})-\\mu)^{2}}{n}\n\\]",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Distribuição Log-Normal</span>"
+    ]
+  }
+]

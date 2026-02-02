@@ -1,0 +1,29 @@
+project:
+  type: book
+  output-dir: docs
+  
+knitr:
+  opts_chunk:
+    code-before: |
+      source("_common.R")
+      
+book:
+  title: "Análise de sobrevivência aplicado a dados epidemiológicos"
+  author: "Ana Caroline Alexandre P."
+  date: last-modified
+  chapters:
+    - index.qmd
+    - dist_exponencial.qmd
+    - dist_weibull.qmd
+    - dist_log_norm.qmd
+    - dist_log_logis.qmd
+bibliography: references.bib
+format:
+  html:
+    theme:  
+      light: flatly
+      dark: darkly
+    toc-title: "Sumário"
+
+editor: visual
+

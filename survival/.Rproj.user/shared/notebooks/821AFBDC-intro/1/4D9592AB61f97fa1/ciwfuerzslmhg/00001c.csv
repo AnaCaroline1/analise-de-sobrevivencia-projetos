@@ -1,0 +1,6 @@
+"0","df_fit1 <- df |>
+  select(-num_not,-dt_notific, -cep, -dt_nasc, -ano)
+"
+"2","Error in select(df, -num_not, -dt_notific, -cep, -dt_nasc, -ano) : 
+  argumentos não utilizados (-num_not, -dt_notific, -cep, -dt_nasc, -ano)
+"

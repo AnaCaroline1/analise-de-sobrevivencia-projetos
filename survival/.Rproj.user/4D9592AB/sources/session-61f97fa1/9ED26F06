@@ -1,0 +1,31 @@
+{
+    "id": "9ED26F06",
+    "path": "~/sobrevivencia_emv/survivel/dist_log_norm.qmd",
+    "project_path": "dist_log_norm.qmd",
+    "type": "quarto_markdown",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1769969450255.0,
+    "source_on_save": false,
+    "relative_order": 4,
+    "properties": {
+        "rmdVisualMode": "true",
+        "rmdVisualWrapConfigured": "true",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "0,0",
+        "scrollLine": "0",
+        "docOutlineVisible": "0",
+        "rmdVisualModeLocation": "380:0",
+        "rmdVisualCollapsedChunks": ""
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1769994761,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1769994761670,
+    "read_only": false,
+    "read_only_alternatives": []
+}

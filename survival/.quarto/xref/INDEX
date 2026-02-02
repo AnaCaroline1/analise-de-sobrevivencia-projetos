@@ -1,0 +1,17 @@
+{
+  "dist_weibull.qmd": {
+    "dist_weibull.html": "f10be0d4"
+  },
+  "index.qmd": {
+    "index.html": "c62a9153"
+  },
+  "dist_exponencial.qmd": {
+    "dist_exponencial.html": "e0b94ad2"
+  },
+  "dist_log_norm.qmd": {
+    "dist_log_norm.html": "3da3268e"
+  },
+  "dist_log_logis.qmd": {
+    "dist_log_logis.html": "6d603d4b"
+  }
+}

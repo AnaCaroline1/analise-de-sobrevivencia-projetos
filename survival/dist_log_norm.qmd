@@ -1,0 +1,67 @@
+# Distribuição Log-normal
+
+A função densidade de probabilidade associada a variável aleatória tempo até o evento $T$ com distribuição log-normal e função de sobrevivência é dada por:
+
+$$
+f(t) = \frac{1}{\sqrt{2\pi} \cdot t \cdot \sigma} \cdot exp\left[ \frac{1}{2\sigma^{2}} \cdot (\log(t) - \mu)^{2} \right] \ ; \ S(t)= \phi \left(\frac{-\log(t) + \mu}{\sigma} \right) t > 0
+$$
+
+## Função de verossimilhança
+
+$$
+L(\theta|t_{i}) = \prod_{i=1}^{n} \left[\frac{1}{\sqrt{2\pi} \cdot t \cdot \sigma} \cdot exp\left[ \frac{1}{2\sigma^{2}} \cdot (\log(t) - \mu)^{2} \right] \right]
+$$
+
+$$
+L(\hat{\theta}|t_{i}) = \frac{1}{(\sqrt{2\pi})^{n} \cdot t_{i} \cdot \sigma^{n}} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right]  
+$$
+
+*Reescrevendo, teremos:*
+
+$$  
+L(\hat{\theta}|t_{i}) = (2\pi)^{\left(-\frac{n}{2}\right)}\cdot \sigma^{-n} \cdot \prod_{i=1}^{n} t_{i}^{-1} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right] 
+$$
+
+## Log-verossimilhança da Log-Normal:
+
+$$ 
+l[L\hat{\theta}| t_{i}] = \log \left[ (2\pi)^{\left(-\frac{n}{2}\right)}\cdot \sigma^{-n} \cdot \prod_{i=1}^{n} t_{i}^{-1} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right]\right] 
+$$
+
+*logo, temos:*
+
+$$ 
+= -\frac{n}{2} \cdot \left[\log(2) + log(\pi)\right]-n\cdot \log(\sigma) \cdot -\sum_{i=1}^{n} \log(t_{i}) -\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n}\left( \log(t_{i}) - \mu\right)^{2} 
+$$
+
+Derivando parcialmente $\hat{\theta}=(\mu,\alpha)$ se obtem:
+
+$$
+\frac{\partial l[L(\hat{\theta} | t_{i})]}{\partial \mu} = -\frac{1}{2\sigma^{2}}\cdot \sum_{i=1}^{n} (\log(t_{i})-\mu)^{2}= 
+$$
+
+$$
+= -\frac{1}{2\sigma^{2}}\cdot 2 \cdot \sum_{i=1}^{n} (\log(t_{i})-\mu) \cdot (-1)= 
+$$
+
+$$
+= \frac{1}{\sigma^{2}} \cdot \sum_{i=1}^{n} (\log(t_{i})-\mu)
+$$
+
+$$
+\frac{\partial l[L(\hat{\theta} | t_{i})]}{\partial \sigma} = \frac{n}{\sigma} - \left[\frac{1}{2} \cdot (\sigma^{-2})' \cdot \sum_{i=1}^{n} (\log(t_i) - \mu)^2 \right] = 
+$$
+
+$$ 
+=-\frac{n}{\sigma} - \left[ -\frac{2}{2} \cdot \sigma^{-3} \cdot \sum_{i=1}^{n} (\log(t_i) - \mu)^2 \right] =
+$$
+
+$$
+= -\frac{n}{\sigma} + \frac{1}{\sigma^{3}} \cdot \sum_{i=1}^{n} (\log(t_i) - \mu)^2
+$$
+
+Com $\hat{\mu}$ e $\hat{\sigma}$, respectivamente:
+
+$$
+\hat{\mu} = \frac{\sum_{i=1}^{n} \log(t_{i})}{n} \ ; \ \hat{\sigma}= \frac{\sum_{i=1}^{n} (\log(t_{i})-\mu)^{2}}{n}
+$$

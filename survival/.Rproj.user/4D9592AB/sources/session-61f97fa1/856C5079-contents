@@ -1,0 +1,416 @@
+# Trabalhando o banco de dados
+
+O banco de dados 'esus.sivep.covid19bh' do ano de 2023 possui um total de 132.804 observações e 11 variáveis. No entanto as colunas que teram enfoque são apenas 6 - sexo, racacor, dt_sin_pri, forma_doenca, classificacao e evolucao.
+
+Após filtrar foi identificado apenas uma observação como 'na' sendo descartada, o total de observações passa a ser de 132.803.
+
+```{r include=FALSE}
+library(tidyverse)
+library(janitor)
+library(survival)
+library(ggplot2)
+library(ggfortify)
+library(tidycmprsk)
+
+
+df <- read.csv("esus.sivep.covid19bh.2023_07-08-23.csv",header = TRUE,sep = ",")
+
+
+# o Quanto essas observações apontam ruído
+# Susteita: censura intervalar. Nesses casos, não se sabe o tempo até os tempos de falha, não o tempo exato.
+# 1. Identificando os casos com classificações diferentes para mesmo indivíduo maior que 1.
+pc_evolucao <- df %>%
+  group_by(num_not) %>% 
+  filter(n_distinct(classificacao) > 1) %>% 
+  arrange(num_not) # Organiza para facilitar a leitura
+
+table(pc_evolucao$classificacao,pc_evolucao$forma_doenca)
+
+
+
+```
+
+Aparentemente as observações sobre pacientes duplicado com sintoma primário e evolução, se percebe que o sintoma é anterior a data de notificação.
+```{r include=FALSE}
+glimpse(df)
+
+table(df$classificacao)
+table(df$evolucao)
+table(df$dt_sin_pri)
+
+df <- df |>
+  ungroup() |> # Garante que não há grupos ativos que travam a coluna.
+  mutate(racacor = case_match(racacor,
+    c("Branca", "Branco") ~ "Branca",
+    .default = racacor # Mantém o valor originaç se não houver erro.
+  ))
+
+
+df_fit1 <- df |>
+  select(-num_not,-dt_notific, -cep, -dt_nasc, -ano)
+
+```
+
+```{r include=FALSE}
+
+df_fit <- na.omit(df_fit1)
+glimpse(df_fit)
+```
+
+```{r include=FALSE}
+
+# Com o Janitor é possível ver a frequencia das categorias que mais aparecem, assim como o percentual.
+
+df_fit |>
+  tabyl(racacor)|>
+  adorn_pct_formatting()
+
+```
+
+```{r include=FALSE}
+status <- df_fit$evolucao
+
+table(status)
+
+table(df_fit$dt_sin_pri)
+
+tempo <- month(ymd(df_fit$dt_sin_pri))
+class(tempo)
+table(tempo)
+
+df_fit
+
+df
+```
+
+```{r echo=FALSE}
+
+head(df_fit1,n=3L)
+
+```
+
+Para trabalha com o tempo para uma análise de sobrevivência é necessário identificar a variável em que se tem informação sobre os sintomas das formas da doença, principalmente em relação ao início de ocorrência. Pela natureza das datas, não é possível a priori, trabalhar o tempo desta maneira, mas é possível transformar para uma forma em que seja estimado os tempos de sobrevivência. Com o pacote 'lubridate' se pode captar numericamente os dias e agrupar o número de ocorrência de sintomas primários nos 12 meses.
+
+```{r echo=FALSE}
+
+table(tempo)
+```
+
+Para o status, baseado na natureza e organização dos dados trabalhar com a variável 'evolucao' se torna um desafio entender, a princípio para identificar e estimar as falhas como evento de interesse. Por isso, eu criei 3 tipos de status, tomando como falhas: cura, óbito e óbito por outras causas. Os casos tidos como 'Em investigação' e 'Em monitoramento', seram tratados como censura, uma vez que o paciente não apresentou os eventos de interesse apresentados.
+
+Há também a variável 'classificacao', sendo interessante para identificar a quantidade de casos confirmados e estimar as falhas de interesse, bem como identificar os casos suspeitos e descartados para quantificar e entender quantos desses foram apresentaram os eventos de interesse e se existe conflito entre os eventos de 'óbito' e 'óbitos por outras causas'.
+
+```{r echo=FALSE}
+
+# Aqui estou criando uma nova variável para fazer a análise do tempo de sobrevivência até a cura de determinado paciente.
+
+df_fit <- df_fit |>
+  mutate(status_1 = case_when(
+    evolucao == "Cura" ~ 1,
+    evolucao %in% c("Em investigação","Em monitoramento","Óbito","Óbito.outras.causas") ~ 0,
+  ))
+
+# Nova variável para fazer a análise do tempo de sobrevivência até o óbito de determinado paciente.
+
+df_fit <- df_fit |>
+  mutate(status_2 = case_when(
+    evolucao == "Óbito" ~ 1,
+    evolucao %in% c("Em investigação","Em monitoramento","Cura","Óbito.outras.causas") ~ 0,
+  ))
+
+# Variável para fazer a análise do tempo de sobrevivência até o óbito por outros motivos.
+
+df_fit <- df_fit |>
+  mutate(status_3 = case_when(
+    evolucao == "Óbito.outras.causas" ~ 1,
+    evolucao %in% c("Em investigação","Em monitoramento","Óbito","Cura") ~ 0,
+  ))
+
+```
+
+Assim o banco de dados estudado fica com 9 variáveis para serem trabalhadas.
+
+```{r echo=FALSE}
+head(df_fit, n=3L)
+```
+
+## Dinâmica das doenças SG vs. SRAG
+
+O que queremos investigar: os tempo de vida de pacientes notificados com suspeita de Síndrome Gripal - SG e Sindrome Respiratória Agúda Grave - SRAG.
+
+Temos algumas linhas de investigação:
+
+-   Entender pela cura;
+
+-   Entender pelos óbitos;
+
+-   Entender quantos desses casos foram confirmados.
+
+-   Quantos desses casos foram descartados.
+
+Segundo as informações do próprio repositório, o SG é por covid19.
+
+### Tempo até a cura: comportamento entre gêneros e classificação de casos
+
+Pela tabela gerada pelo pacote 'survival' do R, se pode percerbe que existe uma estabilidade na probabilidade de sobrevivência principalmente no grupo de pessoas com a forma da doença Síndrome Gripal. Quer dizer que há mais demora até um paciente ser curado. No entanto, apesar de haver muitas notificações de casos de Síndrome Gripal, existe poucos eventos em que esses paciente de fato se curaram.
+
+Para os casos de paciente com Síndrome Respiratória Agúda Grave, houve consideráveis observações de pessoas que se curaram da doença, com probabilidades de não sobrevivência de praticamente 73% no 12 mês do ano de 2023, indicando que apesar das notificações, os pacientes conseguiram se curar.
+
+Em ambos os grupos, podemos observar que houve muitas notificações, onde ao passar dos meses essa notificações foram oscilando e diminuindo drasticamente, principalmente no grupo de pessoas com SRAG. Isto indica que houve censuras, seja por óbitos devido as doenças, óbitos por outro fatores ou mesmo pela perda de acompanhamento desses paciente.
+
+```{r echo=FALSE, warning=FALSE}
+ekm1 <- survfit(Surv(tempo, status_1) ~ forma_doenca,df_fit)
+summary(ekm1)
+
+s_ekm1 <- survfit(Surv(tempo, status_1) ~ sexo,df_fit)
+```
+
+Gráficamente podemos observa melhor a curva de Kaplan-Meier:
+
+```{r echo=FALSE, warning=FALSE}
+
+autoplot(ekm1)+
+  coord_cartesian(ylim = c(0.70, 1)) + # Foca na parte de cima do gráfico
+  scale_x_continuous(breaks = 1:12)+
+  labs(title = "Estimativa de Kaplan-Meier: Comparação entre SG e SRAG (falha=cura)",
+       subtitle = "Acompanhamento de 12 meses (Intervalo de Confiança Log-Log)",
+    y = "Probabilidade de Sobrevivência", 
+    x = "Tempo (mês)",color = NULL,fill=NULL,
+    caption = "Tempo de Falha (Cura)")+
+  theme_bw()+
+  theme(legend.position = "bottom")
+
+
+autoplot(s_ekm1)+
+  coord_cartesian(ylim = c(0.96, 1)) + # Foca na parte de cima do gráfico
+  scale_x_continuous(breaks = 1:12)+
+  labs(title = "Estimativa de Kaplan-Meier: Comparação entre gêneros feminino e masculino",
+       subtitle = "Acompanhamento de 12 meses (Intervalo de Confiança Log-Log)",
+    y = "Probabilidade de Sobrevivência", 
+    x = "Tempo (mês)",color = NULL,fill=NULL,
+    caption = "Tempo de Falha (Cura)")+
+  theme_bw()+
+  theme(legend.position = "bottom")
+```
+
+```{r echo=FALSE, warning=FALSE}
+ekm_class <- survfit(Surv(tempo, status_1) ~ classificacao,df_fit)
+summary(ekm_class)
+```
+
+```{r echo=FALSE, warning=FALSE}
+autoplot(ekm_class)+
+  coord_cartesian(ylim = c(0.85, 1)) + # Foca na parte de cima do gráfico
+  scale_x_continuous(breaks = 1:12)+
+  labs(title = "Estimativa de Kaplan-Meier: Comparação entre a classificação de casos",
+       subtitle = "Acompanhamento de 12 meses (Intervalo de Confiança Log-Log)",
+       y = "Probabilidade de Sobrevivência", x = "Tempo (mês)",color = NULL,fill=NULL,
+       caption = "Tempo de Falha (Cura)")+
+  theme_bw()+
+  theme(legend.position = "bottom")
+
+```
+
+### Tempo até o óbito: comportamento entre gêneros e classificação de casos
+
+```{r echo=FALSE}
+ekm2 <- survfit(Surv(tempo, status_2) ~ forma_doenca,df_fit)
+summary(ekm2)
+
+s_ekm2 <- survfit(Surv(tempo, status_2) ~ sexo,df_fit)
+```
+
+```{r echo=FALSE}
+autoplot(ekm2)+
+  coord_cartesian(ylim = c(0.85,1))+
+  scale_x_continuous(breaks = seq(1:12))+
+  labs(title = "Estimativa de Kaplan-Meier: Comparação entre SG e SRAG",
+       subtitle = "Acompanhamento de 12 meses (Intervalo de Confiança Log-Log)",
+       y = "Probabilidade de Sobrevivência", x = "Tempo (mês)",color = NULL,fill=NULL,
+       caption = "Tempo de Falha (Óbito)")+
+  theme_bw()+
+  theme(legend.position = "bottom")
+
+autoplot(s_ekm2)+
+  coord_cartesian(ylim = c(0.98, 1)) + # Foca na parte de cima do gráfico
+  scale_x_continuous(breaks = 1:12)+
+  labs(title = "Estimativa de Kaplan-Meier: Comparação entre gêneros feminino e masculino",
+       subtitle = "Acompanhamento de 12 meses (Intervalo de Confiança Log-Log)",
+    y = "Probabilidade de Sobrevivência", 
+    x = "Tempo (mês)",color = NULL,fill=NULL,
+    caption = "Tempo de Falha (Óbito)")+
+  theme_bw()+
+  theme(legend.position = "bottom")
+```
+
+```{r echo=FALSE}
+ekm_class2 <- survfit(Surv(tempo, status_2) ~ classificacao,df_fit)
+summary(ekm_class2)
+```
+
+```{r echo=FALSE}
+autoplot(ekm_class2)+
+  coord_cartesian(ylim = c(0.95, 1)) + # Foca na parte de cima do gráfico
+  scale_x_continuous(breaks = 1:12)+
+  labs(title = "Estimativa de Kaplan-Meier: Comparação entre a classificação de casos",
+       subtitle = "Acompanhamento de 12 meses (Intervalo de Confiança Log-Log)",
+       y = "Probabilidade de Sobrevivência", x = "Tempo (mês)",color = NULL,fill=NULL,
+       caption = "Tempo de Falha (Óbito)")+
+  theme_bw()+
+  theme(legend.position = "bottom")
+
+
+```
+
+### Tempo até oóbito por outras causas: comportamento entre gêneros e classificação de casos
+
+```{r echo=FALSE}
+ekm3 <- survfit(Surv(tempo, status_3) ~ forma_doenca,df_fit)
+summary(ekm3)
+
+s_ekm3 <- survfit(Surv(tempo, status_3) ~ sexo,df_fit)
+```
+
+```{r echo=FALSE}
+autoplot(ekm3)+
+  coord_cartesian(ylim = c(0,1))+
+  scale_x_continuous(breaks = seq(0,12,by=1))+
+  labs(title = "Estimativa de Kaplan-Meier: Comparação entre SG e SRAG",
+       subtitle = "Acompanhamento de 12 meses (Intervalo de Confiança Log-Log)",
+       y = "Probabilidade de Sobrevivência", x = "Tempo (mês)",color = NULL,fill=NULL,
+       caption = "Tempo de Falha (Óbito p/ causas)")+
+  theme_bw()+
+  theme(legend.position = "bottom")
+
+autoplot(s_ekm3)+
+  coord_cartesian(ylim = c(0.75, 1)) + # Foca na parte de cima do gráfico
+  scale_x_continuous(breaks = 1:12)+
+  labs(title = "Estimativa de Kaplan-Meier: Comparação entre gêneros feminino e masculino",
+       subtitle = "Acompanhamento de 12 meses (Intervalo de Confiança Log-Log)",
+    y = "Probabilidade de Sobrevivência", 
+    x = "Tempo (mês)",color = NULL,fill=NULL,
+    caption = "Tempo de Falha (Óbito p/ causas)")+
+  theme_bw()+
+  theme(legend.position = "bottom")
+```
+
+```{r echo=FALSE}
+ekm_class3 <- survfit(Surv(tempo, status_3) ~ classificacao,df_fit)
+summary(ekm_class3)
+```
+
+```{r echo=FALSE}
+autoplot(ekm_class3)+
+  coord_cartesian(ylim = c(0, 1)) + # Foca na parte de cima do gráfico
+  scale_x_continuous(breaks = 1:12)+
+  labs(title = "Estimativa de Kaplan-Meier: Comparação entre a classificação de casos",
+       subtitle = "Acompanhamento de 12 meses (Intervalo de Confiança Log-Log)",
+       y = "Probabilidade de Sobrevivência", x = "Tempo (mês)",color = NULL,fill=NULL,
+       caption = "Tempo de Falha (Óbito p/ causas)")+
+  theme_bw()+
+  theme(legend.position = "bottom")
+
+```
+
+### Hipótese testadas para o estimador Kaplan-Meier pela teste Logrank.
+
+#### Hipótese p/ cura
+
+**SG vs SRAG**
+
+$H_{0}$: A probabilidade de cura é igual entre os pacientes com Síndrome Gripal (SG) e Síndrome Respiratória Aguda Grave (SRAG) ao longo de 1 ano de acompanhamento.
+
+$H_{1}$: A probabilidade de cura é diferente em pelo menos um dos pacientes com Síndrome Gripal (SG) e Síndrome Respiratória Aguda Grave (SRAG) em algum ponto de tempo ao longo de 1 ano de acompanhamento.
+
+```{r echo=FALSE}
+
+log_rank <- survdiff(Surv(tempo, status_1) ~ forma_doenca, data = df_fit, rho = 0)
+log_rank
+
+```
+
+Conclusão: p \< 0.05, logo se rejeita $H_{0}$, portanto a probabilidade de cura é diferente em pelo menos um dos paciente com SG e SRAG em algum ponto de tempo ao longo de 1 ano de acompanhamente.
+
+Se nota que houve altas expectativa para notificações de pessoas curadas da Síndrome Gripal, mas ocorreu o oposto: de 921 esperadas, apenas 388 se curaram. Enquanto que se esperava 54 pessoas curadas da Síndrome Respiratória Agúda Grave, 606 se curaram da SRAG.
+
+**Classificados: confirmados, suspeito e descartados**
+
+$H_{0}$: A probabilidade de cura é igual entre os pacientes classificados como casos (confirmados, suspeito e descartados) ao longo de 1 ano de acompanhamento.
+
+$H_{1}$: A probabilidade de cura é diferente em pelo menos um dos pacientes classificados como casos (confirmados, suspeitos e descartados) em algum ponto de tempo ao longo de 1 ano de acompanhamento.
+
+```{r, echo=FALSE}
+long_class <- survdiff(Surv(tempo, status_1) ~ classificacao,df_fit, rho = 0)
+
+long_class
+```
+
+Conclusão: p \< 0.05, logo se rejeita $H_{0}$, portanto a probabilidade de cura é diferente em pelo menos um dos pacientes classificados como casos (confirmados, suspeito e descartados) em algum ponto de tempo ao longo de 1 ano de acompanhamente.
+
+Podemos observar que que entre os grupos classificados dos casos, era esperado 126 casos confirmados, 238 descartados e 610 suspeitos. O que se observou foi que houve mais de 50% de casos confirmados, enquantos que houve casos descartados que atingiram praticamamente a expectativa com erro para menos 3 observações e dos casos esperados como suspeitos eram extremamente altos, na realidade não passaram de 5 casos.
+
+#### Hipótese p/ óbito devido uma das doenças
+
+**SG vs SRAG**
+
+$H_{0}$: A probabilidade de óbito é igual entre os pacientes com Síndrome Gripal (SG) e Síndrome Respiratória Aguda Grave (SRAG) ao longo de 1 ano de acompanhamento.
+
+$H_{1}$: A probabilidade de óbito é diferente em pelo menos um dos pacientes com Síndrome Gripal (SG) e Síndrome Respiratória Aguda Grave (SRAG) em algum ponto de tempo ao longo de 1 ano de acompanhamento.
+
+```{r, echo=FALSE}
+log_rank2 <- survdiff(Surv(tempo, status_2) ~ forma_doenca, data = df_fit, rho = 0)
+log_rank2
+```
+
+Conclusão: p \< 0.05, logo se rejeita $H_{0}$, portanto a probabilidade de óbito é diferente em pelo menos um dos pacientes com Síndrome Gripal (SG) e Síndrome Respiratória Aguda Grave (SRAG) em algum ponto de tempo ao longo de 1 ano de acompanhamente.
+
+Pelo teste, era esperado um número de 151 pessoas que viriam a óbito pela SG, o observado foi que dos 125.340 casos observados, nenhuma pessoa veio a óbito. Por outro lado era esperado que apenas 9 pessoas viriam a morrer de vido ao SRAG, se observou que esse valor cresceu mais que o dobro do esperado, sendo quase 160 pessoas.
+
+**Classificados: confirmados, suspeito e descartados**
+
+$H_{0}$: A probabilidade de óbito é igual entre os pacientes classificados como casos (confirmados, suspeito e descartados) ao longo de 1 ano de acompanhamento.
+
+$H_{1}$: A probabilidade de óbito é diferente em pelo menos um dos pacientes classificados como casos (confirmados, suspeito e descartados) em algum ponto de tempo ao longo de 1 ano de acompanhamento.
+
+```{r, echo=FALSE}
+long_class2 <- survdiff(Surv(tempo, status_2) ~ classificacao,df_fit, rho = 0)
+long_class2
+```
+
+Conclusão: p \< 0.05, logo se rejeita $H_{0}$, portanto a probabilidade de óbito é diferente em pelo menos um dos pacientes classificados como casos (confirmados, suspeito e descartados) em algum ponto de tempo ao longo de 1 ano de acompanhamente.
+
+Surpreendentemente os casos confirmados são exatamente os casos por SRAG, onde não se observou nenhum caso considerado suspeito, tão pouco descartadado. Era esperado quase 40 e 100 observações de ambos. Isto evidencia que não parece existe dependencia entre mortes devido a SRAG ou mortes por outro motivos desses pacientes, indicando a letalidade da doênça.
+
+#### Hipótese p/ óbito por outras causas
+
+**SG vs SRAG**
+
+$H_{0}$: A probabilidade de óbito por outras causas é igual entre os pacientes com Síndrome Gripal (SG) e Síndrome Respiratória Aguda Grave (SRAG) ao longo de 1 ano de acompanhamento.
+
+$H_{1}$: A probabilidade de óbito por outras causas é diferente em pelo menos um dos pacientes com Síndrome Gripal (SG) e Síndrome Respiratória Aguda Grave (SRAG) em algum ponto de tempo ao longo de 1 ano de acompanhamento.
+
+```{r echo=FALSE}
+log_rank3 <- survdiff(Surv(tempo, status_3) ~ forma_doenca, data = df_fit, rho = 0)
+log_rank3
+```
+
+Conclusão: p \< 0.05, logo se rejeita $H_{0}$, portanto a probabilidade de óbito por outras causas é diferente em pelo menos um dos pacientes com Síndrome Gripal (SG) e Síndrome Respiratória Aguda Grave (SRAG) em algum ponto de tempo ao longo de 1 ano de acompanhamente.
+
+Um indicador interessante que mostra o quanto era esperado dos casos de cada doença é perceber que se esperaça mais de 6 mil casos de pacientes que viriam a óbito pela SG contra 370 da SRAG. O que ocorreu foi parecido com o teste para os óbitos: nenhuma observação para esse grupo e um grande volume de pessoas que morreram devido a outras causas.
+
+**Classificados: confirmados, suspeito e descartados**
+
+$H_{0}$: A probabilidade de óbito por outras causas é igual entre os pacientes classificados como casos (confirmados, suspeito e descartados) ao longo de 1 ano de acompanhamento.
+
+$H_{1}$: A probabilidade de óbito por outras causas é diferente em pelo menos um dos pacientes classificados como casos (confirmados, suspeito e descartados) em algum ponto de tempo ao longo de 1 ano de acompanhamento.
+
+```{r echo=FALSE}
+long_class3 <- survdiff(Surv(tempo, status_3) ~ classificacao,df_fit, rho = 0)
+long_class3
+```
+
+Conclusão: p \< 0.05, logo se rejeita $H_{0}$, portanto a probabilidade de óbito por outras causas é diferente em pelo menos um dos pacientes classificados como casos (confirmados, suspeito e descartados) em algum ponto de tempo ao longo de 1 ano de acompanhamente.
+
+Se confirma agora pelo teste Logrank que a curva de Kaplan-Meier indicou: todos os dados observados que foram tidos como mortes por outras causas são todos os casos que foram descartados.
+
+Se pode concluir que o

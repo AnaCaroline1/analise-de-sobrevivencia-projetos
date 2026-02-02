@@ -1,0 +1,420 @@
+---
+title: "Atvidade de implementação computacional - Newton-Raphson"
+subtitle: "modelo weibull e gama"
+author: "Maria Josiane S. Estumano, Victória Gabrielly Serrão"
+  
+format: html
+editor: visual
+lang: pt
+---
+
+```{r}
+setwd("C:/Users/Labest III/Desktop/Diretorio/ATV_INF")
+
+weib <- read.csv("dadosweib.csv")
+
+
+```
+
+## Modelo Weibull
+
+Seja $X_1, X_2, \dots, X_n$ uma amostra aleatória de uma distribuição Weibull $W\left(\alpha,\lambda\right)$, $x \geqslant 0$, com função de probabilidade:
+
+Com função densidade de probabilidade dada por,
+
+$$f(x)=\alpha x^{\alpha-1}\exp\left\{ \lambda -\exp\{\lambda\}x^\alpha\right\}, y\geq0.$$ 1- Função de Verossimilhança
+
+A função de verossimilhança é o produto das densidades individuais:
+
+$$
+L(\alpha,\lambda) = \prod_{i=1}^n \alpha x_i^{\alpha-1} \exp \left\{ \lambda-\exp(\lambda)x_i^{\alpha} \right\}
+.
+$$ Reescrevendo,
+
+$$
+L(\alpha,\lambda)=\alpha^n
+\exp\left\{
+n\lambda - \exp(\lambda)\sum_{i=1}^n x_i^\alpha
+\right\}
+\prod_{i=1}^n x_i^{\alpha-1}.
+$$ #2- Função Log Verossimilhança
+
+Será dada por:
+
+$$
+\ell(\alpha,\lambda)=\log L(\alpha,\lambda).
+$$ Logo,
+
+Tomando o logaritmo
+
+$$
+\ell(\alpha,\lambda)=n\log(\alpha)+ n\lambda- \exp(\lambda)\sum_{i=1}^n x_i^\alpha+ (\alpha-1)\sum_{i=1}^n \log(x_i).
+$$
+
+### 3- Vetor Escore
+
+O vetor escore é o gradiente da log-verossimilhança, ou seja,
+
+$$
+U(\alpha,\lambda)
+=
+\left(
+\frac{\partial \ell(\alpha,\lambda)}{\partial \alpha},
+\frac{\partial \ell(\alpha,\lambda)}{\partial \lambda}
+\right).
+$$
+
+Derivando em relação a $\alpha$:
+
+$$
+\frac{\partial \ell}{\partial \alpha}=\frac{n}{\alpha}- \exp(\lambda)\sum_{i=1}^n[x_i^\alpha \log(x_i)]+ \sum_{i=1}^n[\log(x_i)]
+$$
+
+Derivando em relação a $\lambda$
+
+$$\frac{\partial \ell}{\partial \lambda}=n-\exp(\lambda)\sum_{i=1}^n x_i^\alpha$$ Assim, o vetor escore é:
+
+$$
+U(\alpha,\lambda)
+=
+\begin{pmatrix}
+\dfrac{n}{\alpha}
+- \exp(\lambda)\sum_{i=1}^{n}[ x_i^{\alpha}\log (x_i)]
++ \sum_{i=1}^{n}[\log (x_i)]
+\\[10pt]
+n
+- \exp(\lambda)\sum_{i=1}^{n} x_i^{\alpha}
+\end{pmatrix}
+$$ ##Matriz Hessiana é a matriz das segundas derivadas da log-verossimilhança
+
+$$
+H(\alpha,\lambda)
+=
+\begin{bmatrix}
+\frac{\partial^2 \ell}{\partial \alpha^2} &
+\frac{\partial^2 \ell}{\partial \alpha \partial \lambda} \\[6pt]
+\frac{\partial^2 \ell}{\partial \lambda \partial \alpha} &
+\frac{\partial^2 \ell}{\partial \lambda^2}
+\end{bmatrix}$$
+
+Calculando as segundas derivadas:
+
+$$
+\frac{\partial^2 \ell}{\partial \alpha^2}
+=
+-\frac{n}{\alpha^2}
+-
+\exp(\lambda)\sum_{i=1}^{n}x_i^{\alpha}[\log (x_i)]^2
+$$
+
+$$
+\frac{\partial^2 \ell}{\partial \alpha \partial \lambda}
+=
+- \exp(\lambda)\sum_{i=1}^{n}x_i^{\alpha}\log (x_i)
+$$ $$
+\frac{\partial^2 \ell}{\partial \lambda \partial \alpha}
+=
+- \exp(\lambda)\sum_{i=1}^{n}x_i^{\alpha}\log (x_i)
+$$ $$
+\frac{\partial^2 \ell}{\partial \lambda^2}
+=
+- \exp(\lambda)\sum_{i=1}^{n}x_i^{\alpha}
+$$
+
+$$
+H(\alpha,\lambda)
+=\begin{bmatrix}
+-\dfrac{n}{\alpha^2}
+- \exp(\lambda)\sum_{i=1}^{n} x_i^{\alpha}(\log x_i)^2 &
+- \exp(\lambda)\sum_{i=1}^{n} x_i^{\alpha}\log x_i \\[12pt]
+- \exp(\lambda)\sum_{i=1}^{n} x_i^{\alpha}\log x_i &
+- \exp(\lambda)\sum_{i=1}^{n} x_i^{\alpha}
+\end{bmatrix}$$ Implementação computacional
+
+A implementação computacional do método de Newton-Raphson para o modelo Weibull. A função U representa a implementação do vetor escore:
+
+```{r}
+## Vetor escore – Weibull
+
+U <- function(theta, dados){
+  
+  alpha  <- theta[1]   
+  lambda <- theta[2]   
+  x <- dados
+  n <- length(x)
+  
+  U_alpha  <- n/alpha +
+              sum(log(x)) -
+              exp(lambda) * sum(x^alpha * log(x))
+  
+  U_lambda <- n - exp(lambda) * sum(x^alpha)
+  
+  return(c(U_alpha, U_lambda))
+}
+
+```
+
+A matriz hesiana através da função H
+
+```{r}
+## Matriz Hessiana – Weibull
+
+H <- function(theta, dados){
+  
+  alpha  <- theta[1]   
+  lambda <- theta[2]   
+  x <- dados
+  n <- length(x)
+  
+  a_2  <- -n/(alpha^2) -
+          exp(lambda) * sum(x^alpha * (log(x))^2)
+  
+  l_2  <- -exp(lambda) * sum(x^alpha)
+  
+  a_l  <- -exp(lambda) * sum(x^alpha * log(x))
+  l_a  <- a_l
+  
+  return(matrix(c(a_2, a_l,
+                  l_a, l_2),
+                nrow = 2, ncol = 2))
+}
+
+```
+
+## Histograma dos dados observados
+
+```{r}
+## Histograma dos dados observados
+hist(xi, ylab = "Frequência", xlab = "Dados", freq = FALSE)
+
+```
+
+A implementação do método:
+
+```{r}
+## Iniciando NR
+theta0 <- c(1, 0)   # Chute inicial (alpha, lambda)
+dif <- 1            
+erro <- 10^(-6)     
+i <- 1              
+
+while(dif > erro){
+  
+  H0 <- H(theta = theta0, dados = xi)
+  U0 <- U(theta = theta0, dados = xi)
+  
+  prodHU <- solve(H0, U0)
+  theta1 <- theta0 - prodHU
+  
+  dif <- max(abs(theta1 - theta0))
+  
+  theta0 <- theta1
+  i <- i + 1
+  
+  cat("Iter:", i, "est:", theta1, "\n")
+  # if(i == 10) break
+}
+
+## Estimativa de máxima verossimilhança final:
+
+cat("alpha:", theta1[1], "-", "lambda:", theta1[2])
+
+```
+
+## Comparação dos dados com o modelo Weibull ajustado
+
+```{r}
+## Comparação dos dados com o modelo Weibull ajustado
+x.seq <- seq(min(xi), max(xi), length.out = 1000)
+
+hist(xi, ylab = "Frequência", xlab = "Dados", freq = FALSE,
+     main = "", border = "white")
+
+lines(x.seq,
+      dweibull(x.seq,
+               shape = theta1[1],
+               scale = (exp(theta1[2]))^(-1/theta1[1])))
+
+legend("topright",
+       c("Dados", "Weibull ajustada"),
+       fill = c("gray", NA),
+       col = c("gray", "black"),
+       bty = "n")
+
+
+```
+
+```{r}
+logWeibull <- function(theta, dados){
+  
+  alpha  <- theta[1] # parâmetro de forma
+  lambda <- theta[2] # parâmetro lambda
+  n <- length(dados)
+  x <- dados
+  
+  l <- n*log(alpha) +
+       (alpha - 1)*sum(log(x)) +
+       n*lambda -
+       exp(lambda)*sum(x^alpha)
+  
+  return(-l)
+}
+
+```
+
+Usando a função optim:
+
+```{r}
+fit <- optim(par = theta0,
+             fn = logWeibull,
+             gr = NULL,
+             method = "BFGS",
+             hessian = TRUE,
+             dados = xi)
+
+fit
+
+```
+
+#Informação de fisher observada
+
+## Informação de Fisher observada – Weibull
+
+$$
+\hat{I}_n(\hat{\theta})
+=
+-\frac{\partial^2}{\partial(\alpha,\lambda)^2}
+\log L(\alpha,\lambda; x)
+\Bigg|_{(\alpha,\lambda)=(\hat{\alpha},\hat{\lambda})}
+$$
+
+```{r}
+## Informação de Fisher observada – Weibull
+
+fit$hessian
+
+```
+
+As estimativas de erro padrão para $\theta=(\alpha, \lambda)$, respectivamente são,
+
+```{r}
+## Erros-padrão – Weibull (Informação de Fisher observada)
+
+
+```
+
+## Modelo Gama
+
+Com função densidade de probabilidade dada por, $$ f(x \mid \alpha, \lambda)
+= \frac{1}{\Gamma(\alpha)}
+x^{\alpha - 1}
+\exp\left\{
+\alpha \lambda - x \exp(\lambda)
+\right\},
+\quad y \ge 0.$$
+
+## Função de Verossimilhança
+
+A função de verossimilhança é dada por:
+
+$$
+L(\alpha, \lambda)
+= \prod_{i=1}^{n} f(X_i \mid \alpha, \lambda).
+$$
+
+Substituindo a densidade da distribuição Gama:
+
+$$
+L(\alpha, \lambda)
+= \prod_{i=1}^{n}
+\frac{1}{\Gamma(\alpha)}
+X_i^{\alpha - 1}
+\exp\left\{
+\alpha \lambda - X_i \exp(\lambda)
+\right\}.
+$$
+
+Reescrevendo:
+
+$$
+L(\alpha, \lambda)
+=
+[\Gamma(\alpha)]^{-n}
+\exp\left\{
+n \alpha \lambda
+- \exp(\lambda)\sum_{i=1}^{n} X_i
+\right\}
+\prod_{i=1}^{n} X_i^{\alpha - 1}.
+$$ \## Log-Verossimilhança
+
+A log-verossimilhança é dada por:
+
+$$
+\ell(\alpha, \lambda)
+= \log L(\alpha, \lambda).
+$$
+
+Tomando o logaritmo:
+
+$$
+\ell(\alpha, \lambda)
+= \log\left\{
+[\Gamma(\alpha)]^{-n}
+\exp\left(
+n \alpha \lambda
+- \exp(\lambda)\sum_{i=1}^{n} X_i
+\right)
+\prod_{i=1}^{n} X_i^{\alpha - 1}
+\right\}.
+$$ Reescrevendo:
+
+$$
+\ell(\alpha, \lambda)
+=
+- n \log [\Gamma(\alpha)]
++ n \alpha \lambda
+- \exp(\lambda)\sum_{i=1}^{n} X_i
++ (\alpha - 1)\sum_{i=1}^{n} \log X_i.
+$$
+
+## Vetor Escore
+
+O vetor escore é o gradiente da log-verossimilhança, ou seja,
+
+$$
+U(\alpha, \lambda)
+=
+\left(
+\frac{\partial \ell}{\partial \alpha},
+\frac{\partial \ell}{\partial \lambda}
+\right).
+$$ Derivando em relação a $\alpha$:
+
+$$
+\frac{\partial \ell}{\partial \alpha}
+=
+- n \frac{\Gamma'(\alpha)}{\Gamma(\alpha)}
++ n \lambda
++ \sum_{i=1}^{n} \log X_i.
+$$
+
+Derivando em relação a $\lambda$:
+
+$$
+\frac{\partial \ell}{\partial \lambda}
+=
+n \alpha
+- \exp(\lambda)\sum_{i=1}^{n} X_i.
+$$
+
+Assim, o vetor escore é: $$
+U(\alpha, \lambda)
+=
+\begin{pmatrix}
+- n \dfrac{\Gamma'(\alpha)}{\Gamma(\alpha)}
++ n \lambda
++ \sum_{i=1}^{n} \log X_i \\[0.3cm]
+n \alpha
+- \exp(\lambda)\sum_{i=1}^{n} X_i
+\end{pmatrix}.
+$$
