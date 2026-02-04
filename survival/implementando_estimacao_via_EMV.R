@@ -32,44 +32,25 @@ log_verossimilhanca_censura <- function(theta, t, status) {
   return(-(sum(f_t) + sum(S_t)))
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Estimando parâmetros a partir dos meus dados como a função fitdistr do pacote MASS
 
 tempos # Do banco de dados sobre câncer de bexiga
 cens
 ajust_ini1 <- fitdistr(tempos, "weibull")
 
-par_weibull1 <- ajust_ini$estimate
+par_weibull1 <- ajust_ini1$estimate
 
 
-log_verossimilhança_weibull(par_weibull,tempos)
+log_verossimilhança_weibull(par_weibull1,tempos)
+
+log_verossimilhanca_censura(par_weibull1, tempos, cens)
 
 # Aplicando a optimização
 
 fit1 <- optim(par=c(1,1),fn=log_verossimilhanca_censura, t = tempos,status = cens)
 
 gama_est1 <- fit1$par[1]
-alph_est1 <- fit2$par[2]
+alph_est1 <- fit1$par[2]
 
 n <- length(tempos) # tamanho da amostra
 x <- rweibull(n, shape=gama_est1, scale = alph_est1)
@@ -85,7 +66,7 @@ lines(x_seq, densidade_weibull1, col = "red", lwd = 2)
 
 # Estimando parâmetros com os bancos de dados.
 
-tempo_sg # Do banco de dados sobre Sg e Srag
+tempo_sg<- df_srag_sg$dt_sin_pri # Do banco de dados sobre Sg e Srag
 
 ajust2 <- fitdistr(tempo_sg, "weibull")
 par_weibull2 <- ajust2$estimate

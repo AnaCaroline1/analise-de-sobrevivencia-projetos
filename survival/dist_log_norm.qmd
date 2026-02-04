@@ -3,7 +3,7 @@
 A função densidade de probabilidade associada a variável aleatória tempo até o evento $T$ com distribuição log-normal e função de sobrevivência é dada por:
 
 $$
-f(t) = \frac{1}{\sqrt{2\pi} \cdot t \cdot \sigma} \cdot exp\left[ \frac{1}{2\sigma^{2}} \cdot (\log(t) - \mu)^{2} \right] \ ; \ S(t)= \phi \left(\frac{-\log(t) + \mu}{\sigma} \right) t > 0
+f(t) = \frac{1}{\sqrt{2\pi} \cdot t \cdot \sigma} \cdot exp\left[ \frac{1}{2\sigma^{2}} \cdot (\log(t) - \mu)^{2} \right] \ ; \ S(t)= \Phi \left(\frac{-\log(t) + \mu}{\sigma} \right) t > 0
 $$
 
 ## Função de verossimilhança
@@ -13,7 +13,7 @@ L(\theta|t_{i}) = \prod_{i=1}^{n} \left[\frac{1}{\sqrt{2\pi} \cdot t \cdot \sigm
 $$
 
 $$
-L(\hat{\theta}|t_{i}) = \frac{1}{(\sqrt{2\pi})^{n} \cdot t_{i} \cdot \sigma^{n}} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right]  
+L(\hat{\theta}|t_{i}) = \frac{1}{(\sqrt{2\pi})^{n} \cdot t_{i} \cdot \sigma^{n}} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right] 
 $$
 
 *Reescrevendo, teremos:*

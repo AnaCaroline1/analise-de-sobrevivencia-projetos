@@ -71,27 +71,8 @@ $$
 Que é exatamente a média amostral de $t_{i}$.
 
 
-```{r include=FALSE}
+```{r eval=FALSE}
 
-# Verificanco com o banco de Síndrome Gripal
-
-tempo_sg <- day(ymd(df_srag_sg$dt_sin_pri))
-status_sg1 <- df_srag_sg$status_1
-
-ajust1_sg <- survreg(Surv(tempo_sg,status_sg1)~1,dist = "exponential")
-
-ekm_sg1 <- survfit(Surv(tempo_sg,status_sg1)~1)
-time_sg1 <- ekm_sg1$time
-st_sg1 <- ekm_sg1$surv
-
-alpha_sg1 <-round(exp(ajust1_sg$coefficients[1]),2)
-
-ste_sg1<-exp(-time_sg1/alpha)
-
- plot(st_sg1, ste_sg1, pch=16, ylim=c(0,1), xlim=c(0,1), 
-      xlab = "S(t): Kaplan-Meier", ylab="S(t): exponencial",
-      cex.lab=1.5,cex.axis=1.3)
- abline(a=0,b=1)
 
 # Verificando como os dados do livro: câncer de bexiga
 
@@ -150,8 +131,6 @@ plot(ekm_cc_bx,conf.int=F,xlab="Tempo",ylab="S(t)"); lines(c(0,time),c(1,stln_cc
 legend(25,0.8,lty=c(1,2),c("Kaplan-Meier","Log-normal"),bty="n",cex=0.9)
 
 
-?survfit.formula 
-?Surv
 
 ```
 

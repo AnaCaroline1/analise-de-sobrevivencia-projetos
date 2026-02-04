@@ -3,15 +3,42 @@
 A função densidade de probabilidade associada a variável aleatória tempo até o evento $T$ com distribuição log-logística é dada por:
 
 $$
-f(t) = \frac{\gamma}{\alpha^{\gamma}}\cdot t_{i}^{(\gamma -1)}\cdot \left[1- \left(\frac{t}{\alpha}\right)^{\gamma}  \right]^{-2} \ t > 0
+f(t) = \frac{\gamma}{\alpha^{\gamma}} \cdot t^{(\gamma-1)} \left[ 1 + \left(\frac{t}{\alpha} \right)^\gamma \right]^{-2}
+$$
+
+## Função de Sobrevivência 
+
+$$
+S(t) = \frac{1}{1 + \left(\frac{t}{\alpha} \right)^\gamma}
 $$
 
 ## Função verossimilhança
 
 $$
-L(\theta|t_{i}) = \prod_{i=1}^{n} \left[\frac{\gamma}{\alpha^{\gamma}}\cdot t_{i}^{(\gamma -1)}\cdot \left[1- \left(\frac{t_{i}}{\alpha}\right)^{\gamma}  \right]^{-2} \right]
+L(\theta | t) = \prod_{i=1}^{n} \left[ \left( \frac{\gamma}{\alpha^\gamma} \cdot t_i^{\gamma-1} \left[ 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right]^{-2} \right)^{\delta_i} \cdot \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right)^{1-\delta_i} \right]
 $$
 
 $$
-= \left(\gamma \cdot \alpha^{-\gamma}  \right)^{n} \cdot \prod_{i=1}^{n} t_{i}^{(\gamma -1)} \cdot \left[1 + \left(\frac{t_{i}}{\alpha}\right)^{\gamma} \right]^{-2}
+\ell[L(\theta | t)] = \sum_{i=1}^{n} \left[ \delta_i \log \left( \frac{\gamma}{\alpha^\gamma} \cdot t_i^{\gamma-1} \left[ 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right]^{-2} \right) +  (1-\delta_i) \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right) \right]
+$$
+
+$$
+= \sum_{i=1}^{n} \left[ \delta_i \left( \log(\gamma) - \gamma \log(\alpha) + (\gamma-1) \log(t_i) - 2 \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right) \right) + \\[10pt] (1-\delta_i) \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right) \right]
+$$
+
+Aplicando uma expansão dos termos nas duas últimas partes da expressão, se pode simplificar da seguinte forma:
+
+$$
+= -2 \delta_i \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right) + \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right) - \delta_i \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right)
+$$
+
+$$
+= -\delta_i \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right) + \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right) + \delta_i \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right)
+$$
+
+Logo, a expressão final:
+
+$$
+\\[10pt]
+= \sum_{i=1}^{n} \left[ \delta_i \left[ \log(\gamma) - \gamma \log(\alpha) + (\gamma-1) \log(t_i) - \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right) + \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right) \right] \right]
 $$
