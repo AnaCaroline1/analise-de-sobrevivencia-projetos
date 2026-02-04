@@ -6,10 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Ana Caroline Alexandre P.">
-<meta name="dcterms.date" content="2026-02-04">
 
-<title>Análise de sobrevivência aplicado a dados epidemiológicos</title>
+<title>1&nbsp; Distribuição Log-logística – Análise de sobrevivência aplicado a dados epidemiológicos</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -32,7 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./dist_log_logis.html" rel="next">
+<link href="./index.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -279,7 +277,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Objetivo</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./dist_log_logis.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -311,13 +309,13 @@ window.Quarto = {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Objetivo</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_log_logis.html" class="sidebar-item-text sidebar-link">
+  <a href="./dist_log_logis.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></span></a>
   </div>
 </li>
@@ -331,7 +329,8 @@ window.Quarto = {
     <h2 id="toc-title">Sumário</h2>
    
   <ul>
-  <li><a href="#objetivo" id="toc-objetivo" class="nav-link active" data-scroll-target="#objetivo">Objetivo</a></li>
+  <li><a href="#função-de-sobrevivência" id="toc-função-de-sobrevivência" class="nav-link active" data-scroll-target="#função-de-sobrevivência"><span class="header-section-number">1.1</span> Função de Sobrevivência</a></li>
+  <li><a href="#função-verossimilhança" id="toc-função-verossimilhança" class="nav-link" data-scroll-target="#função-verossimilhança"><span class="header-section-number">1.2</span> Função verossimilhança</a></li>
   </ul>
 </nav>
     </div>
@@ -341,26 +340,14 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Análise de sobrevivência aplicado a dados epidemiológicos</h1>
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Ana Caroline Alexandre P. </p>
-          </div>
-  </div>
     
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">February 4, 2026</p>
-    </div>
-  </div>
   
     
   </div>
@@ -370,20 +357,42 @@ window.Quarto = {
 </header>
 
 
-<section id="objetivo" class="level1 unnumbered">
-<h1 class="unnumbered">Objetivo</h1>
-<p>Verificar comportamento de distribuições de probabilidade em dados para aplicação de análise de sobrevivência. Para tal, se deve obter estimadores de máximo verossimilhança utilizando as funções <span class="math inline">\(optim\)</span> e <span class="math inline">\(optimize\)</span> para identificar os valores dos parâmetros estimados, convergência dos dados sob a distribuição de interesse.</p>
-<p>Além da aplicabilidade, se deve conhecer cada distribuição, seus pressupostos, características, propriedades e comportamento gráfico em relação aos dados.</p>
-<p>Para comparação, se utiliza-se os pacotes implementados do <span class="math inline">\(R\)</span> para aplicar análise de sobrevivência com o <span class="math inline">\(survival\)</span>, vizualização gráfica com o pacote <span class="math inline">\(ggplot2\)</span> e leitura de banco de dados com <span class="math inline">\(readxl\)</span>.</p>
-<p>Aplicando a função de sobrevivência com funções criadas apartir dos resultados de convergência para certa distribuição.</p>
-<p>Os dados utilizados são:</p>
-<ol type="1">
-<li><em>cancer_de_pele.txt</em></li>
-<li><em>pacientes com câncer de bexiga</em></li>
-</ol>
-<ul>
-<li>1 e 2 foram bases retiradas do repositório dos autores do livro Análise de Sobrevivência, Colossimo &amp; Giolo: <a href="https://docs.ufpr.br/~giolo/asa/Dados.html">Acesse aqui</a>;</li>
-</ul>
+<p>A função densidade de probabilidade associada a variável aleatória tempo até o evento <span class="math inline">\(T\)</span> com distribuição log-logística é dada por:</p>
+<p><span class="math display">\[
+f(t) = \frac{\gamma}{\alpha^{\gamma}} \cdot t^{(\gamma-1)} \left[ 1 + \left(\frac{t}{\alpha} \right)^\gamma \right]^{-2}
+\]</span></p>
+<section id="função-de-sobrevivência" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="função-de-sobrevivência"><span class="header-section-number">1.1</span> Função de Sobrevivência</h2>
+<p><span class="math display">\[
+S(t) = \frac{1}{1 + \left(\frac{t}{\alpha} \right)^\gamma}
+\]</span></p>
+</section>
+<section id="função-verossimilhança" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="função-verossimilhança"><span class="header-section-number">1.2</span> Função verossimilhança</h2>
+<p><span class="math display">\[
+L(\theta | t) = \prod_{i=1}^{n} \left[ \left( \frac{\gamma}{\alpha^\gamma} \cdot t_i^{\gamma-1} \left[ 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right]^{-2} \right)^{\delta_i} \cdot \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right)^{1-\delta_i} \right]
+\]</span></p>
+<p><span class="math display">\[
+\ell[L(\theta | t)] = \sum_{i=1}^{n} \left[ \delta_i \log \left( \frac{\gamma}{\alpha^\gamma} \cdot t_i^{\gamma-1} \left[ 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right]^{-2} \right) +  (1-\delta_i) \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right) \right]
+\]</span></p>
+<p><span class="math display">\[
+= \sum_{i=1}^{n} \left[ \delta_i \left( \log(\gamma) - \gamma \log(\alpha) + (\gamma-1) \log(t_i) - 2 \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right) \right) + \\[10pt] (1-\delta_i) \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right) \right]
+\]</span></p>
+<p>Aplicando uma expansão dos termos nas duas últimas partes da expressão, se pode simplificar da seguinte forma:</p>
+<p><span class="math display">\[
+= -2 \delta_i \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right) + \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right) - \delta_i \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right)
+\]</span></p>
+<p><span class="math display">\[
+= -2\delta_i \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right) + \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right) + \delta_i \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right)
+\]</span></p>
+<p><span class="math display">\[
+= -\delta_i \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right) + \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right)
+\]</span></p>
+<p>Logo, a expressão final:</p>
+<p><span class="math display">\[
+\\[10pt]
+= \sum_{i=1}^{n} \left[ \delta_i \left[ \log(\gamma) - \gamma \log(\alpha) + (\gamma-1) \log(t_i) - \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right) + \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right) \right] \right]
+\]</span></p>
 
 
 </section>
@@ -804,11 +813,11 @@ window.Quarto = {
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="./index.html" class="pagination-link" aria-label="Objetivo">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Objetivo</span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./dist_log_logis.html" class="pagination-link" aria-label="Distribuição Log-logística">
-        <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

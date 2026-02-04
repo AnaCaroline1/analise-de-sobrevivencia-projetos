@@ -8,7 +8,7 @@ $$
 f(t) = \frac{\gamma}{\alpha^{\gamma}}\cdot t^{(\gamma-1)} \cdot exp\left[-\left(\frac{t}{\alpha}\right)^{\gamma} \right], \ t>0 
 $$
 
-E função de sobrevivência dada por:\
+E função de sobrevivência dada por:
 $$
 S(t) = exp\left[ - \left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]
 $$

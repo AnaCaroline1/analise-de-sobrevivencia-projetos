@@ -329,7 +329,13 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./dist_log_norm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">dist_log_norm.html</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Distribuição Log-normal</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dist_log_logis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></span></a>
   </div>
 </li>
     </ul>
@@ -370,19 +376,19 @@ window.Quarto = {
 </header>
 
 
-<p>A função densidade de probabilidade associada a variável aleatória tempo até o evento <span class="math inline">\(T\)</span>, possui uma grande variedade de formas, sendo sua função densidade, possuindo uma propriedade básica: a função taxa de falha sendo monótona, ou seja, crescente, decrescente ou constante.</p>
+<p>A função densidade de probabilidade associada a variável aleatória tempo até o evento <span class="math inline">\(t\)</span>, possui uma grande variedade de formas, sendo sua função densidade, possuindo uma propriedade básica: a função taxa de falha sendo monótona, ou seja, crescente, decrescente ou constante.</p>
 <p>Com distribuição Weibull é dada por:</p>
 <p><span class="math display">\[
-f(t) = \frac{\gamma}{\alpha^{\gamma}}\cdot t^{(\gamma-1)} \cdot exp\left[-\left(\frac{t}{\alpha}\right)^{\gamma} \right], \ t\geqslant0
+f(t) = \frac{\gamma}{\alpha^{\gamma}}\cdot t^{(\gamma-1)} \cdot exp\left[-\left(\frac{t}{\alpha}\right)^{\gamma} \right], \ t&gt;0
+\]</span></p>
+<p>E função de sobrevivência dada por: <span class="math display">\[
+S(t) = exp\left[ - \left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]
 \]</span></p>
 <p>Os parâmetros de escala e forma, <span class="math inline">\(\alpha\)</span> e <span class="math inline">\(\gamma\)</span> são positivos. O parâmetro <span class="math inline">\(\alpha\)</span> tem mesma medida de unidade de <span class="math inline">\(t\)</span> e <span class="math inline">\(\gamma\)</span> não tendo unidade de medida.</p>
 <section id="função-de-verossimilhança-é-dada-por" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="função-de-verossimilhança-é-dada-por"><span class="header-section-number">2.1</span> Função de verossimilhança é dada por:</h2>
 <p><span class="math display">\[
-L(\hat{\theta}) = \prod_{i = 1}^{n} \left[\frac{\gamma}{\alpha^{\gamma}}\cdot t_{i}^{(\gamma-1)} \cdot exp\left[-  \left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]\right]^{\delta_{i}} =
-\]</span></p>
-<p><span class="math display">\[
-= \left[\frac{\gamma}{\alpha^{\gamma}}\cdot t_{i}^{(\gamma-1)} \cdot exp\left[-\left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]\right]^{\delta_{i}}\cdot\left[\frac{\gamma}{\alpha^{\gamma}}\cdot t_{i}^{(\gamma-1)} \cdot exp\left[- \left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]\right]^{1-\delta_{i}} =
+L(\hat{\theta}) = \prod_{i = 1}^{n} \left[\frac{\gamma}{\alpha^{\gamma}}\cdot t_{i}^{(\gamma-1)} \cdot exp\left[-  \left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]\right]^{\delta_{i}} \cdot exp\left[ - \left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]^{1-\gamma}=
 \]</span></p>
 <p><span class="math display">\[
 = \left(\frac{\gamma^{n}}{\alpha^{ n \cdot\gamma}}\right)^{\delta_{i}} \cdot \prod_{i=1}^{n}t_{i}^{\delta_{i}(\gamma - 1)} \cdot exp\left[-  \frac{1}{\alpha^{\gamma}} \cdot \sum_{i=1}^{n} (t_{i})^{\gamma}\right]
@@ -416,7 +422,7 @@ l[L\hat{\theta}] = \log \left[\gamma^{n\cdot \delta_{i}} \cdot \alpha^{-n\cdot \
 \frac{\partial l[L(\hat{\theta} | t_{i})]}{\partial \alpha} = - \frac{n \cdot \gamma}{\alpha} + \gamma \cdot \alpha^{-\gamma - 1} \sum_{i=1}^{n} (t_{i})^{\gamma} =
 \]</span></p>
 <p><span class="math display">\[
-=\gamma \cdot \left(\frac{n}{\alpha} +\frac{1}{\alpha^{\gamma+1}} \cdot \sum_{i=1}^{n} (t_{i})^{\gamma} \right)
+=\gamma \cdot \left(-\frac{n}{\alpha} +\frac{1}{\alpha^{\gamma+1}} \cdot \sum_{i=1}^{n} (t_{i})^{\gamma} \right)
 \]</span></p>
 <p>Não é possível…</p>
 
@@ -844,8 +850,8 @@ l[L\hat{\theta}] = \log \left[\gamma^{n\cdot \delta_{i}} \cdot \alpha^{-n\cdot \
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./dist_log_norm.html" class="pagination-link" aria-label="dist_log_norm.html">
-        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">dist_log_norm.html</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./dist_log_norm.html" class="pagination-link" aria-label="Distribuição Log-normal">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Distribuição Log-normal</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

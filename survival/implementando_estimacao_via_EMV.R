@@ -66,14 +66,19 @@ lines(x_seq, densidade_weibull1, col = "red", lwd = 2)
 
 # Estimando parâmetros com os bancos de dados.
 
-tempo_sg<- df_srag_sg$dt_sin_pri # Do banco de dados sobre Sg e Srag
-
+ # Do banco de dados sobre Sg e Srag
+tempo_sgf <- df_srag_sg |>
+  mutate(dif_tempo = as.numeric(dt_notific - dt_sin_pri)) |>
+  filter(dif_tempo > 0)
+tempo_sg<-tempo_sgf$dif_tempo
+cens1 <- tempo_sgf$status_1
+table(tempo_sg)
 ajust2 <- fitdistr(tempo_sg, "weibull")
 par_weibull2 <- ajust2$estimate
 
 log_verossimilhança_weibull(par_weibull2,tempo_sg)
-
-fit2 <- optim(par=c(1,1),fn=log_verossimilhança_weibull, t = tempo_sg)
+log_verossimilhanca_censura(par_weibull2,tempo_sg, cens1)
+fit2 <- optim(par=c(1,1),fn=log_verossimilhanca_censura, t = tempo_sg, status=cens1)
 
 
 gama_est <- fit2$par[1]

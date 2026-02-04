@@ -33,7 +33,11 @@ $$
 $$
 
 $$
-= -\delta_i \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right) + \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right) + \delta_i \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right)
+= -2\delta_i \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right) + \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right) + \delta_i \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right)
+$$
+
+$$
+= -\delta_i \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right) + \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right)
 $$
 
 Logo, a expressão final:
