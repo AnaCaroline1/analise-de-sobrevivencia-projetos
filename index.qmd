@@ -1,0 +1,19 @@
+# Objetivo {.unnumbered}
+
+Verificar comportamento de distribuições de probabilidade em dados para aplicação de análise de sobrevivência. Para tal, se deve obter estimadores de máximo verossimilhança utilizando as funções $optim$ e $optimize$ para identificar os valores dos parâmetros estimados, convergência dos dados sob a distribuição de interesse.
+
+Além da aplicabilidade, se deve conhecer cada distribuição, seus pressupostos, características, propriedades e comportamento gráfico em relação aos dados.
+
+Para comparação, se utiliza-se os pacotes implementados do $R$ para aplicar análise de sobrevivência com o $survival$, vizualização gráfica com o pacote $ggplot2$ e leitura de banco de dados com $readxl$.
+
+Aplicando a função de sobrevivência com funções criadas apartir dos resultados de convergência para certa distribuição.
+
+Os dados utilizados são:
+
+1.  *cancer_de_pele.txt* 
+2.  *pacientes com câncer de bexiga*
+3.  *esus.sivep.covid19bh.2023.csv* 
+
+- 1 e 2 foram bases retiradas do repositório dos autores do livro Análise de Sobrevivência, Colossimo & Giolo: [Acesse aqui](https://docs.ufpr.br/~giolo/asa/Dados.html);
+
+- 3 foi retirado do banco de dados abertos do governo: [Acesso ao banco de dados abertos do Gov](https://dados.gov.br/dados/conjuntos-dados/esus-sisep-dados-epidemiologicos-covid-19)

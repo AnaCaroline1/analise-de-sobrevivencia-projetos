@@ -1,0 +1,141 @@
+# Distribuição Exponencial
+
+A função densidade de probabilidade associada a variável aleatória tempo até o evento $t$ com distribuição exponencial e função de sobrevivência é dada por:
+
+$$
+f(t) = \frac{1}{\alpha} \cdot exp\left[-\frac{t}{\alpha}\right] \ ; \ S(t)= exp\left[-\frac{t}{\alpha}\right]\ t > 0  
+$$
+
+Como o parâmetro $\alpha > 0$ correspondendo ao tempo médio de vida.
+
+## Função de verossimilhança
+
+$$
+L(\theta | t_{i}) = \prod_{i = 1}^{n} \left[\frac{1}{\alpha} \cdot exp\left[-\frac{t_{i}}{\alpha}\right]\right]^{\delta_{i}} 
+$$
+
+$$
+= \left[\frac{1}{\alpha} \cdot exp\left[-\frac{t_{1}}{\alpha}\right]\right]^{\delta_{i}} \cdot \left[exp\left[-\frac{t_{2}}{\alpha}\right]\right]^{1-\delta_{i}}
+$$
+
+$$
+= \left[\frac{1}{\alpha^{n}}\right]^{\delta_{i}} \cdot exp\left(-\frac{\sum_{i=1}^{n}ti}{\alpha}\right)
+$$
+
+Podendo ser reescrita:
+
+$$
+= 1^{\delta_{i}} \cdot \alpha^{-n\cdot\delta_{i}} \cdot exp\left(-\frac{\sum_{i=1}^{n}ti}{\alpha}\right)
+$$
+
+Sabendo que $\delta_{i}=\{0,1\}$, aplicando em $1^{\delta_{i}}$ se tem 1 multiplicando $\alpha$, logo, a função de verossimilhança será:
+
+$$
+= \alpha^{-n\cdot\delta_{i}} \cdot exp\left(-\frac{\sum_{i=1}^{n}ti}{\alpha}\right)
+$$
+
+## A Log-verossimilhança da exponencial
+
+$$
+l[L(\hat{\theta}|t_{i})] = \log\left[\alpha^{-n\cdot\delta_{i}} \cdot exp\left(-\frac{\sum_{i=1}^{n}ti}{\alpha}\right) \right] = -n\cdot \delta_{i}\cdot \log(\alpha) -\frac{\sum_{i=1}^{n}t_{i}}{\alpha}
+$$
+
+Derivando em relação a $\alpha$ teremos que:
+
+$$
+\frac{\partial l[L(\hat{\theta}|t_{i})]}{\partial\alpha} = \frac{-n\cdot\delta_{i}}{\alpha} + \frac{\sum_{i=1}^{n}t_{i}}{\alpha^{2}} = 0
+$$
+
+$$
+\frac{-n\cdot\delta_{i}}{\alpha} + \frac{\sum_{i=1}^{n}t_{i}}{\alpha^{2}} = 0 \ \cdot (\alpha^{2}) 
+$$
+
+$$
+= -n\cdot\delta_{i}\cdot \alpha + \sum_{i=1}^{n}t_{i} = 0 
+$$
+
+$$
+\sum_{i=1}^{n} t_{i} = n \cdot \delta_{i} \cdot \alpha 
+$$
+
+$$
+\hat{\alpha} = \frac{\sum_{i=1}^{n}t_{i}}{n\cdot\delta_{i}}
+$$
+
+Na ausência de censura, aplicando $\delta_{i}={1}$, teremos:
+
+$$
+\hat{\alpha} = \frac{\sum_{i=1}^{n}t_{i}}{n}
+$$
+
+Que é exatamente a média amostral de $t_{i}$.
+
+
+```{r include=FALSE}
+#| eval: false
+
+# Verificanco com o banco de Síndrome Gripal
+
+
+# Verificando como os dados do livro: câncer de bexiga
+
+# Ajuste conforme a distribuição
+
+ajust1_cc_bx <- survreg(Surv(tempos,cens)~1,dist = "exponential")
+ajust2_cc_bx <- survreg(Surv(tempos,cens)~1,dist = "weibull")
+ajust3_cc_bx <- survreg(Surv(tempos,cens)~1,dist = "lognorm")
+# Ekm  dos dados
+
+ekm_cc_bx <- survfit(Surv(tempos,cens)~1)
+time <- ekm_cc_bx$time
+st <- ekm_cc_bx$surv
+
+# Cálculo dos parâmetros estimados das distribuições
+
+alpha<- round(exp(ajust1_cc_bx$coefficients[1]),2)
+alpha2<-  round(exp(ajust2_cc_bx$coefficients[1]),2)
+gama2<-1/ajust2_cc_bx$scale
+
+mi <-  round(ajust3_cc_bx$coefficients[1],2)
+alpha3 <- round(ajust3_cc_bx$scale,2)
+
+ste_cc_bx<-exp(-time/alpha)
+
+stw_cc_bx<- exp(-(time/alpha2)^gama2)
+
+stln_cc_bx<- pnorm((-log(time)+ mi)/alpha3)
+
+par(mfrow=c(1,3))
+ plot(st, ste_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1), 
+      xlab = "S(t): Kaplan-Meier", ylab="S(t): exponencial",
+      cex.lab=1.5,cex.axis=1.3)
+ abline(a=0,b=1)
+
+ plot(st, stw_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1), 
+      xlab = "S(t): Kaplan-Meier", ylab="S(t): weibull",
+      cex.lab=1.5,cex.axis=1.3)
+ abline(a=0,b=1)
+
+ plot(st, stln_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1), 
+      xlab = "S(t): Kaplan-Meier", ylab="S(t): log-normal",
+      cex.lab=1.5,cex.axis=1.3)
+ abline(a=0,b=1)
+
+par(mfrow=c(1,3));
+
+invst<-qnorm(st) 
+
+plot(time,-log(st),pch=16,xlab="Tempo",ylab="-log(S(t))") 
+
+plot(log(time),log(-log(st)),pch=16,xlab="log(Tempo)",ylab="log(-log(S(t)))")
+
+plot(log(time),invst,pch=16,xlab="log(Tempo)",ylab=expression(Phi^-1*(S(t))))
+
+par(mfrow=c(1,2),mar=c(5,1.8,5,1)) 
+plot(ekm_cc_bx,conf.int=F,xlab="Tempo",ylab="S(t)"); lines(c(0,time),c(1,stw_cc_bx),lty=2) 
+legend(25,0.8,lty=c(1,2),c("Kaplan-Meier","Weibull"),bty="n",cex=0.9) 
+
+plot(ekm_cc_bx,conf.int=F,xlab="Tempo",ylab="S(t)"); lines(c(0,time),c(1,stln_cc_bx),lty=2) 
+legend(25,0.8,lty=c(1,2),c("Kaplan-Meier","Log-normal"),bty="n",cex=0.9)
+```
+
