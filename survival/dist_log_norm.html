@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>dist_weibull1</title>
+<title>dist_log_norm</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,18 +23,18 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="dist_weibull1_files/libs/clipboard/clipboard.min.js"></script>
-<script src="dist_weibull1_files/libs/quarto-html/quarto.js" type="module"></script>
-<script src="dist_weibull1_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="dist_weibull1_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="dist_weibull1_files/libs/quarto-html/popper.min.js"></script>
-<script src="dist_weibull1_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="dist_weibull1_files/libs/quarto-html/anchor.min.js"></script>
-<link href="dist_weibull1_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="dist_weibull1_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="dist_weibull1_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="dist_weibull1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="dist_weibull1_files/libs/bootstrap/bootstrap-9e3ffae467580fdb927a41352e75a2e0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="dist_log_norm_files/libs/clipboard/clipboard.min.js"></script>
+<script src="dist_log_norm_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="dist_log_norm_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="dist_log_norm_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="dist_log_norm_files/libs/quarto-html/popper.min.js"></script>
+<script src="dist_log_norm_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="dist_log_norm_files/libs/quarto-html/anchor.min.js"></script>
+<link href="dist_log_norm_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="dist_log_norm_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="dist_log_norm_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="dist_log_norm_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="dist_log_norm_files/libs/bootstrap/bootstrap-9e3ffae467580fdb927a41352e75a2e0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -77,55 +77,53 @@ window.Quarto = {
 
 
 
-<section id="distribuição-weibull" class="level1">
-<h1>Distribuição Weibull</h1>
-<p>A função densidade de probabilidade associada a variável aleatória tempo até o evento <span class="math inline">\(T\)</span>, possui uma grande variedade de formas, sendo sua função densidade, possuindo uma propriedade básica: a função taxa de falha sendo monótona, ou seja, crescente, decrescente ou constante.</p>
-<p>Com distribuição Weibull é dada por:</p>
+<section id="distribuição-log-normal" class="level1">
+<h1>Distribuição Log-normal</h1>
+<p>A função densidade de probabilidade associada a variável aleatória tempo até o evento <span class="math inline">\(T\)</span> com distribuição log-normal e função de sobrevivência é dada por:</p>
 <p><span class="math display">\[
-f(t) = \frac{\gamma}{\alpha^{\gamma}}\cdot t^{(\gamma-1)} \cdot exp\left[-\left(\frac{t}{\alpha}\right)^{\gamma} \right], \ t\geqslant0
+f(t) = \frac{1}{\sqrt{2\pi} \cdot t \cdot \sigma} \cdot exp\left[ \frac{1}{2\sigma^{2}} \cdot (\log(t) - \mu)^{2} \right] \ ; \ S(t)= \Phi \left(\frac{-\log(t) + \mu}{\sigma} \right) t &gt; 0
 \]</span></p>
-<p>Os parâmetros de escala e forma, <span class="math inline">\(\alpha\)</span> e <span class="math inline">\(\gamma\)</span> são positivos. O parâmetro <span class="math inline">\(\alpha\)</span> tem mesma medida de unidade de <span class="math inline">\(t\)</span> e <span class="math inline">\(\gamma\)</span> não tendo unidade de medida.</p>
-<section id="função-de-verossimilhança-é-dada-por" class="level2">
-<h2 class="anchored" data-anchor-id="função-de-verossimilhança-é-dada-por">Função de verossimilhança é dada por:</h2>
+<section id="função-de-verossimilhança" class="level2">
+<h2 class="anchored" data-anchor-id="função-de-verossimilhança">Função de verossimilhança</h2>
 <p><span class="math display">\[
-L(\hat{\theta}) = \prod_{i = 1}^{n} \left[\frac{\gamma}{\alpha^{\gamma}}\cdot t_{i}^{(\gamma-1)} \cdot exp\left[-  \left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]\right]^{\delta_{i}} =
+L(\theta|t_{i}) = \prod_{i=1}^{n} \left[\frac{1}{\sqrt{2\pi} \cdot t \cdot \sigma} \cdot exp\left[ \frac{1}{2\sigma^{2}} \cdot (\log(t) - \mu)^{2} \right]^{\delta_{i}} \cdot \Phi \left(\frac{-\log(t) + \mu}{\sigma}\right)^{1-\delta_{i}} \right]
 \]</span></p>
 <p><span class="math display">\[
-= \left[\frac{\gamma}{\alpha^{\gamma}}\cdot t_{i}^{(\gamma-1)} \cdot exp\left[-\left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]\right]^{\delta_{i}}\cdot\left[ exp\left[- \left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]\right]^{1-\delta_{i}} =
-\]</span></p>
-<p><span class="math display">\[
-= \left(\frac{\gamma^{n}}{\alpha^{ n \cdot\gamma}}\right)^{\delta_{i}} \cdot \prod_{i=1}^{n}t_{i}^{\delta_{i}(\gamma - 1)} \cdot exp\left[-  \frac{1}{\alpha^{\gamma}} \cdot \sum_{i=1}^{n} (t_{i})^{\gamma}\right]
-\]</span></p>
-<p>Reescrevendo, teremos:</p>
-<p><span class="math display">\[
-= \gamma^{n\cdot \delta_{i}} \cdot \alpha^{-n\cdot \delta \cdot \gamma} \cdot \prod_{i=1}^{n}t_{i}^{\delta_{i}(\gamma - 1)} \cdot exp\left[-\frac{1}{\alpha^{\gamma}} \cdot \sum_{i=1}^{n} (t_{i})^{\gamma}\right]
+L(\hat{\theta}|t_{i}) = (2\pi)^{\left(-\sum_{i=1}^{n}\frac{\delta_{i}}{2}\right)}\cdot \sigma^{-\sum_{i=1}^{n} \delta_{i}} \cdot \prod_{i=1}^{n} t_{i}^{-\delta_{i}} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right]^{\delta_{i}}  \cdot \Phi \left(\frac{-\log(t) + \mu}{\sigma}\right)^{1-\delta_{i}}  
 \]</span></p>
 </section>
-<section id="log-verossimilhança-da-weibull" class="level2">
-<h2 class="anchored" data-anchor-id="log-verossimilhança-da-weibull">Log-verossimilhança da Weibull:</h2>
+<section id="log-verossimilhança-da-log-normal" class="level2">
+<h2 class="anchored" data-anchor-id="log-verossimilhança-da-log-normal">Log-verossimilhança da Log-Normal:</h2>
 <p><span class="math display">\[
-l[L\hat{\theta}] = \log \left[\gamma^{n\cdot \delta_{i}} \cdot \alpha^{-n\cdot \delta \cdot \gamma} \cdot  \prod_{i=1}^{n}t_{i}^{\delta_{i}(\gamma - 1)} \cdot exp\left[-\frac{1}{\alpha^{\gamma}} \cdot \sum_{i=1}^{n} (t_{i})^{\gamma}\right] \right] =
+l[L\hat{\theta}| t_{i}] = \log \left[ (2\pi)^{\left(-\sum_{i=1}^{n}\frac{\delta_{i}}{2}\right)}\cdot \sigma^{-\sum_{i=1}^{n} \delta_{i}} \cdot \prod_{i=1}^{n} t_{i}^{-\delta_{i}} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right]^{\delta_{i}}  \cdot \Phi \left(\frac{-\log(t) + \mu}{\sigma}\right)^{1-\delta_{i}} \right]
+\]</span></p>
+<p><em>logo, temos:</em></p>
+<p><span class="math display">\[
+= \sum_{i=1}^{n} \left[ \delta_{i} \left[-\frac{1}{2}\log(2\pi) \cdot-\log{(\alpha) \cdot -\log{t_{i}} \cdot -\frac{1}{2\sigma^{2}} \cdot (\log(t_{i}) - \mu)^{2} \cdot (1-\delta_{i}) \Phi \left(\frac{-\log(t) + \mu}{\sigma} \right)}\right]\right]
+\]</span></p>
+<p>Derivando parcialmente <span class="math inline">\(\hat{\theta}=(\mu,\alpha)\)</span> se obtem:</p>
+<p><span class="math display">\[
+\frac{\partial l[L(\hat{\theta} | t_{i})]}{\partial \mu} =  
+\sum_{i=1}^{n} \left[\delta_{i} \left[-\frac{1}{2\sigma^{2}} \cdot (\log(t_{i}) - \mu)^{2} \cdot (1-\delta_{i}) \Phi\left(\frac{-\log(t) + \mu}{\sigma} \right) \right]\right] =
 \]</span></p>
 <p><span class="math display">\[
-= n \cdot \delta_{i}\log{(\gamma)} - n \cdot \delta_{i} \cdot \gamma\log{(\alpha)}+ \delta_{i}(\gamma-1)\sum_{i=1}^{n} \log{(t_{i})} - \alpha^{-\gamma}\cdot \ \sum_{i=1}^{n} (t_{i})^{\gamma}
-\]</span></p>
-<p>Derivando em relação a <span class="math inline">\(\gamma\)</span>, temos:</p>
-<p><span class="math display">\[
-\frac{\partial l[L(\hat{\theta} | t_{i})]}{\partial \gamma} = \frac{n \cdot \delta_{i}}{\gamma}-n \cdot \delta_{i} \cdot \log{(\alpha)} +\delta_{i} \sum_{i=1}^{n} \log(t_{i})+\alpha^{-\gamma} \cdot \ln(\alpha) \cdot \sum_{i=1}^{n}(t_{i})^{\gamma}-\alpha^{-\gamma} \cdot \sum_{i=1}^{n}(t_{i})^{\gamma} \cdot \ln{(t_{i})}
-\]</span></p>
-<p>Aplicando <span class="math inline">\(\delta_{i}={1}\)</span>, teremos:</p>
-<p><span class="math display">\[
-\frac{\partial l[L(\hat{\theta} | t_{i})]}{\partial \gamma} = \frac{n}{\gamma} - n \cdot \log{(\alpha)} +\sum_{i=1}^{n} \log(t_{i}) + \alpha^{-\gamma} \cdot \ln(\alpha) \cdot \sum_{i=1}^{n}(t_{i})^{\gamma}- \alpha^{-\gamma} \cdot \sum_{i=1}^{n} (t_{i})^{\gamma} \cdot \ln{(t_{i})} =
+= -\frac{1}{2\sigma^{2}}\cdot 2 \cdot \sum_{i=1}^{n} (\log(t_{i})-\mu) \cdot (-1)=
 \]</span></p>
 <p><span class="math display">\[
-=n \cdot \left(\frac{1}{\gamma}-\log(\alpha)\right) +\sum_{i=1}^{n} \log(t_{i}) + \frac{\sum_{i=1}^{n} (t_{i})^{\gamma}}{\alpha^{\gamma}} \cdot \left(\ln{(\alpha)} - \ln{(t_{i})}\right)
-\]</span></p>
-<p>Derivando em relação a <span class="math inline">\(\alpha\)</span>, temos:</p>
-<p><span class="math display">\[
-\frac{\partial l[L(\hat{\theta} | t_{i})]}{\partial \alpha} = - \frac{n \cdot \gamma}{\alpha} + \gamma \cdot \alpha^{-\gamma - 1} \sum_{i=1}^{n} (t_{i})^{\gamma} =
+= \frac{1}{\sigma^{2}} \cdot \sum_{i=1}^{n} (\log(t_{i})-\mu)
 \]</span></p>
 <p><span class="math display">\[
-=\gamma \cdot \left(\frac{n}{\alpha} +\frac{1}{\alpha^{\gamma+1}} \cdot \sum_{i=1}^{n} (t_{i})^{\gamma} \right)
+\frac{\partial l[L(\hat{\theta} | t_{i})]}{\partial \sigma} = \frac{n}{\sigma} - \left[\frac{1}{2} \cdot (\sigma^{-2})' \cdot \sum_{i=1}^{n} (\log(t_i) - \mu)^2 \right] =
+\]</span></p>
+<p><span class="math display">\[
+=-\frac{n}{\sigma} - \left[ -\frac{2}{2} \cdot \sigma^{-3} \cdot \sum_{i=1}^{n} (\log(t_i) - \mu)^2 \right] =
+\]</span></p>
+<p><span class="math display">\[
+= -\frac{n}{\sigma} + \frac{1}{\sigma^{3}} \cdot \sum_{i=1}^{n} (\log(t_i) - \mu)^2
+\]</span></p>
+<p>Com <span class="math inline">\(\hat{\mu}\)</span> e <span class="math inline">\(\hat{\sigma}\)</span>, respectivamente:</p>
+<p><span class="math display">\[
+\hat{\mu} = \frac{\sum_{i=1}^{n} \log(t_{i})}{n} \ ; \ \hat{\sigma}= \frac{\sum_{i=1}^{n} (\log(t_{i})-\mu)^{2}}{n}
 \]</span></p>
 </section>
 </section>
