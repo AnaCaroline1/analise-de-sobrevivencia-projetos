@@ -8,58 +8,52 @@ $$
 
 Como o parâmetro $\alpha > 0$ correspondendo ao tempo médio de vida.
 
+## Função de verossimilhança# Distribuição Exponencial
+
+A função densidade de probabilidade associada a variável aleatória tempo até o evento $t$ com distribuição exponencial e função de sobrevivência é dada por:
+
+$$
+f(t) = \frac{1}{\alpha} \cdot exp\left[-\frac{t}{\alpha}\right] \ ; \ S(t)= exp\left[-\frac{t}{\alpha}\right]\ t > 0  
+$$
+
+Como o parâmetro $\alpha > 0$ correspondendo ao tempo médio de vida.
+
 ## Função de verossimilhança
 
 $$
-L(\theta | t_{i}) = \prod_{i = 1}^{n} \left[\frac{1}{\alpha} \cdot exp\left[-\frac{t_{i}}{\alpha}\right]\right]^{\delta_{i}} 
+L(\theta | t) = \prod_{i=1}^{n} \left[ \left( \frac{1}{\alpha} \exp \left[ -\left( \frac{t_{i}}{\alpha} \right) \right] \right)^{\delta_{i}} \cdot \left( \exp \left[ -\left( \frac{t_{i}}{\alpha} \right) \right] \right)^{1-\delta_{i}} \right] = \\[10pt]
+
+= \prod_{i=1}^{n} \left[ \left( \frac{1}{\alpha} \right)^{\delta_{i}} \cdot \exp \left[ -\left( \frac{t_{i}}{\alpha} \right) \right]\right]
 $$
 
-$$
-= \left[\frac{1}{\alpha} \cdot exp\left[-\frac{t_{1}}{\alpha}\right]\right]^{\delta_{i}} \cdot \left[exp\left[-\frac{t_{2}}{\alpha}\right]\right]^{1-\delta_{i}}
-$$
-
-$$
-= \left[\frac{1}{\alpha^{n}}\right]^{\delta_{i}} \cdot exp\left(-\frac{\sum_{i=1}^{n}ti}{\alpha}\right)
-$$
-
-Podendo ser reescrita:
-
-$$
-= 1^{\delta_{i}} \cdot \alpha^{-n\cdot\delta_{i}} \cdot exp\left(-\frac{\sum_{i=1}^{n}ti}{\alpha}\right)
-$$
-
-Sabendo que $\delta_{i}=\{0,1\}$, aplicando em $1^{\delta_{i}}$ se tem 1 multiplicando $\alpha$, logo, a função de verossimilhança será:
-
-$$
-= \alpha^{-n\cdot\delta_{i}} \cdot exp\left(-\frac{\sum_{i=1}^{n}ti}{\alpha}\right)
-$$
 
 ## A Log-verossimilhança da exponencial
 
 $$
-l[L(\hat{\theta}|t_{i})] = \log\left[\alpha^{-n\cdot\delta_{i}} \cdot exp\left(-\frac{\sum_{i=1}^{n}ti}{\alpha}\right) \right] = -n\cdot \delta_{i}\cdot \log(\alpha) -\frac{\sum_{i=1}^{n}t_{i}}{\alpha}
+\ell[L(\theta | t)] = \sum_{i=1}^n \left[ - \delta_i \log(\alpha) - \left( \frac{t_i}{\alpha} \right) \right]
 $$
+
 
 Derivando em relação a $\alpha$ teremos que:
 
 $$
-\frac{\partial l[L(\hat{\theta}|t_{i})]}{\partial\alpha} = \frac{-n\cdot\delta_{i}}{\alpha} + \frac{\sum_{i=1}^{n}t_{i}}{\alpha^{2}} = 0
+\frac{\partial l[L(\hat{\theta}|t_{i})]}{\partial\alpha} = \frac{-\sum_{i=1}^{n}\cdot\delta_{i}}{\alpha} + \frac{\sum_{i=1}^{n}t_{i}}{\alpha^{2}} = 0
 $$
 
 $$
-\frac{-n\cdot\delta_{i}}{\alpha} + \frac{\sum_{i=1}^{n}t_{i}}{\alpha^{2}} = 0 \ \cdot (\alpha^{2}) 
+\frac{-\sum_{i=1}^{n}\cdot\delta_{i}}{\alpha} + \frac{\sum_{i=1}^{n}t_{i}}{\alpha^{2}} = 0 \ \cdot (\alpha^{2}) 
 $$
 
 $$
-= -n\cdot\delta_{i}\cdot \alpha + \sum_{i=1}^{n}t_{i} = 0 
+= -\sum_{i=1}^{n}\cdot\delta_{i}\cdot \alpha + \sum_{i=1}^{n}t_{i} = 0 
 $$
 
 $$
-\sum_{i=1}^{n} t_{i} = n \cdot \delta_{i} \cdot \alpha 
+\sum_{i=1}^{n} t_{i} = \sum_{i=1}^{n} \cdot \delta_{i} \cdot \alpha 
 $$
 
 $$
-\hat{\alpha} = \frac{\sum_{i=1}^{n}t_{i}}{n\cdot\delta_{i}}
+\hat{\alpha} = \frac{\sum_{i=1}^{n}t_{i}}{\sum_{i=1}^{n}\cdot\delta_{i}}
 $$
 
 Na ausência de censura, aplicando $\delta_{i}={1}$, teremos:
@@ -69,7 +63,6 @@ $$
 $$
 
 Que é exatamente a média amostral de $t_{i}$.
-
 
 ```{r eval=FALSE}
 
@@ -133,4 +126,3 @@ legend(25,0.8,lty=c(1,2),c("Kaplan-Meier","Log-normal"),bty="n",cex=0.9)
 
 
 ```
-

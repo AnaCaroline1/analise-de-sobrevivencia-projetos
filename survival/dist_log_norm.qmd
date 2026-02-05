@@ -9,30 +9,35 @@ $$
 ## Função de verossimilhança
 
 $$
-L(\theta|t_{i}) = \prod_{i=1}^{n} \left[\frac{1}{\sqrt{2\pi} \cdot t \cdot \sigma} \cdot exp\left[ \frac{1}{2\sigma^{2}} \cdot (\log(t) - \mu)^{2} \right]^{\delta_{i}} \cdot \Phi \left(\frac{-\log(t) + \mu}{\sigma}\right)^{1-\delta_{i}} \right]
+L(\theta|t_{i}) = \prod_{i=1}^{n} \left[\frac{1}{\sqrt{2\pi} \cdot t \cdot \sigma} \cdot exp\left[ \frac{1}{2\sigma^{2}} \cdot (\log(t) - \mu)^{2} \right] \right]
 $$
 
 $$
-L(\hat{\theta}|t_{i}) = (2\pi)^{\left(-\sum_{i=1}^{n}\frac{\delta_{i}}{2}\right)}\cdot \sigma^{-\sum_{i=1}^{n} \delta_{i}} \cdot \prod_{i=1}^{n} t_{i}^{-\delta_{i}} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right]^{\delta_{i}}  \cdot \Phi \left(\frac{-\log(t) + \mu}{\sigma}\right)^{1-\delta_{i}}  
+L(\hat{\theta}|t_{i}) = \frac{1}{(\sqrt{2\pi})^{n} \cdot t_{i} \cdot \sigma^{n}} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right] 
+$$
+
+*Reescrevendo, teremos:*
+
+$$  
+L(\hat{\theta}|t_{i}) = (2\pi)^{\left(-\frac{n}{2}\right)}\cdot \sigma^{-n} \cdot \prod_{i=1}^{n} t_{i}^{-1} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right] 
 $$
 
 ## Log-verossimilhança da Log-Normal:
 
 $$ 
-l[L\hat{\theta}| t_{i}] = \log \left[ (2\pi)^{\left(-\sum_{i=1}^{n}\frac{\delta_{i}}{2}\right)}\cdot \sigma^{-\sum_{i=1}^{n} \delta_{i}} \cdot \prod_{i=1}^{n} t_{i}^{-\delta_{i}} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right]^{\delta_{i}}  \cdot \Phi \left(\frac{-\log(t) + \mu}{\sigma}\right)^{1-\delta_{i}} \right] 
+l[L\hat{\theta}| t_{i}] = \log \left[ (2\pi)^{\left(-\frac{n}{2}\right)}\cdot \sigma^{-n} \cdot \prod_{i=1}^{n} t_{i}^{-1} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right]\right] 
 $$
 
 *logo, temos:*
 
 $$ 
-= \sum_{i=1}^{n} \left[ \delta_{i} \left[-\frac{1}{2}\log(2\pi) \cdot-\log{(\alpha) \cdot -\log{t_{i}} \cdot -\frac{1}{2\sigma^{2}} \cdot (\log(t_{i}) - \mu)^{2} \cdot (1-\delta_{i}) \Phi \left(\frac{-\log(t) + \mu}{\sigma} \right)}\right]\right] 
+= -\frac{n}{2} \cdot \left[\log(2) + log(\pi)\right]-n\cdot \log(\sigma) \cdot -\sum_{i=1}^{n} \log(t_{i}) -\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n}\left( \log(t_{i}) - \mu\right)^{2} 
 $$
 
 Derivando parcialmente $\hat{\theta}=(\mu,\alpha)$ se obtem:
 
 $$
-\frac{\partial l[L(\hat{\theta} | t_{i})]}{\partial \mu} =  
-\sum_{i=1}^{n} \left[\delta_{i} \left[-\frac{1}{2\sigma^{2}} \cdot (\log(t_{i}) - \mu)^{2} \cdot (1-\delta_{i}) \Phi\left(\frac{-\log(t) + \mu}{\sigma} \right) \right]\right] = 
+\frac{\partial l[L(\hat{\theta} | t_{i})]}{\partial \mu} = -\frac{1}{2\sigma^{2}}\cdot \sum_{i=1}^{n} (\log(t_{i})-\mu)^{2}= 
 $$
 
 $$
