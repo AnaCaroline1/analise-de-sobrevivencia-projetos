@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>3&nbsp; Distribuição Log-normal – Análise de sobrevivência aplicado a dados epidemiológicos</title>
+<title>2&nbsp; Distribuição Log-normal – Análise de sobrevivência aplicado a dados epidemiológicos</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -278,7 +278,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./dist_log_norm.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Distribuição Log-normal</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./dist_log_norm.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Distribuição Log-normal</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -316,26 +316,20 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist_exponencial.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Distribuição Exponencial</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./dist_weibull.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Distribuição Weibull</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Distribuição Weibull</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./dist_log_norm.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Distribuição Log-normal</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Distribuição Log-normal</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./dist_log_logis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></span></a>
   </div>
 </li>
     </ul>
@@ -348,8 +342,8 @@ window.Quarto = {
     <h2 id="toc-title">Sumário</h2>
    
   <ul>
-  <li><a href="#função-de-verossimilhança" id="toc-função-de-verossimilhança" class="nav-link active" data-scroll-target="#função-de-verossimilhança"><span class="header-section-number">3.1</span> Função de verossimilhança</a></li>
-  <li><a href="#log-verossimilhança-da-log-normal" id="toc-log-verossimilhança-da-log-normal" class="nav-link" data-scroll-target="#log-verossimilhança-da-log-normal"><span class="header-section-number">3.2</span> Log-verossimilhança da Log-Normal:</a></li>
+  <li><a href="#função-de-verossimilhança" id="toc-função-de-verossimilhança" class="nav-link active" data-scroll-target="#função-de-verossimilhança"><span class="header-section-number">2.1</span> Função de verossimilhança</a></li>
+  <li><a href="#log-verossimilhança-da-log-normal" id="toc-log-verossimilhança-da-log-normal" class="nav-link" data-scroll-target="#log-verossimilhança-da-log-normal"><span class="header-section-number">2.2</span> Log-verossimilhança da Log-Normal:</a></li>
   </ul>
 </nav>
     </div>
@@ -359,7 +353,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Distribuição Log-normal</span></h1>
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Distribuição Log-normal</span></h1>
 </div>
 
 
@@ -380,8 +374,8 @@ window.Quarto = {
 <p><span class="math display">\[
 f(t) = \frac{1}{\sqrt{2\pi} \cdot t \cdot \sigma} \cdot exp\left[ \frac{1}{2\sigma^{2}} \cdot (\log(t) - \mu)^{2} \right] \ ; \ S(t)= \Phi \left(\frac{-\log(t) + \mu}{\sigma} \right) t &gt; 0
 \]</span></p>
-<section id="função-de-verossimilhança" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="função-de-verossimilhança"><span class="header-section-number">3.1</span> Função de verossimilhança</h2>
+<section id="função-de-verossimilhança" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="função-de-verossimilhança"><span class="header-section-number">2.1</span> Função de verossimilhança</h2>
 <p><span class="math display">\[
 L(\theta|t_{i}) = \prod_{i=1}^{n} \left[\frac{1}{\sqrt{2\pi} \cdot t \cdot \sigma} \cdot exp\left[ \frac{1}{2\sigma^{2}} \cdot (\log(t) - \mu)^{2} \right] \right]
 \]</span></p>
@@ -393,8 +387,8 @@ L(\hat{\theta}|t_{i}) = \frac{1}{(\sqrt{2\pi})^{n} \cdot t_{i} \cdot \sigma^{n}}
 L(\hat{\theta}|t_{i}) = (2\pi)^{\left(-\frac{n}{2}\right)}\cdot \sigma^{-n} \cdot \prod_{i=1}^{n} t_{i}^{-1} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right]
 \]</span></p>
 </section>
-<section id="log-verossimilhança-da-log-normal" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="log-verossimilhança-da-log-normal"><span class="header-section-number">3.2</span> Log-verossimilhança da Log-Normal:</h2>
+<section id="log-verossimilhança-da-log-normal" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="log-verossimilhança-da-log-normal"><span class="header-section-number">2.2</span> Log-verossimilhança da Log-Normal:</h2>
 <p><span class="math display">\[
 l[L\hat{\theta}| t_{i}] = \log \left[ (2\pi)^{\left(-\frac{n}{2}\right)}\cdot \sigma^{-n} \cdot \prod_{i=1}^{n} t_{i}^{-1} \cdot exp\left[-\frac{1}{2\sigma^{2}} \cdot \sum_{i=1}^{n} \left(\log(t_{i}) - \mu\right)^{2} \right]\right]
 \]</span></p>
@@ -846,12 +840,12 @@ l[L\hat{\theta}| t_{i}] = \log \left[ (2\pi)^{\left(-\frac{n}{2}\right)}\cdot \s
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./dist_weibull.html" class="pagination-link" aria-label="Distribuição Weibull">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Distribuição Weibull</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Distribuição Weibull</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./dist_log_logis.html" class="pagination-link" aria-label="Distribuição Log-logística">
-        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

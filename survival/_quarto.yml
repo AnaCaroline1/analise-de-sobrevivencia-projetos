@@ -14,8 +14,8 @@ book:
   chapters:
     - index.qmd
     #- dist_exponencial.qmd
-    #- dist_weibull.qmd
-    #- dist_log_norm.qmd
+    - dist_weibull.qmd
+    - dist_log_norm.qmd
     - dist_log_logis.qmd
 bibliography: references.bib
 format:

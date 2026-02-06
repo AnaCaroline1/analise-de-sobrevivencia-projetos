@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>1&nbsp; Distribuição Log-logística – Análise de sobrevivência aplicado a dados epidemiológicos</title>
+<title>3&nbsp; Distribuição Log-logística – Análise de sobrevivência aplicado a dados epidemiológicos</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,7 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./index.html" rel="prev">
+<link href="./dist_log_norm.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -277,7 +277,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./dist_log_logis.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./dist_log_logis.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -315,8 +315,20 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./dist_weibull.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Distribuição Weibull</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dist_log_norm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Distribuição Log-normal</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./dist_log_logis.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></span></a>
   </div>
 </li>
     </ul>
@@ -329,8 +341,8 @@ window.Quarto = {
     <h2 id="toc-title">Sumário</h2>
    
   <ul>
-  <li><a href="#função-de-sobrevivência" id="toc-função-de-sobrevivência" class="nav-link active" data-scroll-target="#função-de-sobrevivência"><span class="header-section-number">1.1</span> Função de Sobrevivência</a></li>
-  <li><a href="#função-verossimilhança" id="toc-função-verossimilhança" class="nav-link" data-scroll-target="#função-verossimilhança"><span class="header-section-number">1.2</span> Função verossimilhança</a></li>
+  <li><a href="#função-de-sobrevivência" id="toc-função-de-sobrevivência" class="nav-link active" data-scroll-target="#função-de-sobrevivência"><span class="header-section-number">3.1</span> Função de Sobrevivência</a></li>
+  <li><a href="#função-verossimilhança" id="toc-função-verossimilhança" class="nav-link" data-scroll-target="#função-verossimilhança"><span class="header-section-number">3.2</span> Função verossimilhança</a></li>
   </ul>
 </nav>
     </div>
@@ -340,7 +352,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></h1>
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></h1>
 </div>
 
 
@@ -361,14 +373,14 @@ window.Quarto = {
 <p><span class="math display">\[
 f(t) = \frac{\gamma}{\alpha^{\gamma}} \cdot t^{(\gamma-1)} \left[ 1 + \left(\frac{t}{\alpha} \right)^\gamma \right]^{-2}
 \]</span></p>
-<section id="função-de-sobrevivência" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="função-de-sobrevivência"><span class="header-section-number">1.1</span> Função de Sobrevivência</h2>
+<section id="função-de-sobrevivência" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="função-de-sobrevivência"><span class="header-section-number">3.1</span> Função de Sobrevivência</h2>
 <p><span class="math display">\[
 S(t) = \frac{1}{1 + \left(\frac{t}{\alpha} \right)^\gamma}
 \]</span></p>
 </section>
-<section id="função-verossimilhança" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="função-verossimilhança"><span class="header-section-number">1.2</span> Função verossimilhança</h2>
+<section id="função-verossimilhança" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="função-verossimilhança"><span class="header-section-number">3.2</span> Função verossimilhança</h2>
 <p><span class="math display">\[
 L(\theta | t) = \prod_{i=1}^{n} \left[ \left( \frac{\gamma}{\alpha^\gamma} \cdot t_i^{\gamma-1} \left[ 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right]^{-2} \right)^{\delta_i} \cdot \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right)^{1-\delta_i} \right]
 \]</span></p>
@@ -813,8 +825,8 @@ L(\theta | t) = \prod_{i=1}^{n} \left[ \left( \frac{\gamma}{\alpha^\gamma} \cdot
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./index.html" class="pagination-link" aria-label="Objetivo">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Objetivo</span>
+      <a href="./dist_log_norm.html" class="pagination-link" aria-label="Distribuição Log-normal">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Distribuição Log-normal</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
