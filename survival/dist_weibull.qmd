@@ -32,7 +32,50 @@ $$
 \ell[L(\theta | t)] = \sum_{i=1}^{n} \left[ \delta_{i} \left[ \log(\gamma) - \gamma \log(\alpha) + (\gamma - 1) \log(t_{i}) \right] - \left( \frac{t_{i}}{\alpha} \right)^{\gamma} \right]
 $$
 
-Derivando em relação a $\gamma$, temos:
+## Distribuição Log-Weibull (Gumbel)
+
+$$L(\theta | y) = \prod_{i=1}^n \left[ \left( \frac{1}{\sigma} \exp \left[ \frac{y_i - \mu}{\sigma} - \exp \left( \frac{y_i - \mu}{\sigma} \right) \right] \right)^{\delta_i} \cdot \left( \exp \left[ -\exp \left( \frac{y_i - \mu}{\sigma} \right) \right] \right)^{1-\delta_i} \right]$$
+
+$$\ell[L(\theta|y)] = \sum_{i=0}^{n}\left[\delta_{i} \log\left(\frac{1}{\sigma} \exp \left[ \frac{y_i - \mu}{\sigma} - \exp \left( \frac{y_i - \mu}{\sigma} \right) \right] \right) + (1-\delta_i) \log \left( \exp \left[ -\exp \left( \frac{y_i - \mu}{\sigma} \right) \right] \right)\right]$$
+
+Desenvolvendo as exponencias, aplicando os logs e separando os termos multiplicados na segunda parte da equação por $1-\delta_{i}$.
+
+$$-\delta_{i} \exp \left[ \frac{y_i - \mu}{\sigma} \right] - \exp \left[\frac{y_{i} - \mu}{\sigma} \right]+ \delta{i} \exp \left[\frac{y_{i} - \mu}{\sigma} \right]$$
+
+$$\ell[L(\theta | y)] = \sum_{i=1}^n \left[ \delta_i \left[ -\log(\sigma) + \left( \frac{y_i - \mu}{\sigma} \right) \right] - \exp \left( \frac{y_i - \mu}{\sigma} \right) \right]$$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
