@@ -1,7 +1,6 @@
 project:
   type: book
   output-dir: docs
-  
 knitr:
   opts_chunk:
     code-before: |
@@ -13,10 +12,11 @@ book:
   date: last-modified
   chapters:
     - index.qmd
-    #- dist_exponencial.qmd
+    - dist_exponencial.qmd
     - dist_weibull.qmd
     - dist_log_norm.qmd
     - dist_log_logis.qmd
+    - implementando_estimacao_via_EMV.R
 bibliography: references.bib
 format:
   html:

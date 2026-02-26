@@ -1,0 +1,2 @@
+"0","invst<-qnorm(st) "
+"0","plot(time,-log(st),pch=16,xlab=""Tempo"",ylab=""-log(S(t))"") "

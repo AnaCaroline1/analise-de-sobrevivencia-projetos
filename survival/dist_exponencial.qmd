@@ -8,31 +8,21 @@ $$
 
 Como o parâmetro $\alpha > 0$ correspondendo ao tempo médio de vida.
 
-## Função de verossimilhança# Distribuição Exponencial
-
-A função densidade de probabilidade associada a variável aleatória tempo até o evento $t$ com distribuição exponencial e função de sobrevivência é dada por:
-
-$$
-f(t) = \frac{1}{\alpha} \cdot exp\left[-\frac{t}{\alpha}\right] \ ; \ S(t)= exp\left[-\frac{t}{\alpha}\right]\ t > 0  
-$$
-
-Como o parâmetro $\alpha > 0$ correspondendo ao tempo médio de vida.
-
 ## Função de verossimilhança
 
 $$
-L(\theta | t) = \prod_{i=1}^{n} \left[ \left( \frac{1}{\alpha} \exp \left[ -\left( \frac{t_{i}}{\alpha} \right) \right] \right)^{\delta_{i}} \cdot \left( \exp \left[ -\left( \frac{t_{i}}{\alpha} \right) \right] \right)^{1-\delta_{i}} \right] = \\[10pt]
-
-= \prod_{i=1}^{n} \left[ \left( \frac{1}{\alpha} \right)^{\delta_{i}} \cdot \exp \left[ -\left( \frac{t_{i}}{\alpha} \right) \right]\right]
+L(\theta | t) = \prod_{i=1}^{n} \left[\left(\frac{1}{\alpha} \cdot exp\left[-\frac{t}{\alpha}\right] \right)^{\delta_{i}} \cdot \left(exp\left[-\frac{t}{\alpha}\right]\right)^{1-\delta_{i}}\right]
 $$
 
+$$
+= \prod_{i=1}^{n} \left[ \left( \frac{1}{\alpha} \right)^{\delta_{i}} \cdot \exp \left[ -\left( \frac{t_{i}}{\alpha} \right) \right]\right]
+$$
 
 ## A Log-verossimilhança da exponencial
 
 $$
 \ell[L(\theta | t)] = \sum_{i=1}^n \left[ - \delta_i \log(\alpha) - \left( \frac{t_i}{\alpha} \right) \right]
 $$
-
 
 Derivando em relação a $\alpha$ teremos que:
 
@@ -64,7 +54,31 @@ $$
 
 Que é exatamente a média amostral de $t_{i}$.
 
-```{r eval=FALSE}
+## Linearização da função de sobrevivência
+
+> "Para comparar o comportamento do modelo com os dados utilizados, se pode aplicar a linearização da função de sobrevivência de cada modelo construindo gráficos que sejam aproximadamente lineares, caso o modelo seja apropiado. Violação de lienaridade pode ser verificada visualmente de forma rápida."
+
+### Linarização da função de sobrevivência exponencial
+
+Para o modelo exponencial, a função de sobre vivência é dada por
+
+$$
+S(t)= exp\left[-\frac{t}{\alpha}\right]
+$$
+
+Logo,
+
+$$-\log[S(t)] = \frac{t}{\alpha} = \left(\frac{1}{\alpha}\right)t$$
+
+corresponde à equação da reta $y = a+bx$, $y=-log[S(t)]$, $a=0$, $b=1/\alpha$ e $x= t$. Sendo o modelo apropriado no caso $y$ versus t deve aproximadamente linear passando pela origem, com $\hat{S}(t)$ correspodendo ao estimador de Kaplan-Meier.
+
+![](modelo_vs_dados.jpeg){fig-align="center"}
+
+![](verificacao_linearidade.jpeg){fig-align="center"}
+
+No gráfico de verificação de risco ou linenaridade, se observa o risco acumulado versus o tempo. Se o risco fosse constante para o modelo Exponencial, os pontos deveriam formar uma linha reta partindo da origem. No caso, entretanto, os pontos formam uma curva para cima, indicando que o risco de o evento ocorrer aumenta com o tempo (risco de desenvolver câncer de bexiga). No início, o risco é vagaroso (tempo 0 a 15), após o tempo 20, a inclinação aumenta bruscamente.
+
+```{r eval=FALSE, include=FALSE}
 
 
 # Verificando como os dados do livro: câncer de bexiga

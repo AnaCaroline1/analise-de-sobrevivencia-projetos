@@ -1,0 +1,1 @@
+"0","plot(log(time),invst,pch=16,xlab=""log(Tempo)"",ylab=expression(Phi^-1*(S(t))))"

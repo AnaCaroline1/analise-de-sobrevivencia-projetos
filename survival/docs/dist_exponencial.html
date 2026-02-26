@@ -20,41 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -385,6 +350,10 @@ window.Quarto = {
   <ul>
   <li><a href="#função-de-verossimilhança" id="toc-função-de-verossimilhança" class="nav-link active" data-scroll-target="#função-de-verossimilhança"><span class="header-section-number">1.1</span> Função de verossimilhança</a></li>
   <li><a href="#a-log-verossimilhança-da-exponencial" id="toc-a-log-verossimilhança-da-exponencial" class="nav-link" data-scroll-target="#a-log-verossimilhança-da-exponencial"><span class="header-section-number">1.2</span> A Log-verossimilhança da exponencial</a></li>
+  <li><a href="#linearização-da-função-de-sobrevivência" id="toc-linearização-da-função-de-sobrevivência" class="nav-link" data-scroll-target="#linearização-da-função-de-sobrevivência"><span class="header-section-number">1.3</span> Linearização da função de sobrevivência</a>
+  <ul class="collapse">
+  <li><a href="#linarização-da-função-de-sobrevivência-exponencial" id="toc-linarização-da-função-de-sobrevivência-exponencial" class="nav-link" data-scroll-target="#linarização-da-função-de-sobrevivência-exponencial"><span class="header-section-number">1.3.1</span> Linarização da função de sobrevivência exponencial</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -419,108 +388,67 @@ f(t) = \frac{1}{\alpha} \cdot exp\left[-\frac{t}{\alpha}\right] \ ; \ S(t)= exp\
 <section id="função-de-verossimilhança" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="função-de-verossimilhança"><span class="header-section-number">1.1</span> Função de verossimilhança</h2>
 <p><span class="math display">\[
-L(\theta | t_{i}) = \prod_{i = 1}^{n} \left[\frac{1}{\alpha} \cdot exp\left[-\frac{t_{i}}{\alpha}\right]\right]^{\delta_{i}}
+L(\theta | t) = \prod_{i=1}^{n} \left[\left(\frac{1}{\alpha} \cdot exp\left[-\frac{t}{\alpha}\right] \right)^{\delta_{i}} \cdot \left(exp\left[-\frac{t}{\alpha}\right]\right)^{1-\delta_{i}}\right]
 \]</span></p>
 <p><span class="math display">\[
-= \left[\frac{1}{\alpha} \cdot exp\left[-\frac{t_{1}}{\alpha}\right]\right]^{\delta_{i}} \cdot \left[exp\left[-\frac{t_{2}}{\alpha}\right]\right]^{1-\delta_{i}}
-\]</span></p>
-<p><span class="math display">\[
-= \left[\frac{1}{\alpha^{n}}\right]^{\delta_{i}} \cdot exp\left(-\frac{\sum_{i=1}^{n}ti}{\alpha}\right)
-\]</span></p>
-<p>Podendo ser reescrita:</p>
-<p><span class="math display">\[
-= 1^{\delta_{i}} \cdot \alpha^{-n\cdot\delta_{i}} \cdot exp\left(-\frac{\sum_{i=1}^{n}ti}{\alpha}\right)
-\]</span></p>
-<p>Sabendo que <span class="math inline">\(\delta_{i}=\{0,1\}\)</span>, aplicando em <span class="math inline">\(1^{\delta_{i}}\)</span> se tem 1 multiplicando <span class="math inline">\(\alpha\)</span>, logo, a função de verossimilhança será:</p>
-<p><span class="math display">\[
-= \alpha^{-n\cdot\delta_{i}} \cdot exp\left(-\frac{\sum_{i=1}^{n}ti}{\alpha}\right)
+= \prod_{i=1}^{n} \left[ \left( \frac{1}{\alpha} \right)^{\delta_{i}} \cdot \exp \left[ -\left( \frac{t_{i}}{\alpha} \right) \right]\right]
 \]</span></p>
 </section>
 <section id="a-log-verossimilhança-da-exponencial" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="a-log-verossimilhança-da-exponencial"><span class="header-section-number">1.2</span> A Log-verossimilhança da exponencial</h2>
 <p><span class="math display">\[
-l[L(\hat{\theta}|t_{i})] = \log\left[\alpha^{-n\cdot\delta_{i}} \cdot exp\left(-\frac{\sum_{i=1}^{n}ti}{\alpha}\right) \right] = -n\cdot \delta_{i}\cdot \log(\alpha) -\frac{\sum_{i=1}^{n}t_{i}}{\alpha}
+\ell[L(\theta | t)] = \sum_{i=1}^n \left[ - \delta_i \log(\alpha) - \left( \frac{t_i}{\alpha} \right) \right]
 \]</span></p>
 <p>Derivando em relação a <span class="math inline">\(\alpha\)</span> teremos que:</p>
 <p><span class="math display">\[
-\frac{\partial l[L(\hat{\theta}|t_{i})]}{\partial\alpha} = \frac{-n\cdot\delta_{i}}{\alpha} + \frac{\sum_{i=1}^{n}t_{i}}{\alpha^{2}} = 0
+\frac{\partial l[L(\hat{\theta}|t_{i})]}{\partial\alpha} = \frac{-\sum_{i=1}^{n}\cdot\delta_{i}}{\alpha} + \frac{\sum_{i=1}^{n}t_{i}}{\alpha^{2}} = 0
 \]</span></p>
 <p><span class="math display">\[
-\frac{-n\cdot\delta_{i}}{\alpha} + \frac{\sum_{i=1}^{n}t_{i}}{\alpha^{2}} = 0 \ \cdot (\alpha^{2})
+\frac{-\sum_{i=1}^{n}\cdot\delta_{i}}{\alpha} + \frac{\sum_{i=1}^{n}t_{i}}{\alpha^{2}} = 0 \ \cdot (\alpha^{2})
 \]</span></p>
 <p><span class="math display">\[
-= -n\cdot\delta_{i}\cdot \alpha + \sum_{i=1}^{n}t_{i} = 0
+= -\sum_{i=1}^{n}\cdot\delta_{i}\cdot \alpha + \sum_{i=1}^{n}t_{i} = 0
 \]</span></p>
 <p><span class="math display">\[
-\sum_{i=1}^{n} t_{i} = n \cdot \delta_{i} \cdot \alpha
+\sum_{i=1}^{n} t_{i} = \sum_{i=1}^{n} \cdot \delta_{i} \cdot \alpha
 \]</span></p>
 <p><span class="math display">\[
-\hat{\alpha} = \frac{\sum_{i=1}^{n}t_{i}}{n\cdot\delta_{i}}
+\hat{\alpha} = \frac{\sum_{i=1}^{n}t_{i}}{\sum_{i=1}^{n}\cdot\delta_{i}}
 \]</span></p>
 <p>Na ausência de censura, aplicando <span class="math inline">\(\delta_{i}={1}\)</span>, teremos:</p>
 <p><span class="math display">\[
 \hat{\alpha} = \frac{\sum_{i=1}^{n}t_{i}}{n}
 \]</span></p>
 <p>Que é exatamente a média amostral de <span class="math inline">\(t_{i}\)</span>.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificando como os dados do livro: câncer de bexiga</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajuste conforme a distribuição</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>ajust1_cc_bx <span class="ot">&lt;-</span> <span class="fu">survreg</span>(<span class="fu">Surv</span>(tempos,cens)<span class="sc">~</span><span class="dv">1</span>,<span class="at">dist =</span> <span class="st">"exponential"</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>ajust2_cc_bx <span class="ot">&lt;-</span> <span class="fu">survreg</span>(<span class="fu">Surv</span>(tempos,cens)<span class="sc">~</span><span class="dv">1</span>,<span class="at">dist =</span> <span class="st">"weibull"</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>ajust3_cc_bx <span class="ot">&lt;-</span> <span class="fu">survreg</span>(<span class="fu">Surv</span>(tempos,cens)<span class="sc">~</span><span class="dv">1</span>,<span class="at">dist =</span> <span class="st">"lognorm"</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Ekm  dos dados</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>ekm_cc_bx <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(tempos,cens)<span class="sc">~</span><span class="dv">1</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>time <span class="ot">&lt;-</span> ekm_cc_bx<span class="sc">$</span>time</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>st <span class="ot">&lt;-</span> ekm_cc_bx<span class="sc">$</span>surv</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Cálculo dos parâmetros estimados das distribuições</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>alpha<span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">exp</span>(ajust1_cc_bx<span class="sc">$</span>coefficients[<span class="dv">1</span>]),<span class="dv">2</span> )</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>alpha2<span class="ot">&lt;-</span>  <span class="fu">round</span>(<span class="fu">exp</span>(ajust2_cc_bx<span class="sc">$</span>coefficients[<span class="dv">1</span>]),<span class="dv">2</span> )</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>gama2<span class="ot">&lt;-</span><span class="dv">1</span><span class="sc">/</span>ajust2_cc_bx<span class="sc">$</span>scale</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>mi <span class="ot">&lt;-</span>  <span class="fu">round</span>(ajust3_cc_bx<span class="sc">$</span>coefficients[<span class="dv">1</span>],<span class="dv">2</span>)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>alpha3 <span class="ot">&lt;-</span> <span class="fu">round</span>(ajust3_cc_bx<span class="sc">$</span>scale,<span class="dv">2</span>)</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>ste_cc_bx<span class="ot">&lt;-</span><span class="fu">exp</span>(<span class="sc">-</span>time<span class="sc">/</span>alpha)</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>stw_cc_bx<span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>(time<span class="sc">/</span>alpha2)<span class="sc">^</span>gama2)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>stln_cc_bx<span class="ot">&lt;-</span> <span class="fu">pnorm</span>((<span class="sc">-</span><span class="fu">log</span>(time)<span class="sc">+</span> mi)<span class="sc">/</span>alpha3)</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a> <span class="fu">plot</span>(st, ste_cc_bx, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab =</span> <span class="st">"S(t): Kaplan-Meier"</span>, <span class="at">ylab=</span><span class="st">"S(t): exponencial"</span>,</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>      <span class="at">cex.lab=</span><span class="fl">1.5</span>,<span class="at">cex.axis=</span><span class="fl">1.3</span>)</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a> <span class="fu">abline</span>(<span class="at">a=</span><span class="dv">0</span>,<span class="at">b=</span><span class="dv">1</span>)</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a> <span class="fu">plot</span>(st, stw_cc_bx, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab =</span> <span class="st">"S(t): Kaplan-Meier"</span>, <span class="at">ylab=</span><span class="st">"S(t): weibull"</span>,</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">cex.lab=</span><span class="fl">1.5</span>,<span class="at">cex.axis=</span><span class="fl">1.3</span>)</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a> <span class="fu">abline</span>(<span class="at">a=</span><span class="dv">0</span>,<span class="at">b=</span><span class="dv">1</span>)</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a> <span class="fu">plot</span>(st, stln_cc_bx, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab =</span> <span class="st">"S(t): Kaplan-Meier"</span>, <span class="at">ylab=</span><span class="st">"S(t): log-normal"</span>,</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>      <span class="at">cex.lab=</span><span class="fl">1.5</span>,<span class="at">cex.axis=</span><span class="fl">1.3</span>)</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a> <span class="fu">abline</span>(<span class="at">a=</span><span class="dv">0</span>,<span class="at">b=</span><span class="dv">1</span>)</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">5</span>,<span class="dv">2</span>,<span class="dv">2</span>)); </span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>invst<span class="ot">&lt;-</span><span class="fu">qnorm</span>(st) </span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(time,<span class="sc">-</span><span class="fu">log</span>(st),<span class="at">pch=</span><span class="dv">16</span>,<span class="at">xlab=</span><span class="st">"Tempo"</span>,<span class="at">ylab=</span><span class="st">"-log(S(t))"</span>) </span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">log</span>(time),<span class="fu">log</span>(<span class="sc">-</span><span class="fu">log</span>(st)),<span class="at">pch=</span><span class="dv">16</span>,<span class="at">xlab=</span><span class="st">"log(Tempo)"</span>,<span class="at">ylab=</span><span class="st">"log(-log(S(t)))"</span>) </span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">log</span>(time),invst,<span class="at">pch=</span><span class="dv">16</span>,<span class="at">xlab=</span><span class="st">"log(Tempo)"</span>,<span class="at">ylab=</span><span class="fu">expression</span>(Phi<span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span>(<span class="fu">S</span>(t))))</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)) </span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ekm_cc_bx,<span class="at">conf.int=</span>F,<span class="at">xlab=</span><span class="st">"Tempo"</span>,<span class="at">ylab=</span><span class="st">"S(t)"</span>); <span class="fu">lines</span>(<span class="fu">c</span>(<span class="dv">0</span>,time),<span class="fu">c</span>(<span class="dv">1</span>,stw_cc_bx),<span class="at">lty=</span><span class="dv">2</span>) </span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="dv">25</span>,<span class="fl">0.8</span>,<span class="at">lty=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),<span class="fu">c</span>(<span class="st">"Kaplan-Meier"</span>,<span class="st">"Weibull"</span>),<span class="at">bty=</span><span class="st">"n"</span>,<span class="at">cex=</span><span class="fl">0.9</span>) </span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ekm_cc_bx,<span class="at">conf.int=</span>F,<span class="at">xlab=</span><span class="st">"Tempo"</span>,<span class="at">ylab=</span><span class="st">"S(t)"</span>); <span class="fu">lines</span>(<span class="fu">c</span>(<span class="dv">0</span>,time),<span class="fu">c</span>(<span class="dv">1</span>,stln_cc_bx),<span class="at">lty=</span><span class="dv">2</span>) </span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="dv">25</span>,<span class="fl">0.8</span>,<span class="at">lty=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),<span class="fu">c</span>(<span class="st">"Kaplan-Meier"</span>,<span class="st">"Log-normal"</span>),<span class="at">bty=</span><span class="st">"n"</span>,<span class="at">cex=</span><span class="fl">0.9</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="linearização-da-função-de-sobrevivência" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="linearização-da-função-de-sobrevivência"><span class="header-section-number">1.3</span> Linearização da função de sobrevivência</h2>
+<blockquote class="blockquote">
+<p>“Para comparar o comportamento do modelo com os dados utilizados, se pode aplicar a linearização da função de sobrevivência de cada modelo construindo gráficos que sejam aproximadamente lineares, caso o modelo seja apropiado. Violação de lienaridade pode ser verificada visualmente de forma rápida.”</p>
+</blockquote>
+<section id="linarização-da-função-de-sobrevivência-exponencial" class="level3" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="linarização-da-função-de-sobrevivência-exponencial"><span class="header-section-number">1.3.1</span> Linarização da função de sobrevivência exponencial</h3>
+<p>Para o modelo exponencial, a função de sobre vivência é dada por</p>
+<p><span class="math display">\[
+S(t)= exp\left[-\frac{t}{\alpha}\right]
+\]</span></p>
+<p>Logo,</p>
+<p><span class="math display">\[-\log[S(t)] = \frac{t}{\alpha} = \left(\frac{1}{\alpha}\right)t\]</span></p>
+<p>corresponde à equação da reta <span class="math inline">\(y = a+bx\)</span>, <span class="math inline">\(y=-log[S(t)]\)</span>, <span class="math inline">\(a=0\)</span>, <span class="math inline">\(b=1/\alpha\)</span> e <span class="math inline">\(x= t\)</span>. Sendo o modelo apropriado no caso <span class="math inline">\(y\)</span> versus t deve aproximadamente linear passando pela origem, com <span class="math inline">\(\hat{S}(t)\)</span> correspodendo ao estimador de Kaplan-Meier.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="modelo_vs_dados.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
 </div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="verificacao_linearidade.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p>No gráfico de verificação de risco ou linenaridade, se observa o risco acumulado versus o tempo. Se o risco fosse constante para o modelo Exponencial, os pontos deveriam formar uma linha reta partindo da origem. No caso, entretanto, os pontos formam uma curva para cima, indicando que o risco de o evento ocorrer aumenta com o tempo (risco de desenvolver câncer de bexiga). No início, o risco é vagaroso (tempo 0 a 15), após o tempo 20, a inclinação aumenta bruscamente.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

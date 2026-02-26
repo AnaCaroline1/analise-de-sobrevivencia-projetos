@@ -1,0 +1,1 @@
+"0","plot(log(time),log(-log(st)),pch=16,xlab=""log(Tempo)"",ylab=""log(-log(S(t)))"") "

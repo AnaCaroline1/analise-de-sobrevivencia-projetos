@@ -1,0 +1,1 @@
+"0","plot(ekm_cc_bx,conf.int=F,xlab=""Tempo"",ylab=""S(t)""); lines(c(0,time),c(1,stw_cc_bx),lty=2) "

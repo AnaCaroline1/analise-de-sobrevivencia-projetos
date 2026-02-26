@@ -1,101 +1,125 @@
-log_verossimilhança_weibull <- function(theta,t){
-  gama <- theta[1]
-  alpha <- theta[2] #gamma #alpha
-  
-  # Evitando parâmetros não-positivos durante a otimização
-  if(gama <= 0 || alpha <=0) return(Inf)
-  
-  # Log da densidade weibull
-  
-  log_link_w <- dweibull(t,shape=gama,scale=alpha,log = T)
-  
-  return(-sum(log_link_w))
-}
-
 # Nova função considerando censura
-log_verossimilhanca_censura <- function(theta, t, status) {
-  gama <- theta[1]  # shape
-  alpha <- theta[2] # scale
+log_vero_surv_exponencial <- function(theta, t, status) {
+  alpha <- theta[1]
   
-  if(gama <= 0 || alpha <= 0) return(Inf)
+  if(alpha <= 0) return(Inf)
   
-  # Evento de falha (Densidade)
-  # dweibull(..., log = T)
-  f_t <- dweibull(t[status == 1], shape = gama, scale = alpha, log = TRUE)
-  
-  # Evento de censura (Sobrevivência)
-  # pweibull(..., lower.tail = F, log = T) é o log(S(t))
-  
-  S_t <- pweibull(t[status == 0], shape = gama, scale = alpha, lower.tail = FALSE, log.p = TRUE)
+  logv <- sum(-status * log(alpha) -(t/alpha))
   
   # Log-verossimilhança total (negativa para o optim)
-  return(-(sum(f_t) + sum(S_t)))
+  return(-logv)
 }
 
 # Estimando parâmetros a partir dos meus dados como a função fitdistr do pacote MASS
 
 tempos # Do banco de dados sobre câncer de bexiga
 cens
-ajust_ini1 <- fitdistr(tempos, "weibull")
+ajust_ini1 <- fitdistr(tempos, "exponential")
 
-par_weibull1 <- ajust_ini1$estimate
+par_exp1 <- ajust_ini1$estimate
 
 
-log_verossimilhança_weibull(par_weibull1,tempos)
+log_vero_surv_exponencial(par_exp1, tempos, cens)
 
-log_verossimilhanca_censura(par_weibull1, tempos, cens)
 
 # Aplicando a optimização
 
-fit1 <- optim(par=c(1,1),fn=log_verossimilhanca_censura, t = tempos,status = cens)
+ajus1 <- optimize(f=log_vero_surv_exponencial, 
+                  interval = c(0.001, 1000),
+                  t = tempos,
+                  status = cens)
+ajus1$minimum
 
-gama_est1 <- fit1$par[1]
-alph_est1 <- fit1$par[2]
+ajus11 <- optim(par = 1,
+                fn=log_vero_surv_exponencial, 
+                t = tempos,
+                status = cens, 
+                method="Brent",
+                lower = 0.001,
+                upper = 1000)
+ajus11$par
 
 n <- length(tempos) # tamanho da amostra
-x <- rweibull(n, shape=gama_est1, scale = alph_est1)
+x <- rexp(n,ajus11$par)
 
 x_seq <- seq(min(tempos), max(tempos), length.out = 10)
 #length.out: gera uma sequência de 100 valores x igualmente espaçados entre o valor
 ##mínimo e o valor máximo dos dados.
-densidade_weibull1 <- dweibull(x_seq, shape = gama_est1, scale = alph_est1) 
+densidade_exp <- dexp(x_seq,ajus11$par) 
 
-hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Weibull p/ bexiga",
+plot(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Exponencial p/ câncer de bexiga",
      freq = FALSE)
-lines(x_seq, densidade_weibull1, col = "red", lwd = 2)
-
-# Estimando parâmetros com os bancos de dados.
-
- # Do banco de dados sobre Sg e Srag
-tempo_sgf <- df_srag_sg |>
-  mutate(dif_tempo = as.numeric(dt_notific - dt_sin_pri)) |>
-  filter(dif_tempo > 0)
-tempo_sg<-tempo_sgf$dif_tempo
-cens1 <- tempo_sgf$status_1
-table(tempo_sg)
-ajust2 <- fitdistr(tempo_sg, "weibull")
-par_weibull2 <- ajust2$estimate
-
-log_verossimilhança_weibull(par_weibull2,tempo_sg)
-log_verossimilhanca_censura(par_weibull2,tempo_sg, cens1)
-fit2 <- optim(par=c(1,1),fn=log_verossimilhanca_censura, t = tempo_sg, status=cens1)
-
-
-gama_est <- fit2$par[1]
-alph_est <- fit2$par[2]
-
-n <- length(tempo_sg) # tamanho da amostra
-x <- rweibull(n, shape=gama_est, scale = alph_est)
-
-x_seq <- seq(min(tempo_sg), max(tempo_sg), length.out = 5)
-#length.out: gera uma sequência de 100 valores x igualmente espaçados entre o valor
-##mínimo e o valor máximo dos dados.
-densidade_weibull2 <- dweibull(x_seq, shape = gama_est, scale = alph_est) 
-
-hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Weibull p/ srg",
+lines(x_seq, densidade_exp, col = "red", lwd = 2)
+hist(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Exponencial p/ câncer de bexiga",
      freq = FALSE)
-lines(x_seq, densidade_weibull2, col = "red", lwd = 2)
+lines(x_seq, densidade_exp, col = "red", lwd = 2)
 
+#############################################
+## Passos
+# ordenar os tempos
+# calcular a proporção de sobreviventes para
+# o tempo de evento (delta=1)
+
+ekm <- function(tempos,status){
+  ordem <- order(tempos)
+  t <- tempos[ordem]
+  s <- status[ordem]
+  
+  n <- length(t)
+  surv <- numeric(n)
+  p_surv <- 1
+  
+  for(i in 1:n) {
+    # n_risco: quantos restam (incluindo o atual)
+    n_risco <- n - i + 1
+    # Se houve evento, a probabilidade condicional de sobreviver é (n-1)/n
+    if(s[i] == 1) {
+      p_surv <- p_surv * ((n_risco - 1) / n_risco)
+    }
+    surv[i] <- p_surv
+  }
+  
+  return(list(tempo = t, sobrevivencia = surv))
+}
+
+km_c_bx <- ekm(tempos,cens)
+km_c_bx
+
+t_teorico <- seq(0, max(tempos),length.out=50)
+s_teorico <- exp(-t_teorico/ajus11$par)
+
+plot(km_c_bx$tempo, km_c_bx$sobrevivencia,
+     type = "s",
+     lwd=2,
+     main = "Ajuste Manual: Dados vs. Modelo Exponencial",
+     ylim = c(0,1))
+lines(t_teorico,s_teorico, col="red",lwd=2,lty=2)
+legend("topright", 
+       legend = c("Kaplan-Meier (Dados)", "Exponencial (Modelo)"),
+       col = c("black", "red"), 
+       lty = c(1, 2), 
+       lwd = 2)
+
+# Para entender se a exponencial é um boa escolha, se utiliza
+# uma visualização gráfica por meio do Risco Acumulado, sendo na 
+# exponencial -log(S(t)), com linha reta começando em zero.
+
+# Calcular o log negativo da sobrevivência de Kaplan-Meier
+risco_acumulado_km <- -log(km_c_bx$sobrevivencia)
+
+# Plotar
+plot(km_c_bx$tempo, risco_acumulado_km, pch = 5, col = "blue",
+     xlab = "Tempo (t)", ylab = "-log(S(t))",
+     main = "Verificação de Risco Constante")
+
+# Adicionar a linha esperada pelo seu modelo (1/alpha * t)
+abline(a = 0, b = 1/ajus11$par, col = "red", lwd = 2)
+
+# Se os pontos azuis seguirem a reta, a 
+#distribuição é adequada para os dados.
+# Se os pontos fazem uma curva, seja para cima ou baixo,
+# indica que o risco não é constante, logo se testa outra 
+#distribuição.
 
 
 #############################################
