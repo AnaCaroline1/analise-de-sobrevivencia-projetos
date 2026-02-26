@@ -29,7 +29,25 @@ $$
 = \sum_{i=1}^n \left[ \delta_i\left[ \log\left(-\frac{1}{2}2\pi - t_i - \sigma\right) - \frac{1}{2\sigma^2} (\log(t_i) - \mu)^2 \right] + (1-\delta_i) \log \left( \Phi \left( \frac{-\log(t_i) + \mu}{\sigma} \right) \right) \right]\\[10pt]
 $$
 
+
 $$
 = \sum_{i=1}^n \left[ \delta_i\left[ \log\left(-\pi - t_i - \sigma\right) - \frac{1}{2\sigma^2} (\log(t_i) - \mu)^2 \right] + (1-\delta_i) \log \left( \Phi \left( \frac{-\log(t_i) + \mu}{\sigma} \right) \right) \right]
 $$
 
+## Lineiarização da função de sobrevivência da log-normal
+
+A função de sobrevivência associada ao modelo log-normal, dada por 
+
+$$
+S(t)= \Phi \left(\frac{-\log(t) + \mu}{\sigma} \right)
+$$
+
+também pode ser linearizada e apresentada a seguinte forma
+
+$$
+\Phi^{-1}(S(t)) = \frac{-\log(t) + \mu}{\sigma} = \frac{\mu}{\sigma} - \left(\frac{1}{\sigma}\right)\log(t)
+$$
+
+com $\Phi^{-1}(.)$ correspondendo aos percentis da distribuição normal padrão.
+
+Portanto para que o modelo log-normal seja considerado apropriado, o gráfico $\Phi^{-1}(\hat{S}(t))$ *versus* $\log(t)$ deve ser aproximadamente linear com intercepto $a=\mu/\sigma$, e inclinação $b = -1/\sigma$.
