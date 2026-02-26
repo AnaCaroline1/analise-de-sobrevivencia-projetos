@@ -54,6 +54,10 @@ $$
 
 Que é exatamente a média amostral de $t_{i}$.
 
+## Sobre o modelo
+
+O modelo mais simples, caracterizado pela ausência de memória. Sendo aplicado em situações onde a falha ocorre de forma aleatória e estável, limitado para casos em que se quer obter o envelhecimento ou desgaste.
+
 ## Linearização da função de sobrevivência
 
 > "Para comparar o comportamento do modelo com os dados utilizados, se pode aplicar a linearização da função de sobrevivência de cada modelo construindo gráficos que sejam aproximadamente lineares, caso o modelo seja apropiado. Violação de lienaridade pode ser verificada visualmente de forma rápida."
