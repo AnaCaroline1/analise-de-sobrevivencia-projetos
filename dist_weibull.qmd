@@ -44,6 +44,21 @@ $$-\delta_{i} \exp \left[ \frac{y_i - \mu}{\sigma} \right] - \exp \left[\frac{y_
 
 $$\ell[L(\theta | y)] = \sum_{i=1}^n \left[ \delta_i \left[ -\log(\sigma) + \left( \frac{y_i - \mu}{\sigma} \right) \right] - \exp \left( \frac{y_i - \mu}{\sigma} \right) \right]$$
 
+## Linearização da função de sobrevivência da Weibull
+
+A função de sobrevivência do modelo de Weibull é dado por
+
+$$
+S(t) = \exp\left[- \frac{t}{\alpha}^{\lambda} \right]
+$$
+
+Desse modo,
+
+$$
+-\log\left[S(t)\right] = \left( \frac{t}{\alpha}^{\lambda}\right)
+$$
+
+tal que, de acordo com a equação $y= a +bx$, se tem $y=\log\left[-\log\left[S(t)\right]\right],$a = -\lambda\log(\alpha)$, $b=\lambda$, $x=\log(t)$. Portanto, para que o modelo de Weibull seja considerado apropriado, gráfico $\log\left[-\log\left[S(t)\right]\right]$ *versus* $\log(t)$ dve ser aproximadamente linear, com $\hat{S}(t)$ correspondendo ao estimador de Kaplan-Meier. Se além de linear, apresentar inclinação igual a 1, haverá evidências a favor do modelo exponencial.
 
 
 
