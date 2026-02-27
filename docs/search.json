@@ -44,7 +44,7 @@
     "href": "index.html",
     "title": "Análise de sobrevivência aplicado a dados epidemiológicos",
     "section": "",
-    "text": "Objetivo\nVerificar comportamento de distribuições de probabilidade em dados para aplicação de análise de sobrevivência. Para tal, se deve obter estimadores de máximo verossimilhança utilizando as funções \\(optim\\) e \\(optimize\\) para identificar os valores dos parâmetros estimados, convergência dos dados sob a distribuição de interesse.\nAlém da aplicabilidade, se deve conhecer cada distribuição, seus pressupostos, características, propriedades e comportamento gráfico em relação aos dados.\nPara comparação, se utiliza-se os pacotes implementados do \\(R\\) para aplicar análise de sobrevivência com o \\(survival\\), vizualização gráfica com o pacote \\(ggplot2\\) e leitura de banco de dados com \\(readxl\\).\nAplicando a função de sobrevivência com funções criadas apartir dos resultados de convergência para certa distribuição.\nOs dados utilizados são:\n\ncancer_de_pele.txt\npacientes com câncer de bexiga\nesus.sivep.covid19bh.2023.csv\n\n\n1 e 2 foram bases retiradas do repositório dos autores do livro Análise de Sobrevivência, Colossimo & Giolo: Acesse aqui;\n3 foi retirado do banco de dados abertos do governo: Acesso ao banco de dados abertos do Gov",
+    "text": "Objetivo\nVerificar comportamento de distribuições de probabilidade em dados para aplicação de análise de sobrevivência. Para tal, se deve obter estimadores de máximo verossimilhança utilizando as funções \\(optim\\) e \\(optimize\\) para identificar os valores dos parâmetros estimados, convergência dos dados sob a distribuição de interesse.\nAlém da aplicabilidade, se deve conhecer cada distribuição, seus pressupostos, características, propriedades e comportamento gráfico em relação aos dados.\nPara comparação, se utiliza-se os pacotes implementados do \\(R\\) para aplicar análise de sobrevivência com o \\(survival\\), vizualização gráfica com o pacote \\(ggplot2\\) e leitura de banco de dados com \\(readxl\\).\nAplicando a função de sobrevivência com funções criadas apartir dos resultados de convergência para certa distribuição.\nOs dados utilizados são:\n\ncancer_de_pele.txt\npacientes com câncer de bexiga\n\n\n1 e 2 foram bases retiradas do repositório dos autores do livro Análise de Sobrevivência, Colossimo & Giolo: Acesse aqui;",
     "crumbs": [
       "Objetivo"
     ]
@@ -64,7 +64,7 @@
     "href": "dist_log_norm.html#log-verossimilhança-da-log-normal",
     "title": "3  Distribuição Log-normal",
     "section": "3.2 Log-verossimilhança da Log-Normal:",
-    "text": "3.2 Log-verossimilhança da Log-Normal:\n\\[\n\\ell[L(\\theta | t)] = \\sum_{i=1}^n \\left[ \\delta_i \\log \\left( (2\\pi)^{-1/2} \\cdot t_i^{-1} \\cdot \\sigma^{-1} \\cdot \\exp \\left[ -\\frac{1}{2\\sigma^2} (\\log(t_i) - \\mu)^2 \\right] \\right) + (1-\\delta_i) \\log \\left( \\Phi \\left( \\frac{-\\log(t_i) + \\mu}{\\sigma} \\right) \\right) \\right]\n\\]\n\\[\n= \\sum_{i=1}^n \\left[ \\delta_i \\left[ -\\frac{1}{2} \\log(2\\pi) - \\log(t_i) - \\log(\\sigma) - \\frac{1}{2\\sigma^2} (\\log(t_i) - \\mu)^2 \\right] + (1-\\delta_i) \\log \\left( \\Phi \\left( \\frac{-\\log(t_i) + \\mu}{\\sigma} \\right) \\right) \\right]\n\\]\nReescrevendo, teremos:\n\\[\n= \\sum_{i=1}^n \\left[ \\delta_i\\left[ \\log\\left(-\\frac{1}{2}2\\pi - t_i - \\sigma\\right) - \\frac{1}{2\\sigma^2} (\\log(t_i) - \\mu)^2 \\right] + (1-\\delta_i) \\log \\left( \\Phi \\left( \\frac{-\\log(t_i) + \\mu}{\\sigma} \\right) \\right) \\right]\\\\[10pt]\n\\]\n\\[\n= \\sum_{i=1}^n \\left[ \\delta_i\\left[ \\log\\left(-\\pi - t_i - \\sigma\\right) - \\frac{1}{2\\sigma^2} (\\log(t_i) - \\mu)^2 \\right] + (1-\\delta_i) \\log \\left( \\Phi \\left( \\frac{-\\log(t_i) + \\mu}{\\sigma} \\right) \\right) \\right]\n\\]",
+    "text": "3.2 Log-verossimilhança da Log-Normal:\n\\[\n\\ell[L(\\theta | t)] = \\sum_{i=1}^n \\left[ \\delta_i \\log \\left( (2\\pi)^{-1/2} \\cdot t_i^{-1} \\cdot \\sigma^{-1} \\cdot \\exp \\left[ -\\frac{1}{2\\sigma^2} (\\log(t_i) - \\mu)^2 \\right] \\right) + (1-\\delta_i) \\log \\left( \\Phi \\left( \\frac{-\\log(t_i) + \\mu}{\\sigma} \\right) \\right) \\right]\n\\]\n\\[\n= \\sum_{i=1}^n \\left[ \\delta_i \\left[ -\\frac{1}{2} \\log(2\\pi) - \\log(t_i) - \\log(\\sigma) - \\frac{1}{2\\sigma^2} (\\log(t_i) - \\mu)^2 \\right] + (1-\\delta_i) \\log \\left( \\Phi \\left( \\frac{-\\log(t_i) + \\mu}{\\sigma} \\right) \\right) \\right]\n\\]",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Distribuição Log-normal</span>"
     ]
@@ -94,7 +94,7 @@
     "href": "dist_weibull.html#distribuição-log-weibull-gumbel",
     "title": "2  Distribuição Weibull",
     "section": "2.3 Distribuição Log-Weibull (Gumbel)",
-    "text": "2.3 Distribuição Log-Weibull (Gumbel)\n\\[L(\\theta | y) = \\prod_{i=1}^n \\left[ \\left( \\frac{1}{\\sigma} \\exp \\left[ \\frac{y_i - \\mu}{\\sigma} - \\exp \\left( \\frac{y_i - \\mu}{\\sigma} \\right) \\right] \\right)^{\\delta_i} \\cdot \\left( \\exp \\left[ -\\exp \\left( \\frac{y_i - \\mu}{\\sigma} \\right) \\right] \\right)^{1-\\delta_i} \\right]\\]\n\\[\\ell[L(\\theta | y)] = \\sum_{i=1}^n \\left[ \\delta_i \\log \\left[ \\frac{1}{\\sigma} \\exp \\left( \\frac{y_i - \\mu}{\\sigma} \\right) \\right] - \\exp \\left( \\frac{y_i - \\mu}{\\sigma} \\right) \\right]\\]\n\\[\\ell[L(\\theta | y)] = \\sum_{i=1}^n \\left[ \\delta_i \\left[ -\\log(\\sigma) + \\left( \\frac{y_i - \\mu}{\\sigma} \\right) \\right] - \\exp \\left( \\frac{y_i - \\mu}{\\sigma} \\right) \\right]\\]",
+    "text": "2.3 Distribuição Log-Weibull (Gumbel)\n\\[L(\\theta | y) = \\prod_{i=1}^n \\left[ \\left( \\frac{1}{\\sigma} \\exp \\left[ \\frac{y_i - \\mu}{\\sigma} - \\exp \\left( \\frac{y_i - \\mu}{\\sigma} \\right) \\right] \\right)^{\\delta_i} \\cdot \\left( \\exp \\left[ -\\exp \\left( \\frac{y_i - \\mu}{\\sigma} \\right) \\right] \\right)^{1-\\delta_i} \\right]\\]\n\\[\\ell[L(\\theta|y)] = \\sum_{i=0}^{n}\\left[\\delta_{i} \\log\\left(\\frac{1}{\\sigma} \\exp \\left[ \\frac{y_i - \\mu}{\\sigma} - \\exp \\left( \\frac{y_i - \\mu}{\\sigma} \\right) \\right] \\right) + (1-\\delta_i) \\log \\left( \\exp \\left[ -\\exp \\left( \\frac{y_i - \\mu}{\\sigma} \\right) \\right] \\right)\\right]\\]\nDesenvolvendo as exponencias, aplicando os logs e separando os termos multiplicados na segunda parte da equação por \\(1-\\delta_{i}\\).\n\\[-\\delta_{i} \\exp \\left[ \\frac{y_i - \\mu}{\\sigma} \\right] - \\exp \\left[\\frac{y_{i} - \\mu}{\\sigma} \\right]+ \\delta{i} \\exp \\left[\\frac{y_{i} - \\mu}{\\sigma} \\right]\\]\n\\[\\ell[L(\\theta | y)] = \\sum_{i=1}^n \\left[ \\delta_i \\left[ -\\log(\\sigma) + \\left( \\frac{y_i - \\mu}{\\sigma} \\right) \\right] - \\exp \\left( \\frac{y_i - \\mu}{\\sigma} \\right) \\right]\\]",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Distribuição Weibull</span>"
     ]
@@ -103,10 +103,180 @@
     "objectID": "dist_exponencial.html#linearização-da-função-de-sobrevivência",
     "href": "dist_exponencial.html#linearização-da-função-de-sobrevivência",
     "title": "1  Distribuição Exponencial",
-    "section": "1.3 Linearização da função de sobrevivência",
-    "text": "1.3 Linearização da função de sobrevivência\n\n“Para comparar o comportamento do modelo com os dados utilizados, se pode aplicar a linearização da função de sobrevivência de cada modelo construindo gráficos que sejam aproximadamente lineares, caso o modelo seja apropiado. Violação de lienaridade pode ser verificada visualmente de forma rápida.”\n\n\n1.3.1 Linarização da função de sobrevivência exponencial\nPara o modelo exponencial, a função de sobre vivência é dada por\n\\[\nS(t)= exp\\left[-\\frac{t}{\\alpha}\\right]\n\\]\nLogo,\n\\[-\\log[S(t)] = \\frac{t}{\\alpha} = \\left(\\frac{1}{\\alpha}\\right)t\\]\ncorresponde à equação da reta \\(y = a+bx\\), \\(y=-log[S(t)]\\), \\(a=0\\), \\(b=1/\\alpha\\) e \\(x= t\\). Sendo o modelo apropriado no caso \\(y\\) versus t deve aproximadamente linear passando pela origem, com \\(\\hat{S}(t)\\) correspodendo ao estimador de Kaplan-Meier.\n\n\n\n\n\n\n\n\n\n\nNo gráfico de verificação de risco ou linenaridade, se observa o risco acumulado versus o tempo. Se o risco fosse constante para o modelo Exponencial, os pontos deveriam formar uma linha reta partindo da origem. No caso, entretanto, os pontos formam uma curva para cima, indicando que o risco de o evento ocorrer aumenta com o tempo (risco de desenvolver câncer de bexiga). No início, o risco é vagaroso (tempo 0 a 15), após o tempo 20, a inclinação aumenta bruscamente.",
+    "section": "1.4 Linearização da função de sobrevivência",
+    "text": "1.4 Linearização da função de sobrevivência\n\n“Para comparar o comportamento do modelo com os dados utilizados, se pode aplicar a linearização da função de sobrevivência de cada modelo construindo gráficos que sejam aproximadamente lineares, caso o modelo seja apropiado. Violação de lienaridade pode ser verificada visualmente de forma rápida.”\n\n\n1.4.1 Linearização da função de sobrevivência exponencial\nPara o modelo exponencial, a função de sobre vivência é dada por\n\\[\nS(t)= exp\\left[-\\frac{t}{\\alpha}\\right]\n\\]\nLogo,\n\\[-\\log[S(t)] = \\frac{t}{\\alpha} = \\left(\\frac{1}{\\alpha}\\right)t\\]\ncorresponde à equação da reta \\(y = a+bx\\), \\(y=-log[S(t)]\\), \\(a=0\\), \\(b=1/\\alpha\\) e \\(x= t\\). Sendo o modelo apropriado no caso \\(y\\) versus t deve aproximadamente linear passando pela origem, com \\(\\hat{S}(t)\\) correspodendo ao estimador de Kaplan-Meier.",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Distribuição Exponencial</span>"
+    ]
+  },
+  {
+    "objectID": "dist_exponencial.html#sobre-o-modelo",
+    "href": "dist_exponencial.html#sobre-o-modelo",
+    "title": "1  Distribuição Exponencial",
+    "section": "1.3 Sobre o modelo",
+    "text": "1.3 Sobre o modelo\nO modelo mais simples, caracterizado pela ausência de memória. Sendo aplicado em situações onde a falha ocorre de forma aleatória e estável, limitado para casos em que se quer obter o envelhecimento ou desgaste.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Distribuição Exponencial</span>"
+    ]
+  },
+  {
+    "objectID": "dist_weibull.html#linearização-da-função-de-sobrevivência-da-weibull",
+    "href": "dist_weibull.html#linearização-da-função-de-sobrevivência-da-weibull",
+    "title": "2  Distribuição Weibull",
+    "section": "2.4 Linearização da função de sobrevivência da Weibull",
+    "text": "2.4 Linearização da função de sobrevivência da Weibull\nA função de sobrevivência do modelo de Weibull é dado por\n\\[\nS(t) = \\exp\\left[- \\frac{t}{\\alpha}^{\\lambda} \\right]\n\\]\nDesse modo,\n\\[\n-\\log\\left[S(t)\\right] = \\left( \\frac{t}{\\alpha}^{\\lambda}\\right)\n\\]\ntal que, de acordo com a equação \\(y= a +bx\\), se tem \\(y=\\log\\left[-\\log\\left[S(t)\\right]\\right]\\), \\(a = -\\lambda\\log(\\alpha)\\), \\(b=\\lambda\\), \\(x=\\log(t)\\). Portanto, para que o modelo de Weibull seja considerado apropriado, gráfico \\(\\log\\left[-\\log\\left[S(t)\\right]\\right]\\) versus \\(\\log(t)\\) deve ser aproximadamente linear, com \\(\\hat{S}(t)\\) correspondendo ao estimador de Kaplan-Meier. Se além de linear, apresentar inclinação igual a 1, haverá evidências a favor do modelo exponencial.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Distribuição Weibull</span>"
+    ]
+  },
+  {
+    "objectID": "dist_log_norm.html#lineiarização-da-função-de-sobrevivência-da-log-normal",
+    "href": "dist_log_norm.html#lineiarização-da-função-de-sobrevivência-da-log-normal",
+    "title": "3  Distribuição Log-normal",
+    "section": "3.3 Lineiarização da função de sobrevivência da log-normal",
+    "text": "3.3 Lineiarização da função de sobrevivência da log-normal\nA função de sobrevivência associada ao modelo log-normal, dada por\n\\[\nS(t)= \\Phi \\left(\\frac{-\\log(t) + \\mu}{\\sigma} \\right)\n\\]\ntambém pode ser linearizada e apresentada a seguinte forma\n\\[\n\\Phi^{-1}(S(t)) = \\frac{-\\log(t) + \\mu}{\\sigma} = \\frac{\\mu}{\\sigma} - \\left(\\frac{1}{\\sigma}\\right)\\log(t)\n\\]\ncom \\(\\Phi^{-1}(.)\\) correspondendo aos percentis da distribuição normal padrão.\nPortanto para que o modelo log-normal seja considerado apropriado, o gráfico \\(\\Phi^{-1}(\\hat{S}(t))\\) versus \\(\\log(t)\\) deve ser aproximadamente linear com intercepto \\(a=\\mu/\\sigma\\), e inclinação \\(b = -1/\\sigma\\).",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Distribuição Log-normal</span>"
+    ]
+  },
+  {
+    "objectID": "dist_exponencial.html#aplicação-pacientes-com-câncer-de-bexiga",
+    "href": "dist_exponencial.html#aplicação-pacientes-com-câncer-de-bexiga",
+    "title": "1  Distribuição Exponencial",
+    "section": "1.5 Aplicação: pacientes com câncer de bexiga",
+    "text": "1.5 Aplicação: pacientes com câncer de bexiga\n1º Função log-verossimilhança encontrado\n\nlog_vero_surv_exponencial &lt;- function(theta, t, status) {\n  alpha &lt;- theta[1]\n  \n  if(alpha &lt;= 0) return(Inf)\n  \n  logv &lt;- sum(-status * log(alpha) -(t/alpha))\n  \n  # Log-verossimilhança total (negativa para o optim)\n  return(-logv)\n}\n\n2º Estimador de Kaplan-Meier\nDado por:\n\\[\n\\hat{S}(t)= \\prod_{t_{j}\\leq t} \\left(1 - \\frac{d_{j}}{n_{j}}\\right)\n\\]\n\nekm &lt;- function(tempos,status){\n  ordem &lt;- order(tempos)\n  t &lt;- tempos[ordem]\n  s &lt;- status[ordem]\n  \n  n &lt;- length(t)\n  surv &lt;- numeric(n)\n  p_surv &lt;- 1\n  \n  for(i in 1:n) {\n    n_risco &lt;- n - i + 1\n    if(s[i] == 1) {\n      p_surv &lt;- p_surv * ((n_risco - 1) / n_risco)\n    }\n    surv[i] &lt;- p_surv\n  }\n  \n  return(list(tempo = t, sobrevivencia = surv))\n}\n\n3º Aplicando o pacote \\(optim\\) para estimar \\(\\hat{\\alpha}\\)\n\najus11 &lt;- optim(par = 1,\n                fn=log_vero_surv_exponencial, \n                t = tempos,\n                status = cens, \n                method=\"Brent\",#para um parâmetro\n                lower = 0.001,\n                upper = 1000)\n\nO valor \\(\\hat{\\alpha}\\) é de 20.41177 sendo o valor da estatistica da log-verrossimilhança para o modelo de 68.27389.\n4º Obtendo o valor de \\(\\hat{\\alpha}\\), se pode verificar graficamente a curva de sobrevivência teórica à curva de Kaplan-Meier.\n\nt_teorico &lt;- seq(0, max(tempos),length.out=50)\ns_teorico &lt;- exp(-t_teorico/ajus11$par)\n\n\n\n\n\n\n5º E pela linearidade, se pode observar o comportamento dos dados ao modelo.\n\nrisco_acumulado_km &lt;- -log(km_c_bx$sobrevivencia)\n\n\n\n\n\n\nNo gráfico de verificação de risco ou linearidade, se observa o risco acumulado versus o tempo. Se o risco fosse constante para o modelo Exponencial, os pontos deveriam formar uma linha reta partindo da origem. No caso, entretanto, os pontos formam uma curva para cima, indicando que o risco de o evento ocorrer aumenta com o tempo (risco de reincidência do tumor). No início, o risco é vagaroso (tempo 0 a 15 meses), após o tempo 20, a inclinação aumenta bruscamente.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Distribuição Exponencial</span>"
+    ]
+  },
+  {
+    "objectID": "outras_funções_comp.html",
+    "href": "outras_funções_comp.html",
+    "title": "5  Funções no optim",
+    "section": "",
+    "text": "5.0.1 Exponencial (Criado)\nS_exp &lt;- function(alpha, t, delta){\n  \n  log_L &lt;- -sum(delta * log(alpha)) - (1/alpha) * sum(t)\n  \n  return(-log_L)\n}\n\najuste &lt;- optimize(f = S_exp, c(0.01, 100), tempos, censura)\najuste\n\n$minimum\n[1] 20.41178\n\n$objective\n[1] 68.27389",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Funções no optim</span>"
+    ]
+  },
+  {
+    "objectID": "outras_funções_comp.html#weibull-criado",
+    "href": "outras_funções_comp.html#weibull-criado",
+    "title": "5  Funções no optim",
+    "section": "5.1 Weibull (Criado)",
+    "text": "5.1 Weibull (Criado)\n\nS_weib &lt;- function(theta, t, delta){\n  \n  alpha &lt;- theta[1] \n  gamma &lt;- theta[2]\n  r &lt;- sum(delta) #soma de todos as falhas\n\n  Log_L &lt;- r*log(gamma)-(r*gamma*log(alpha))+(gamma -1)*sum(delta*log(t))-(alpha^(-gamma))*sum(t^gamma)\n  \n  if(!is.finite(Log_L)) return(1e10) #garante o tempo positivo apenas\n  \n  return(-Log_L)\n}\n\n#?optim()\nresultado &lt;- optim(par = c(1, 1), S_weib, t = tempos, delta = censura, method = \"BFGS\")\nresultado \n\n$par\n[1] 21.334902  1.543351\n\n$value\n[1] 66.13336\n\n$counts\nfunction gradient \n      44       23 \n\n$convergence\n[1] 0\n\n$message\nNULL",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Funções no optim</span>"
+    ]
+  },
+  {
+    "objectID": "outras_funções_comp.html#weibull-survival",
+    "href": "outras_funções_comp.html#weibull-survival",
+    "title": "5  Funções no optim",
+    "section": "5.2 Weibull (Survival)",
+    "text": "5.2 Weibull (Survival)\n\nmodelo_weib &lt;- survreg(Surv(tempos, censura) ~ 1, dist = \"weibull\")\nsummary(modelo_weib)\n\n\nCall:\nsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"weibull\")\n             Value Std. Error    z      p\n(Intercept)  3.061      0.160 19.1 &lt;2e-16\nLog(scale)  -0.434      0.189 -2.3  0.022\n\nScale= 0.648 \n\nWeibull distribution\nLoglik(model)= -66.1   Loglik(intercept only)= -66.1\nNumber of Newton-Raphson Iterations: 6 \nn= 20",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Funções no optim</span>"
+    ]
+  },
+  {
+    "objectID": "outras_funções_comp.html#log-normal-survival",
+    "href": "outras_funções_comp.html#log-normal-survival",
+    "title": "5  Funções no optim",
+    "section": "6.1 Log-Normal (Survival)",
+    "text": "6.1 Log-Normal (Survival)\n\nmodelo_logN &lt;- survreg(Surv(tempos, censura) ~ 1, dist = \"lognormal\")\nsummary(modelo_logN)\n\n\nCall:\nsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"lognormal\")\n             Value Std. Error     z      p\n(Intercept)  2.717      0.176 15.42 &lt;2e-16\nLog(scale)  -0.268      0.174 -1.54   0.12\n\nScale= 0.765 \n\nLog Normal distribution\nLoglik(model)= -65.7   Loglik(intercept only)= -65.7\nNumber of Newton-Raphson Iterations: 6 \nn= 20",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Funções no optim</span>"
+    ]
+  },
+  {
+    "objectID": "outras_funções_comp.html#log-logística-criada",
+    "href": "outras_funções_comp.html#log-logística-criada",
+    "title": "5  Funções no optim",
+    "section": "6.2 Log-Logística (Criada)",
+    "text": "6.2 Log-Logística (Criada)\n\nS_loglogistica &lt;- function(theta, t, delta) {\n\n  alpha &lt;- exp(theta[1])\n  gamma &lt;- exp(theta[2])\n  \n  log_f &lt;- log(gamma) - (gamma * log(alpha)) + (gamma - 1) * log(t) - 2 * log(1 + (t/alpha)^gamma)\n  \n  log_S &lt;- -log(1 + (t/alpha)^gamma)\n  \n  LOG_L &lt;- sum(delta * log_f + (1 - delta) * log_S)\n  \n  return(-LOG_L)\n}\n\n# Chute inicial (log da média dos tempos e log de 1)\ninicio &lt;- c(log(mean(tempos)), 0)\n\nfit_ll &lt;- optim(par = inicio, fn = S_loglogistica, t = tempos, delta = censura, method = \"BFGS\")\nfit_ll\n\n$par\n[1] 2.7373688 0.7993457\n\n$value\n[1] 66.03053\n\n$counts\nfunction gradient \n      21        7 \n\n$convergence\n[1] 0\n\n$message\nNULL",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Funções no optim</span>"
+    ]
+  },
+  {
+    "objectID": "outras_funções_comp.html#log-logística-survival",
+    "href": "outras_funções_comp.html#log-logística-survival",
+    "title": "5  Funções no optim",
+    "section": "6.3 Log-Logística (Survival)",
+    "text": "6.3 Log-Logística (Survival)\n\nmodelo_LL &lt;- survreg(Surv(tempos, censura) ~ 1, dist = \"loglogistic\")\nmodelo_LL\n\nCall:\nsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"loglogistic\")\n\nCoefficients:\n(Intercept) \n   2.737415 \n\nScale= 0.4496653 \n\nLoglik(model)= -66   Loglik(intercept only)= -66\nn= 20",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Funções no optim</span>"
+    ]
+  },
+  {
+    "objectID": "outras_funções_comp.html#gama-criada",
+    "href": "outras_funções_comp.html#gama-criada",
+    "title": "5  Funções no optim",
+    "section": "6.4 Gama (Criada)",
+    "text": "6.4 Gama (Criada)\n\nS_gama &lt;- function(theta, t, delta) {\n\n  shape &lt;- exp(theta[1])\n  scale &lt;- exp(theta[2])\n  \n  log_f &lt;- dgamma(t, shape = shape, scale = scale, log = TRUE)\n  \n  log_S &lt;- pgamma(t, shape = shape, scale = scale, lower.tail = FALSE, log.p = TRUE)\n  \n  logl &lt;- sum(delta * log_f + (1 - delta) * log_S)\n  \n  return(-logl)\n}\n\np &lt;- log(mean(tempos))\n\nfit_g &lt;- optim(par = c(0, p), fn = S_gama, t = tempos, delta = censura, method = \"BFGS\")\nfit_g\n\n$par\n[1] 0.7626296 2.1937980\n\n$value\n[1] 65.84754\n\n$counts\nfunction gradient \n      30        9 \n\n$convergence\n[1] 0\n\n$message\nNULL",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Funções no optim</span>"
+    ]
+  },
+  {
+    "objectID": "outras_funções_comp.html#gama-flexsurvreg",
+    "href": "outras_funções_comp.html#gama-flexsurvreg",
+    "title": "5  Funções no optim",
+    "section": "6.5 Gama (Flexsurvreg)",
+    "text": "6.5 Gama (Flexsurvreg)\n\nmodelo_gama &lt;- flexsurvreg(Surv(tempos, censura) ~ 1, dist = \"gamma\")\nmodelo_gama\n\nCall:\nflexsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"gamma\")\n\nEstimates: \n       est     L95%    U95%    se    \nshape  2.1439  1.1580  3.9692  0.6737\nrate   0.1115  0.0540  0.2303  0.0413\n\nN = 20,  Events: 17,  Censored: 3\nTotal time at risk: 347\nLog-likelihood = -65.84754, df = 2\nAIC = 135.6951",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Funções no optim</span>"
+    ]
+  },
+  {
+    "objectID": "outras_funções_comp.html#gama-generalizada-criada",
+    "href": "outras_funções_comp.html#gama-generalizada-criada",
+    "title": "5  Funções no optim",
+    "section": "6.6 Gama Generalizada (Criada)",
+    "text": "6.6 Gama Generalizada (Criada)\n\nS_gamaG &lt;- function(theta, t, delta) {\n\n  alpha &lt;- exp(theta[1])\n  gamma &lt;- exp(theta[2])\n  s     &lt;- exp(theta[3])\n  \n  log_f &lt;- log(gamma)-lgamma(s)-(gamma*s*log(alpha))+(gamma * s - 1)*log(t)-(t / alpha)^gamma\n  \n  log_S &lt;- pgamma((t / alpha)^gamma, shape = s, lower.tail = FALSE, log.p = TRUE)\n  \n  logl &lt;- sum(delta * log_f + (1 - delta) * log_S)\n  \n  if(!is.finite(logl)) return(1e10)\n  \n  return(-logl)\n}\n\ni &lt;- c(log(mean(tempos)), 0, 0) \n\nresultado_gg &lt;- optim(par = i, fn = S_gamaG, t = tempos, delta = censura, method = \"BFGS\")\nresultado_gg\n\n$par\n[1] -2.8700735 -0.8786525  2.3651648\n\n$value\n[1] 65.6936\n\n$counts\nfunction gradient \n     202      100 \n\n$convergence\n[1] 1\n\n$message\nNULL",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Funções no optim</span>"
+    ]
+  },
+  {
+    "objectID": "outras_funções_comp.html#gama-generalizada-flexsurvreg",
+    "href": "outras_funções_comp.html#gama-generalizada-flexsurvreg",
+    "title": "5  Funções no optim",
+    "section": "6.7 Gama Generalizada (Flexsurvreg)",
+    "text": "6.7 Gama Generalizada (Flexsurvreg)\n\nmodelo_GG &lt;- flexsurvreg(Surv(tempos, censura) ~ 1, dist = \"gengamma\")\nmodelo_GG\n\nCall:\nflexsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"gengamma\")\n\nEstimates: \n       est     L95%    U95%    se    \nmu      2.805   2.168   3.442   0.325\nsigma   0.743   0.498   1.110   0.152\nQ       0.247  -1.291   1.786   0.785\n\nN = 20,  Events: 17,  Censored: 3\nTotal time at risk: 347\nLog-likelihood = -65.69074, df = 3\nAIC = 137.3815",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Funções no optim</span>"
+    ]
+  },
+  {
+    "objectID": "dist_log_norm.html#aplicação-pacientes-com-câncer-de-bexiga",
+    "href": "dist_log_norm.html#aplicação-pacientes-com-câncer-de-bexiga",
+    "title": "3  Distribuição Log-normal",
+    "section": "3.4 Aplicação: Pacientes com câncer de bexiga",
+    "text": "3.4 Aplicação: Pacientes com câncer de bexiga\n1º Função de log-verossimilhança\n\nlog_vero_surv_lnorm &lt;- function(theta,t,status){\n  mu    &lt;- theta[1]\n  sigma &lt;- theta[2]\n  log_S &lt;- plnorm(t, meanlog = mu, sdlog = sigma, lower.tail = FALSE, log.p = TRUE)\n  \n  log_f &lt;- -0.5*log(2*pi) - log(t) - log(sigma) - (1/(2*sigma^2)) * (log(t) - mu)^2\n  \n  L_LOG &lt;- sum(status * log_f + (1 - status) * log_S)\n  \n  return(-L_LOG)\n\n}\n\n2º Obtendo os parâmetros estimados pelo modelo\n\najust2 &lt;- optim(par=c(1,1),f=log_vero_surv_lnorm,\n                   t = tempos,\n                   status = cens)\n\nO valor \\(par = \\left\\{\\hat{\\mu};\\hat{\\sigma}\\right\\}\\) é de \\(\\hat{\\mu} = 2.717182\\) e \\(\\hat{\\sigma} =0.764918\\) sendo o valor da estatistica da log-verrossimilhança para o modelo de 65.7399.\n3º Comparação gráfica entre a curva de sobrevivência teórica e a curva KM. Bem como observar o comportamento dos dados, ao modelo.\n\nmu_est &lt;- ajust2$par[1]\nsigma_est &lt;- ajust2$par[2]\n\ns_lnorm &lt;- pnorm((log(t_teorico) - mu_est) / sigma_est, \n                 lower.tail = FALSE)",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Distribuição Log-normal</span>"
+    ]
+  },
+  {
+    "objectID": "dist_log_logis.html#aplicação",
+    "href": "dist_log_logis.html#aplicação",
+    "title": "4  Distribuição Log-logística",
+    "section": "4.3 Aplicação",
+    "text": "4.3 Aplicação\n\nS_loglogistica &lt;- function(theta, t, delta) {\n  \n  alpha &lt;- exp(theta[1])\n  gamma &lt;- exp(theta[2])\n  \n  log_f &lt;- log(gamma) - (gamma * log(alpha)) + (gamma - 1) * log(t) - 2 * log(1 + (t/alpha)^gamma)\n  \n  log_S &lt;- -log(1 + (t/alpha)^gamma)\n  \n  LOG_L &lt;- sum(delta * log_f + (1 - delta) * log_S)\n  \n  return(-LOG_L)\n}\n\nAplicando o \\(optim\\) se obtem os valores estimados dos parãmetros: [ 2.7373688, 0.7993457] e estatística de 66.03053.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Distribuição Log-logística</span>"
+    ]
+  },
+  {
+    "objectID": "dist_weibull.html#aplicação",
+    "href": "dist_weibull.html#aplicação",
+    "title": "2  Distribuição Weibull",
+    "section": "2.5 Aplicação",
+    "text": "2.5 Aplicação\n\nlog_vero_surv_weibull &lt;- function(theta, t, status){\n  \n  alpha &lt;- theta[1] \n  gamma &lt;- theta[2]\n  r &lt;- status\n  \n  Log_L &lt;- sum(r*(log(gamma)-gamma*log(alpha)+(gamma-1)*log(t))-(t/alpha)^gamma)\n  \n  if(!is.finite(Log_L)) return(1e10) #garante o tempo positivo apenas\n  \n  return(-Log_L)\n}\n\n\n# plot 1\nt_seq &lt;- seq(0, max(tempos), length.out = 100)\ns_weibull &lt;- exp(-(t_seq / alpha_est)^gamma_est)\n\n#plot 2\n# 1. Preparar os dados (remover S(t)=0 ou 1 para evitar log de erro)\nindices &lt;- which(km_c_bx$sobrevivencia &gt; 0 & km_c_bx$sobrevivencia &lt; 1)\nt_km &lt;- km_c_bx$tempo[indices]\ns_km &lt;- km_c_bx$sobrevivencia[indices]\n\n# 2. Transformações lineares\ny_weibull &lt;- log(-log(s_km))\nx_weibull &lt;- log(t_km)",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Distribuição Weibull</span>"
     ]
   }
 ]

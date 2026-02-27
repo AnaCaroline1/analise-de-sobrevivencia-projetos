@@ -21,7 +21,6 @@ $$
 L(\theta | t) = \prod_{i=1}^{n} \left[ \left( \frac{\gamma}{\alpha^{\gamma}} \cdot t_{i}^{\gamma-1} \cdot \exp\left[ -\left( \frac{t_{i}}{\alpha} \right)^{\gamma} \right] \right)^{\delta_{i}} \cdot \left( \exp\left[ -\left( \frac{t_{i}}{\alpha} \right)^{\gamma} \right] \right)^{1-\delta_{i}} \right]
 $$
 
-
 ## Log-verossimilhança da Weibull:
 
 $$
@@ -58,44 +57,44 @@ $$
 -\log\left[S(t)\right] = \left( \frac{t}{\alpha}^{\lambda}\right)
 $$
 
-tal que, de acordo com a equação $y= a +bx$, se tem $y=\log\left[-\log\left[S(t)\right]\right],$a = -\lambda\log(\alpha)$, $b=\lambda$, $x=\log(t)$. Portanto, para que o modelo de Weibull seja considerado apropriado, gráfico $\log\left[-\log\left[S(t)\right]\right]$ *versus* $\log(t)$ dve ser aproximadamente linear, com $\hat{S}(t)$ correspondendo ao estimador de Kaplan-Meier. Se além de linear, apresentar inclinação igual a 1, haverá evidências a favor do modelo exponencial.
+tal que, de acordo com a equação $y= a +bx$, se tem $y=\log\left[-\log\left[S(t)\right]\right]$, $a = -\lambda\log(\alpha)$, $b=\lambda$, $x=\log(t)$. Portanto, para que o modelo de Weibull seja considerado apropriado, gráfico $\log\left[-\log\left[S(t)\right]\right]$ *versus* $\log(t)$ deve ser aproximadamente linear, com $\hat{S}(t)$ correspondendo ao estimador de Kaplan-Meier. Se além de linear, apresentar inclinação igual a 1, haverá evidências a favor do modelo exponencial.
 
+## Aplicação
 
+```{r}
+#| eval: false
+log_vero_surv_weibull <- function(theta, t, status){
+  
+  alpha <- theta[1] 
+  gamma <- theta[2]
+  r <- status
+  
+  Log_L <- sum(r*(log(gamma)-gamma*log(alpha)+(gamma-1)*log(t))-(t/alpha)^gamma)
+  
+  if(!is.finite(Log_L)) return(1e10) #garante o tempo positivo apenas
+  
+  return(-Log_L)
+}
+```
 
+```{r}
+#| eval: false
+# plot 1
+t_seq <- seq(0, max(tempos), length.out = 100)
+s_weibull <- exp(-(t_seq / alpha_est)^gamma_est)
 
+#plot 2
+# 1. Preparar os dados (remover S(t)=0 ou 1 para evitar log de erro)
+indices <- which(km_c_bx$sobrevivencia > 0 & km_c_bx$sobrevivencia < 1)
+t_km <- km_c_bx$tempo[indices]
+s_km <- km_c_bx$sobrevivencia[indices]
 
+# 2. Transformações lineares
+y_weibull <- log(-log(s_km))
+x_weibull <- log(t_km)
 
+```
 
+![](weibull.jpeg){fig-align="center"}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+![](lin_weibul.jpeg){fig-align="center"}

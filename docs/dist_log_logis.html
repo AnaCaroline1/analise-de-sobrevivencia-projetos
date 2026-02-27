@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,6 +65,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./outras_funções_comp.html" rel="next">
 <link href="./dist_log_norm.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -337,6 +373,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./outras_funções_comp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Funções no optim</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -349,6 +391,7 @@ window.Quarto = {
   <ul>
   <li><a href="#função-de-sobrevivência" id="toc-função-de-sobrevivência" class="nav-link active" data-scroll-target="#função-de-sobrevivência"><span class="header-section-number">4.1</span> Função de Sobrevivência</a></li>
   <li><a href="#função-verossimilhança" id="toc-função-verossimilhança" class="nav-link" data-scroll-target="#função-verossimilhança"><span class="header-section-number">4.2</span> Função verossimilhança</a></li>
+  <li><a href="#aplicação" id="toc-aplicação" class="nav-link" data-scroll-target="#aplicação"><span class="header-section-number">4.3</span> Aplicação</a></li>
   </ul>
 </nav>
     </div>
@@ -408,6 +451,25 @@ L(\theta | t) = \prod_{i=1}^{n} \left[ \left( \frac{\gamma}{\alpha^\gamma} \cdot
 \\[10pt]
 = \sum_{i=1}^{n} \left[ \delta_i \left[ \log(\gamma) - \gamma \log(\alpha) + (\gamma-1) \log(t_i) - \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right) + \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right) \right] \right]
 \]</span></p>
+</section>
+<section id="aplicação" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="aplicação"><span class="header-section-number">4.3</span> Aplicação</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>S_loglogistica <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, delta) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">1</span>])</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  gamma <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">2</span>])</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  log_f <span class="ot">&lt;-</span> <span class="fu">log</span>(gamma) <span class="sc">-</span> (gamma <span class="sc">*</span> <span class="fu">log</span>(alpha)) <span class="sc">+</span> (gamma <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="fu">log</span>(t) <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">+</span> (t<span class="sc">/</span>alpha)<span class="sc">^</span>gamma)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  log_S <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span> <span class="sc">+</span> (t<span class="sc">/</span>alpha)<span class="sc">^</span>gamma)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  LOG_L <span class="ot">&lt;-</span> <span class="fu">sum</span>(delta <span class="sc">*</span> log_f <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> delta) <span class="sc">*</span> log_S)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>LOG_L)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Aplicando o <span class="math inline">\(optim\)</span> se obtem os valores estimados dos parãmetros: [ 2.7373688, 0.7993457] e estatística de 66.03053.</p>
 
 
 </section>
@@ -833,6 +895,9 @@ L(\theta | t) = \prod_{i=1}^{n} \left[ \left( \frac{\gamma}{\alpha^\gamma} \cdot
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./outras_funções_comp.html" class="pagination-link" aria-label="Funções no optim">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Funções no optim</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -338,6 +373,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./outras_funções_comp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Funções no optim</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -350,6 +391,8 @@ window.Quarto = {
   <ul>
   <li><a href="#função-de-verossimilhança" id="toc-função-de-verossimilhança" class="nav-link active" data-scroll-target="#função-de-verossimilhança"><span class="header-section-number">3.1</span> Função de verossimilhança</a></li>
   <li><a href="#log-verossimilhança-da-log-normal" id="toc-log-verossimilhança-da-log-normal" class="nav-link" data-scroll-target="#log-verossimilhança-da-log-normal"><span class="header-section-number">3.2</span> Log-verossimilhança da Log-Normal:</a></li>
+  <li><a href="#lineiarização-da-função-de-sobrevivência-da-log-normal" id="toc-lineiarização-da-função-de-sobrevivência-da-log-normal" class="nav-link" data-scroll-target="#lineiarização-da-função-de-sobrevivência-da-log-normal"><span class="header-section-number">3.3</span> Lineiarização da função de sobrevivência da log-normal</a></li>
+  <li><a href="#aplicação-pacientes-com-câncer-de-bexiga" id="toc-aplicação-pacientes-com-câncer-de-bexiga" class="nav-link" data-scroll-target="#aplicação-pacientes-com-câncer-de-bexiga"><span class="header-section-number">3.4</span> Aplicação: Pacientes com câncer de bexiga</a></li>
   </ul>
 </nav>
     </div>
@@ -394,13 +437,57 @@ L(\theta | t) = \prod_{i=1}^n \left[ \left( (2\pi)^{-1/2} \cdot t^{-1} \cdot \si
 <p><span class="math display">\[
 = \sum_{i=1}^n \left[ \delta_i \left[ -\frac{1}{2} \log(2\pi) - \log(t_i) - \log(\sigma) - \frac{1}{2\sigma^2} (\log(t_i) - \mu)^2 \right] + (1-\delta_i) \log \left( \Phi \left( \frac{-\log(t_i) + \mu}{\sigma} \right) \right) \right]
 \]</span></p>
-<p><em>Reescrevendo, teremos</em>:</p>
+</section>
+<section id="lineiarização-da-função-de-sobrevivência-da-log-normal" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="lineiarização-da-função-de-sobrevivência-da-log-normal"><span class="header-section-number">3.3</span> Lineiarização da função de sobrevivência da log-normal</h2>
+<p>A função de sobrevivência associada ao modelo log-normal, dada por</p>
 <p><span class="math display">\[
-= \sum_{i=1}^n \left[ \delta_i\left[ \log\left(-\frac{1}{2}2\pi - t_i - \sigma\right) - \frac{1}{2\sigma^2} (\log(t_i) - \mu)^2 \right] + (1-\delta_i) \log \left( \Phi \left( \frac{-\log(t_i) + \mu}{\sigma} \right) \right) \right]\\[10pt]
+S(t)= \Phi \left(\frac{-\log(t) + \mu}{\sigma} \right)
 \]</span></p>
+<p>também pode ser linearizada e apresentada a seguinte forma</p>
 <p><span class="math display">\[
-= \sum_{i=1}^n \left[ \delta_i\left[ \log\left(-\pi - t_i - \sigma\right) - \frac{1}{2\sigma^2} (\log(t_i) - \mu)^2 \right] + (1-\delta_i) \log \left( \Phi \left( \frac{-\log(t_i) + \mu}{\sigma} \right) \right) \right]
+\Phi^{-1}(S(t)) = \frac{-\log(t) + \mu}{\sigma} = \frac{\mu}{\sigma} - \left(\frac{1}{\sigma}\right)\log(t)
 \]</span></p>
+<p>com <span class="math inline">\(\Phi^{-1}(.)\)</span> correspondendo aos percentis da distribuição normal padrão.</p>
+<p>Portanto para que o modelo log-normal seja considerado apropriado, o gráfico <span class="math inline">\(\Phi^{-1}(\hat{S}(t))\)</span> <em>versus</em> <span class="math inline">\(\log(t)\)</span> deve ser aproximadamente linear com intercepto <span class="math inline">\(a=\mu/\sigma\)</span>, e inclinação <span class="math inline">\(b = -1/\sigma\)</span>.</p>
+</section>
+<section id="aplicação-pacientes-com-câncer-de-bexiga" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="aplicação-pacientes-com-câncer-de-bexiga"><span class="header-section-number">3.4</span> Aplicação: Pacientes com câncer de bexiga</h2>
+<p>1º Função de log-verossimilhança</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>log_vero_surv_lnorm <span class="ot">&lt;-</span> <span class="cf">function</span>(theta,t,status){</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  mu    <span class="ot">&lt;-</span> theta[<span class="dv">1</span>]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  sigma <span class="ot">&lt;-</span> theta[<span class="dv">2</span>]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  log_S <span class="ot">&lt;-</span> <span class="fu">plnorm</span>(t, <span class="at">meanlog =</span> mu, <span class="at">sdlog =</span> sigma, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>, <span class="at">log.p =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  log_f <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">0.5</span><span class="sc">*</span><span class="fu">log</span>(<span class="dv">2</span><span class="sc">*</span>pi) <span class="sc">-</span> <span class="fu">log</span>(t) <span class="sc">-</span> <span class="fu">log</span>(sigma) <span class="sc">-</span> (<span class="dv">1</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>sigma<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">*</span> (<span class="fu">log</span>(t) <span class="sc">-</span> mu)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  L_LOG <span class="ot">&lt;-</span> <span class="fu">sum</span>(status <span class="sc">*</span> log_f <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> status) <span class="sc">*</span> log_S)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>L_LOG)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>2º Obtendo os parâmetros estimados pelo modelo</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ajust2 <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>),<span class="at">f=</span>log_vero_surv_lnorm,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">t =</span> tempos,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">status =</span> cens)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>O valor <span class="math inline">\(par = \left\{\hat{\mu};\hat{\sigma}\right\}\)</span> é de <span class="math inline">\(\hat{\mu} = 2.717182\)</span> e <span class="math inline">\(\hat{\sigma} =0.764918\)</span> sendo o valor da estatistica da log-verrossimilhança para o modelo de 65.7399.</p>
+<p>3º Comparação gráfica entre a curva de sobrevivência teórica e a curva KM. Bem como observar o comportamento dos dados, ao modelo.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mu_est <span class="ot">&lt;-</span> ajust2<span class="sc">$</span>par[<span class="dv">1</span>]</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sigma_est <span class="ot">&lt;-</span> ajust2<span class="sc">$</span>par[<span class="dv">2</span>]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>s_lnorm <span class="ot">&lt;-</span> <span class="fu">pnorm</span>((<span class="fu">log</span>(t_teorico) <span class="sc">-</span> mu_est) <span class="sc">/</span> sigma_est, </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Captura de tela 2026-02-26 233841.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
 
 
 </section>

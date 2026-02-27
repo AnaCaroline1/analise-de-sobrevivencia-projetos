@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -338,6 +373,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./outras_funções_comp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">funcoes_optim</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -350,10 +391,12 @@ window.Quarto = {
   <ul>
   <li><a href="#função-de-verossimilhança" id="toc-função-de-verossimilhança" class="nav-link active" data-scroll-target="#função-de-verossimilhança"><span class="header-section-number">1.1</span> Função de verossimilhança</a></li>
   <li><a href="#a-log-verossimilhança-da-exponencial" id="toc-a-log-verossimilhança-da-exponencial" class="nav-link" data-scroll-target="#a-log-verossimilhança-da-exponencial"><span class="header-section-number">1.2</span> A Log-verossimilhança da exponencial</a></li>
-  <li><a href="#linearização-da-função-de-sobrevivência" id="toc-linearização-da-função-de-sobrevivência" class="nav-link" data-scroll-target="#linearização-da-função-de-sobrevivência"><span class="header-section-number">1.3</span> Linearização da função de sobrevivência</a>
+  <li><a href="#sobre-o-modelo" id="toc-sobre-o-modelo" class="nav-link" data-scroll-target="#sobre-o-modelo"><span class="header-section-number">1.3</span> Sobre o modelo</a></li>
+  <li><a href="#linearização-da-função-de-sobrevivência" id="toc-linearização-da-função-de-sobrevivência" class="nav-link" data-scroll-target="#linearização-da-função-de-sobrevivência"><span class="header-section-number">1.4</span> Linearização da função de sobrevivência</a>
   <ul class="collapse">
-  <li><a href="#linarização-da-função-de-sobrevivência-exponencial" id="toc-linarização-da-função-de-sobrevivência-exponencial" class="nav-link" data-scroll-target="#linarização-da-função-de-sobrevivência-exponencial"><span class="header-section-number">1.3.1</span> Linarização da função de sobrevivência exponencial</a></li>
+  <li><a href="#linearização-da-função-de-sobrevivência-exponencial" id="toc-linearização-da-função-de-sobrevivência-exponencial" class="nav-link" data-scroll-target="#linearização-da-função-de-sobrevivência-exponencial"><span class="header-section-number">1.4.1</span> Linearização da função de sobrevivência exponencial</a></li>
   </ul></li>
+  <li><a href="#aplicação-pacientes-com-câncer-de-bexiga" id="toc-aplicação-pacientes-com-câncer-de-bexiga" class="nav-link" data-scroll-target="#aplicação-pacientes-com-câncer-de-bexiga"><span class="header-section-number">1.5</span> Aplicação: pacientes com câncer de bexiga</a></li>
   </ul>
 </nav>
     </div>
@@ -421,13 +464,17 @@ L(\theta | t) = \prod_{i=1}^{n} \left[\left(\frac{1}{\alpha} \cdot exp\left[-\fr
 \]</span></p>
 <p>Que é exatamente a média amostral de <span class="math inline">\(t_{i}\)</span>.</p>
 </section>
-<section id="linearização-da-função-de-sobrevivência" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="linearização-da-função-de-sobrevivência"><span class="header-section-number">1.3</span> Linearização da função de sobrevivência</h2>
+<section id="sobre-o-modelo" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="sobre-o-modelo"><span class="header-section-number">1.3</span> Sobre o modelo</h2>
+<p>O modelo mais simples, caracterizado pela ausência de memória. Sendo aplicado em situações onde a falha ocorre de forma aleatória e estável, limitado para casos em que se quer obter o envelhecimento ou desgaste.</p>
+</section>
+<section id="linearização-da-função-de-sobrevivência" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="linearização-da-função-de-sobrevivência"><span class="header-section-number">1.4</span> Linearização da função de sobrevivência</h2>
 <blockquote class="blockquote">
 <p>“Para comparar o comportamento do modelo com os dados utilizados, se pode aplicar a linearização da função de sobrevivência de cada modelo construindo gráficos que sejam aproximadamente lineares, caso o modelo seja apropiado. Violação de lienaridade pode ser verificada visualmente de forma rápida.”</p>
 </blockquote>
-<section id="linarização-da-função-de-sobrevivência-exponencial" class="level3" data-number="1.3.1">
-<h3 data-number="1.3.1" class="anchored" data-anchor-id="linarização-da-função-de-sobrevivência-exponencial"><span class="header-section-number">1.3.1</span> Linarização da função de sobrevivência exponencial</h3>
+<section id="linearização-da-função-de-sobrevivência-exponencial" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="linearização-da-função-de-sobrevivência-exponencial"><span class="header-section-number">1.4.1</span> Linearização da função de sobrevivência exponencial</h3>
 <p>Para o modelo exponencial, a função de sobre vivência é dada por</p>
 <p><span class="math display">\[
 S(t)= exp\left[-\frac{t}{\alpha}\right]
@@ -435,20 +482,82 @@ S(t)= exp\left[-\frac{t}{\alpha}\right]
 <p>Logo,</p>
 <p><span class="math display">\[-\log[S(t)] = \frac{t}{\alpha} = \left(\frac{1}{\alpha}\right)t\]</span></p>
 <p>corresponde à equação da reta <span class="math inline">\(y = a+bx\)</span>, <span class="math inline">\(y=-log[S(t)]\)</span>, <span class="math inline">\(a=0\)</span>, <span class="math inline">\(b=1/\alpha\)</span> e <span class="math inline">\(x= t\)</span>. Sendo o modelo apropriado no caso <span class="math inline">\(y\)</span> versus t deve aproximadamente linear passando pela origem, com <span class="math inline">\(\hat{S}(t)\)</span> correspodendo ao estimador de Kaplan-Meier.</p>
+</section>
+</section>
+<section id="aplicação-pacientes-com-câncer-de-bexiga" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="aplicação-pacientes-com-câncer-de-bexiga"><span class="header-section-number">1.5</span> Aplicação: pacientes com câncer de bexiga</h2>
+<p>1º Função log-verossimilhança encontrado</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>log_vero_surv_exponencial <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, status) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> theta[<span class="dv">1</span>]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(alpha <span class="sc">&lt;=</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="cn">Inf</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  logv <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="sc">-</span>status <span class="sc">*</span> <span class="fu">log</span>(alpha) <span class="sc">-</span>(t<span class="sc">/</span>alpha))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Log-verossimilhança total (negativa para o optim)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>logv)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>2º Estimador de Kaplan-Meier</p>
+<p>Dado por:</p>
+<p><span class="math display">\[
+\hat{S}(t)= \prod_{t_{j}\leq t} \left(1 - \frac{d_{j}}{n_{j}}\right)
+\]</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ekm <span class="ot">&lt;-</span> <span class="cf">function</span>(tempos,status){</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  ordem <span class="ot">&lt;-</span> <span class="fu">order</span>(tempos)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> tempos[ordem]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> status[ordem]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(t)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  surv <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  p_surv <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    n_risco <span class="ot">&lt;-</span> n <span class="sc">-</span> i <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(s[i] <span class="sc">==</span> <span class="dv">1</span>) {</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>      p_surv <span class="ot">&lt;-</span> p_surv <span class="sc">*</span> ((n_risco <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">/</span> n_risco)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    surv[i] <span class="ot">&lt;-</span> p_surv</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">tempo =</span> t, <span class="at">sobrevivencia =</span> surv))</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>3º Aplicando o pacote <span class="math inline">\(optim\)</span> para estimar <span class="math inline">\(\hat{\alpha}\)</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ajus11 <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="dv">1</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">fn=</span>log_vero_surv_exponencial, </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">t =</span> tempos,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">status =</span> cens, </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">method=</span><span class="st">"Brent"</span>,<span class="co">#para um parâmetro</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">lower =</span> <span class="fl">0.001</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">upper =</span> <span class="dv">1000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>O valor <span class="math inline">\(\hat{\alpha}\)</span> é de 20.41177 sendo o valor da estatistica da log-verrossimilhança para o modelo de 68.27389.</p>
+<p>4º Obtendo o valor de <span class="math inline">\(\hat{\alpha}\)</span>, se pode verificar graficamente a curva de sobrevivência teórica à curva de Kaplan-Meier.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>t_teorico <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">max</span>(tempos),<span class="at">length.out=</span><span class="dv">50</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>s_teorico <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>t_teorico<span class="sc">/</span>ajus11<span class="sc">$</span>par)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="modelo_vs_dados.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
+</div>
+<p>5º E pela linearidade, se pode observar o comportamento dos dados ao modelo.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>risco_acumulado_km <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fu">log</span>(km_c_bx<span class="sc">$</span>sobrevivencia)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="verificacao_linearidade.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
 </div>
-<p>No gráfico de verificação de risco ou linenaridade, se observa o risco acumulado versus o tempo. Se o risco fosse constante para o modelo Exponencial, os pontos deveriam formar uma linha reta partindo da origem. No caso, entretanto, os pontos formam uma curva para cima, indicando que o risco de o evento ocorrer aumenta com o tempo (risco de desenvolver câncer de bexiga). No início, o risco é vagaroso (tempo 0 a 15), após o tempo 20, a inclinação aumenta bruscamente.</p>
+<p>No gráfico de verificação de risco ou linearidade, se observa o risco acumulado versus o tempo. Se o risco fosse constante para o modelo Exponencial, os pontos deveriam formar uma linha reta partindo da origem. No caso, entretanto, os pontos formam uma curva para cima, indicando que o risco de o evento ocorrer aumenta com o tempo (risco de reincidência do tumor). No início, o risco é vagaroso (tempo 0 a 15 meses), após o tempo 20, a inclinação aumenta bruscamente.</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

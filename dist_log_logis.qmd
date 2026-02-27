@@ -42,3 +42,27 @@ $$
 \\[10pt]
 = \sum_{i=1}^{n} \left[ \delta_i \left[ \log(\gamma) - \gamma \log(\alpha) + (\gamma-1) \log(t_i) - \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right) + \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right) \right] \right]
 $$
+
+## Aplicação 
+
+```{r}
+#| eval: false
+
+S_loglogistica <- function(theta, t, delta) {
+  
+  alpha <- exp(theta[1])
+  gamma <- exp(theta[2])
+  
+  log_f <- log(gamma) - (gamma * log(alpha)) + (gamma - 1) * log(t) - 2 * log(1 + (t/alpha)^gamma)
+  
+  log_S <- -log(1 + (t/alpha)^gamma)
+  
+  LOG_L <- sum(delta * log_f + (1 - delta) * log_S)
+  
+  return(-LOG_L)
+}
+```
+Aplicando o $optim$ se obtem os valores estimados dos parãmetros: [ 2.7373688, 0.7993457] e estatística de 66.03053.
+
+
+

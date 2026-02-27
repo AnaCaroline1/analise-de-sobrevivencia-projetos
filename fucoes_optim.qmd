@@ -1,0 +1,198 @@
+---
+title: "funcoes_optim"
+format: html
+editor: visual
+---
+
+```{r, message=FALSE}
+#install.packages("survival")
+#install.packages("flexsurv")
+library(survival)
+library(flexsurv)
+
+
+# EXEMPLO PACIENTES COM CÂNCER DE BEXIGA (2006 Enrico Antônio Colosimo, Suely Ruiz Giolo)
+ tempos<-c(3,5,6,7,8,9,10,10,12,15,15,18,19,20,22,25,28,30,40,45)
+ censura<-c(1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0)
+```
+
+### Exponencial (Criado)
+
+```{r}
+S_exp <- function(alpha, t, delta){
+  
+  log_L <- -sum(delta * log(alpha)) - (1/alpha) * sum(t)
+  
+  return(-log_L)
+}
+
+ajuste <- optimize(f = S_exp, c(0.01, 100), tempos, censura)
+ajuste
+```
+
+### Exponencial (Survival)
+
+```{r}
+modelo_exp <- survreg(Surv(tempos, censura) ~ 1, dist = "exponential")
+summary(modelo_exp)
+```
+
+## Weibull (Criado)
+
+```{r, warning=FALSE}
+S_weib <- function(theta, t, delta){
+  
+  alpha <- theta[1] 
+  gamma <- theta[2]
+  r <- sum(delta) #soma de todos as falhas
+
+  Log_L <- r*log(gamma)-(r*gamma*log(alpha))+(gamma -1)*sum(delta*log(t))-(alpha^(-gamma))*sum(t^gamma)
+  
+  if(!is.finite(Log_L)) return(1e10) #garante o tempo positivo apenas
+  
+  return(-Log_L)
+}
+
+#?optim()
+resultado <- optim(par = c(1, 1), S_weib, t = tempos, delta = censura, method = "BFGS")
+resultado 
+
+```
+
+## Weibull (Survival)
+
+```{r}
+modelo_weib <- survreg(Surv(tempos, censura) ~ 1, dist = "weibull")
+summary(modelo_weib)
+```
+
+# Log-Normal (Criado)
+
+```{r}
+S_lognorm <- function(theta, t, delta) {
+  
+  mu    <- theta[1]
+  sigma <- theta[2]
+  
+
+  log_S <- plnorm(t, meanlog = mu, sdlog = sigma, lower.tail = FALSE, log.p = TRUE)
+  
+  log_f <- -0.5*log(2*pi) - log(t) - log(sigma) - (1/(2*sigma^2)) * (log(t) - mu)^2
+  
+  L_LOG <- sum(delta * log_f + (1 - delta) * log_S)
+  
+  return(-L_LOG)
+}
+```
+
+```{r}
+o_mu <- mean(tempos) #mean(log(tempos))
+o_sigma <- sd(tempos) #sd(log(tempos))
+
+fit_ln <- optim(par = c(o_mu, o_sigma), fn = S_lognorm,t = tempos,delta = censura, method = "BFGS"
+)
+fit_ln
+
+```
+
+## Log-Normal (Survival)
+
+```{r}
+modelo_logN <- survreg(Surv(tempos, censura) ~ 1, dist = "lognormal")
+summary(modelo_logN)
+```
+
+## Log-Logística (Criada)
+
+```{r}
+S_loglogistica <- function(theta, t, delta) {
+
+  alpha <- exp(theta[1])
+  gamma <- exp(theta[2])
+  
+  log_f <- log(gamma) - (gamma * log(alpha)) + (gamma - 1) * log(t) - 2 * log(1 + (t/alpha)^gamma)
+  
+  log_S <- -log(1 + (t/alpha)^gamma)
+  
+  LOG_L <- sum(delta * log_f + (1 - delta) * log_S)
+  
+  return(-LOG_L)
+}
+
+# Chute inicial (log da média dos tempos e log de 1)
+inicio <- c(log(mean(tempos)), 0)
+
+fit_ll <- optim(par = inicio, fn = S_loglogistica, t = tempos, delta = censura, method = "BFGS")
+fit_ll
+```
+
+## Log-Logística (Survival)
+
+```{r}
+modelo_LL <- survreg(Surv(tempos, censura) ~ 1, dist = "loglogistic")
+modelo_LL
+```
+
+## Gama (Criada)
+
+```{r}
+S_gama <- function(theta, t, delta) {
+
+  shape <- exp(theta[1])
+  scale <- exp(theta[2])
+  
+  log_f <- dgamma(t, shape = shape, scale = scale, log = TRUE)
+  
+  log_S <- pgamma(t, shape = shape, scale = scale, lower.tail = FALSE, log.p = TRUE)
+  
+  logl <- sum(delta * log_f + (1 - delta) * log_S)
+  
+  return(-logl)
+}
+
+p <- log(mean(tempos))
+
+fit_g <- optim(par = c(0, p), fn = S_gama, t = tempos, delta = censura, method = "BFGS")
+fit_g
+```
+
+## Gama (Flexsurvreg)
+
+```{r}
+modelo_gama <- flexsurvreg(Surv(tempos, censura) ~ 1, dist = "gamma")
+modelo_gama
+```
+
+## Gama Generalizada (Criada)
+
+```{r}
+
+S_gamaG <- function(theta, t, delta) {
+
+  alpha <- exp(theta[1])
+  gamma <- exp(theta[2])
+  s     <- exp(theta[3])
+  
+  log_f <- log(gamma)-lgamma(s)-(gamma*s*log(alpha))+(gamma * s - 1)*log(t)-(t / alpha)^gamma
+  
+  log_S <- pgamma((t / alpha)^gamma, shape = s, lower.tail = FALSE, log.p = TRUE)
+  
+  logl <- sum(delta * log_f + (1 - delta) * log_S)
+  
+  if(!is.finite(logl)) return(1e10)
+  
+  return(-logl)
+}
+
+i <- c(log(mean(tempos)), 0, 0) 
+
+resultado_gg <- optim(par = i, fn = S_gamaG, t = tempos, delta = censura, method = "BFGS")
+resultado_gg
+```
+
+## Gama Generalizada (Flexsurvreg)
+
+```{r}
+modelo_GG <- flexsurvreg(Surv(tempos, censura) ~ 1, dist = "gengamma")
+modelo_GG
+```

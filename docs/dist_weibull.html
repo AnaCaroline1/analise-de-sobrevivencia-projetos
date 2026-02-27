@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -338,6 +373,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./outras_funções_comp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Funções no optim</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -351,6 +392,8 @@ window.Quarto = {
   <li><a href="#função-de-verossimilhança-é-dada-por" id="toc-função-de-verossimilhança-é-dada-por" class="nav-link active" data-scroll-target="#função-de-verossimilhança-é-dada-por"><span class="header-section-number">2.1</span> Função de verossimilhança é dada por:</a></li>
   <li><a href="#log-verossimilhança-da-weibull" id="toc-log-verossimilhança-da-weibull" class="nav-link" data-scroll-target="#log-verossimilhança-da-weibull"><span class="header-section-number">2.2</span> Log-verossimilhança da Weibull:</a></li>
   <li><a href="#distribuição-log-weibull-gumbel" id="toc-distribuição-log-weibull-gumbel" class="nav-link" data-scroll-target="#distribuição-log-weibull-gumbel"><span class="header-section-number">2.3</span> Distribuição Log-Weibull (Gumbel)</a></li>
+  <li><a href="#linearização-da-função-de-sobrevivência-da-weibull" id="toc-linearização-da-função-de-sobrevivência-da-weibull" class="nav-link" data-scroll-target="#linearização-da-função-de-sobrevivência-da-weibull"><span class="header-section-number">2.4</span> Linearização da função de sobrevivência da Weibull</a></li>
+  <li><a href="#aplicação" id="toc-aplicação" class="nav-link" data-scroll-target="#aplicação"><span class="header-section-number">2.5</span> Aplicação</a></li>
   </ul>
 </nav>
     </div>
@@ -405,8 +448,64 @@ L(\theta | t) = \prod_{i=1}^{n} \left[ \left( \frac{\gamma}{\alpha^{\gamma}} \cd
 <section id="distribuição-log-weibull-gumbel" class="level2" data-number="2.3">
 <h2 data-number="2.3" class="anchored" data-anchor-id="distribuição-log-weibull-gumbel"><span class="header-section-number">2.3</span> Distribuição Log-Weibull (Gumbel)</h2>
 <p><span class="math display">\[L(\theta | y) = \prod_{i=1}^n \left[ \left( \frac{1}{\sigma} \exp \left[ \frac{y_i - \mu}{\sigma} - \exp \left( \frac{y_i - \mu}{\sigma} \right) \right] \right)^{\delta_i} \cdot \left( \exp \left[ -\exp \left( \frac{y_i - \mu}{\sigma} \right) \right] \right)^{1-\delta_i} \right]\]</span></p>
-<p><span class="math display">\[\ell[L(\theta | y)] = \sum_{i=1}^n \left[ \delta_i \log \left[ \frac{1}{\sigma} \exp \left( \frac{y_i - \mu}{\sigma} \right) \right] - \exp \left( \frac{y_i - \mu}{\sigma} \right) \right]\]</span></p>
+<p><span class="math display">\[\ell[L(\theta|y)] = \sum_{i=0}^{n}\left[\delta_{i} \log\left(\frac{1}{\sigma} \exp \left[ \frac{y_i - \mu}{\sigma} - \exp \left( \frac{y_i - \mu}{\sigma} \right) \right] \right) + (1-\delta_i) \log \left( \exp \left[ -\exp \left( \frac{y_i - \mu}{\sigma} \right) \right] \right)\right]\]</span></p>
+<p>Desenvolvendo as exponencias, aplicando os logs e separando os termos multiplicados na segunda parte da equação por <span class="math inline">\(1-\delta_{i}\)</span>.</p>
+<p><span class="math display">\[-\delta_{i} \exp \left[ \frac{y_i - \mu}{\sigma} \right] - \exp \left[\frac{y_{i} - \mu}{\sigma} \right]+ \delta{i} \exp \left[\frac{y_{i} - \mu}{\sigma} \right]\]</span></p>
 <p><span class="math display">\[\ell[L(\theta | y)] = \sum_{i=1}^n \left[ \delta_i \left[ -\log(\sigma) + \left( \frac{y_i - \mu}{\sigma} \right) \right] - \exp \left( \frac{y_i - \mu}{\sigma} \right) \right]\]</span></p>
+</section>
+<section id="linearização-da-função-de-sobrevivência-da-weibull" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="linearização-da-função-de-sobrevivência-da-weibull"><span class="header-section-number">2.4</span> Linearização da função de sobrevivência da Weibull</h2>
+<p>A função de sobrevivência do modelo de Weibull é dado por</p>
+<p><span class="math display">\[
+S(t) = \exp\left[- \frac{t}{\alpha}^{\lambda} \right]
+\]</span></p>
+<p>Desse modo,</p>
+<p><span class="math display">\[
+-\log\left[S(t)\right] = \left( \frac{t}{\alpha}^{\lambda}\right)
+\]</span></p>
+<p>tal que, de acordo com a equação <span class="math inline">\(y= a +bx\)</span>, se tem <span class="math inline">\(y=\log\left[-\log\left[S(t)\right]\right]\)</span>, <span class="math inline">\(a = -\lambda\log(\alpha)\)</span>, <span class="math inline">\(b=\lambda\)</span>, <span class="math inline">\(x=\log(t)\)</span>. Portanto, para que o modelo de Weibull seja considerado apropriado, gráfico <span class="math inline">\(\log\left[-\log\left[S(t)\right]\right]\)</span> <em>versus</em> <span class="math inline">\(\log(t)\)</span> deve ser aproximadamente linear, com <span class="math inline">\(\hat{S}(t)\)</span> correspondendo ao estimador de Kaplan-Meier. Se além de linear, apresentar inclinação igual a 1, haverá evidências a favor do modelo exponencial.</p>
+</section>
+<section id="aplicação" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="aplicação"><span class="header-section-number">2.5</span> Aplicação</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>log_vero_surv_weibull <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, status){</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> theta[<span class="dv">1</span>] </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  gamma <span class="ot">&lt;-</span> theta[<span class="dv">2</span>]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> status</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  Log_L <span class="ot">&lt;-</span> <span class="fu">sum</span>(r<span class="sc">*</span>(<span class="fu">log</span>(gamma)<span class="sc">-</span>gamma<span class="sc">*</span><span class="fu">log</span>(alpha)<span class="sc">+</span>(gamma<span class="dv">-1</span>)<span class="sc">*</span><span class="fu">log</span>(t))<span class="sc">-</span>(t<span class="sc">/</span>alpha)<span class="sc">^</span>gamma)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.finite</span>(Log_L)) <span class="fu">return</span>(<span class="fl">1e10</span>) <span class="co">#garante o tempo positivo apenas</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>Log_L)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot 1</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>t_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">max</span>(tempos), <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>s_weibull <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>(t_seq <span class="sc">/</span> alpha_est)<span class="sc">^</span>gamma_est)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#plot 2</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Preparar os dados (remover S(t)=0 ou 1 para evitar log de erro)</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>indices <span class="ot">&lt;-</span> <span class="fu">which</span>(km_c_bx<span class="sc">$</span>sobrevivencia <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> km_c_bx<span class="sc">$</span>sobrevivencia <span class="sc">&lt;</span> <span class="dv">1</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>t_km <span class="ot">&lt;-</span> km_c_bx<span class="sc">$</span>tempo[indices]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>s_km <span class="ot">&lt;-</span> km_c_bx<span class="sc">$</span>sobrevivencia[indices]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Transformações lineares</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>y_weibull <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="sc">-</span><span class="fu">log</span>(s_km))</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>x_weibull <span class="ot">&lt;-</span> <span class="fu">log</span>(t_km)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="weibull.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="lin_weibul.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
 
 
 </section>

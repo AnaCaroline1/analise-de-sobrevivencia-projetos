@@ -22,21 +22,9 @@ $$
 = \sum_{i=1}^n \left[ \delta_i \left[ -\frac{1}{2} \log(2\pi) - \log(t_i) - \log(\sigma) - \frac{1}{2\sigma^2} (\log(t_i) - \mu)^2 \right] + (1-\delta_i) \log \left( \Phi \left( \frac{-\log(t_i) + \mu}{\sigma} \right) \right) \right]
 $$
 
-*Reescrevendo, teremos*:
-
-
-$$
-= \sum_{i=1}^n \left[ \delta_i\left[ \log\left(-\frac{1}{2}2\pi - t_i - \sigma\right) - \frac{1}{2\sigma^2} (\log(t_i) - \mu)^2 \right] + (1-\delta_i) \log \left( \Phi \left( \frac{-\log(t_i) + \mu}{\sigma} \right) \right) \right]\\[10pt]
-$$
-
-
-$$
-= \sum_{i=1}^n \left[ \delta_i\left[ \log\left(-\pi - t_i - \sigma\right) - \frac{1}{2\sigma^2} (\log(t_i) - \mu)^2 \right] + (1-\delta_i) \log \left( \Phi \left( \frac{-\log(t_i) + \mu}{\sigma} \right) \right) \right]
-$$
-
 ## Lineiarização da função de sobrevivência da log-normal
 
-A função de sobrevivência associada ao modelo log-normal, dada por 
+A função de sobrevivência associada ao modelo log-normal, dada por
 
 $$
 S(t)= \Phi \left(\frac{-\log(t) + \mu}{\sigma} \right)
@@ -51,3 +39,51 @@ $$
 com $\Phi^{-1}(.)$ correspondendo aos percentis da distribuição normal padrão.
 
 Portanto para que o modelo log-normal seja considerado apropriado, o gráfico $\Phi^{-1}(\hat{S}(t))$ *versus* $\log(t)$ deve ser aproximadamente linear com intercepto $a=\mu/\sigma$, e inclinação $b = -1/\sigma$.
+
+## Aplicação: Pacientes com câncer de bexiga
+
+1º Função de log-verossimilhança
+
+```{r}
+#| eval: false
+
+log_vero_surv_lnorm <- function(theta,t,status){
+  mu    <- theta[1]
+  sigma <- theta[2]
+  log_S <- plnorm(t, meanlog = mu, sdlog = sigma, lower.tail = FALSE, log.p = TRUE)
+  
+  log_f <- -0.5*log(2*pi) - log(t) - log(sigma) - (1/(2*sigma^2)) * (log(t) - mu)^2
+  
+  L_LOG <- sum(status * log_f + (1 - status) * log_S)
+  
+  return(-L_LOG)
+
+}
+```
+
+2º Obtendo os parâmetros estimados pelo modelo
+
+```{r}
+#| eval: false
+
+ajust2 <- optim(par=c(1,1),f=log_vero_surv_lnorm,
+                   t = tempos,
+                   status = cens)
+```
+
+O valor $par = \left\{\hat{\mu};\hat{\sigma}\right\}$ é de $\hat{\mu} = 2.717182$ e $\hat{\sigma} =0.764918$ sendo o valor da estatistica da log-verrossimilhança para o modelo de 65.7399.
+
+3º Comparação gráfica entre a curva de sobrevivência teórica e a curva KM. Bem como observar o comportamento dos dados, ao modelo.
+
+```{r}
+#| eval: false
+
+mu_est <- ajust2$par[1]
+sigma_est <- ajust2$par[2]
+
+s_lnorm <- pnorm((log(t_teorico) - mu_est) / sigma_est, 
+                 lower.tail = FALSE)
+
+```
+
+![](Captura%20de%20tela%202026-02-26%20233841.png){fig-align="center"}
