@@ -17,10 +17,6 @@ cens<-c(1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0)
 df_cc_bx <- data.frame(tempos, cens)
 
 #write_parquet(df_final, "df_srag_sg.parquet")
-
-# Lê o arquivo
-df_srag_sg <- read_parquet("df_srag_sg.parquet")
-
 df_cc_pl <- read.table("cancer_de_pele.txt", header = T)
 
 i<-order(df_cc_pl$survtime)
