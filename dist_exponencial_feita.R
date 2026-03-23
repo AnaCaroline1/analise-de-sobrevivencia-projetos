@@ -36,15 +36,20 @@ ajus11 <- optim(par = 1,
                 status = cens, 
                 method="Brent",
                 lower = 0.001,
-                upper = 1000)
+                upper = 1000,
+                hessian = T)
+
+
 ajus11$par
 
 n <- length(tempos) # tamanho da amostra
 x <- rexp(n,ajus11$par)
 
 x_seq <- seq(min(tempos), max(tempos), length.out = 10)
+
 #length.out: gera uma sequência de 100 valores x igualmente espaçados entre o valor
 ##mínimo e o valor máximo dos dados.
+##
 densidade_exp <- dexp(x_seq,ajus11$par) 
 
 plot(x, ylab = "Frequência", xlab = "Valores dos dados", main = "Histograma com ajuste: Exponencial p/ câncer de bexiga",
@@ -146,3 +151,22 @@ S_t <- function(tempo_alvo) {
 }
 
 S_t(30)
+
+###########################################
+
+# Criando intervalo de confiança para os resultados obtidos
+
+# Pegando a hessiana dos ajuste
+
+f_theta <- ajus11$hessian
+
+# Calculando a Var(theta) 
+
+var_theta <- 1/f_theta
+
+ep_theta <- sqrt(diag(var_theta))
+
+limite_inf <- ajus11$par - 1.96 * ep_theta
+limite_sup <- ajus11$par + 1.96 * ep_theta
+
+###########################################
