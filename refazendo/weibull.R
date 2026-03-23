@@ -74,16 +74,16 @@ s_weibull <- pweibull(t_seq, shape = gamma_est, scale = alpha_est, lower.tail = 
 
 # 4. Plotar usando os vetores com o tempo zero incluído
 plot(t_plot, s_plot, type = "s", lwd = 2,
-     xlab = "Tempo (t)", ylab = "S(t)", 
-     main = "Ajuste Weibull vs. Kaplan-Meier",
-     xlim = c(0, max(t_plot)), 
-     ylim = c(0, 1),
-     xaxs = "i", yaxs = "i") # 'i' faz os eixos encostarem exatamente no 0 e 1
-
-lines(t_seq, s_weibull, col = "darkred", lwd = 2, lty = 2)
-
-legend("topright", legend = c("Kaplan-Meier", "Weibull Ajustada"),
-       col = c("black", "darkred"), lty = c(1, 2), lwd = 2)
+       xlab = "Tempo (t)", ylab = "S(t)", 
+       main = "Ajuste Weibull vs. Kaplan-Meier",
+       xlim = c(0, max(t_plot)), 
+       ylim = c(0, 1),
+       xaxs = "i", yaxs = "i") # 'i' faz os eixos encostarem exatamente no 0 e 1
+  
+  lines(t_seq, s_weibull, col = "darkred", lwd = 2, lty = 2)
+  
+  legend("topright", legend = c("Kaplan-Meier", "Weibull Ajustada"),
+         col = c("black", "darkred"), lty = c(1, 2), lwd = 2)
 
 # 2. Transformações lineares
 y_weibull <- log(-log(s_km))

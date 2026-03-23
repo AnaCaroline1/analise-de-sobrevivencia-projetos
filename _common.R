@@ -24,3 +24,4 @@ i<-order(df_cc_pl$survtime)
 df_cc_pl<-df_cc_pl[i,]
 attach(df_cc_pl)
 
+

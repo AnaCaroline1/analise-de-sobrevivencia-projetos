@@ -73,7 +73,8 @@ ajust2 <- optim(par=c(1,1),f=log_vero_surv_lnorm,
 
 O valor $par = \left\{\hat{\mu};\hat{\sigma}\right\}$ é de $\hat{\mu} = 2.717182$ e $\hat{\sigma} =0.764918$ sendo o valor da estatistica da log-verrossimilhança para o modelo de 65.7399.
 
-3º Comparação gráfica entre a curva de sobrevivência teórica e a curva KM. Bem como observar o comportamento dos dados, ao modelo.
+3º Comparação gráfica entre a curva de sobrevivência teórica e a curva KM.
+Bem como observar o comportamento dos dados, ao modelo.
 
 ```{r}
 #| eval: false
@@ -81,9 +82,40 @@ O valor $par = \left\{\hat{\mu};\hat{\sigma}\right\}$ é de $\hat{\mu} = 2.71718
 mu_est <- ajust2$par[1]
 sigma_est <- ajust2$par[2]
 
+
+indices <- which(km_c_bx$sobrevivencia > 0) 
+t_km <- km_c_bx$tempo[indices]
+s_km <- km_c_bx$sobrevivencia[indices]
+
+t_plot <- c(0, t_km)
+s_plot <- c(1, s_km)
+
+
+t_teorico <- seq(0, max(t_plot),length.out=100)
 s_lnorm <- pnorm((log(t_teorico) - mu_est) / sigma_est, 
                  lower.tail = FALSE)
 
+y_coord <- qnorm(1 - s_km)
+x_coord <- log(t_km)
+
 ```
 
-![](Captura%20de%20tela%202026-02-26%20233841.png){fig-align="center"}
+```{r}
+#| echo: false
+
+plot(t_plot,s_plot, type = "s", lwd = 2,
+     xlab = "Tempo (t)", ylab = "S(t)", 
+     main = "Ajuste Log-Normal vs. Kaplan-Meier")
+lines(t_teorico, s_lnorm, col = "blue", lwd = 2, lty = 2)
+legend("topright", legend = c("Kaplan-Meier", "Log-Normal Ajustada"),
+       col = c("black", "blue"), lty = c(1, 2), lwd = 2)
+
+plot(x_coord, y_coord, pch = 16, col = "darkgreen",
+     xlab = "log(t)", ylab = "qnorm(1 - S(t))",
+     main = "Gráfico de Linearização Log-Normal")
+
+# y = (1/sigma) * log(t) - (mu/sigma)
+
+abline(a = -mu_est/sigma_est, b = 1/sigma_est, col = "red", lwd = 2)
+
+```

@@ -79,22 +79,58 @@ log_vero_surv_weibull <- function(theta, t, status){
 
 ```{r}
 #| eval: false
+ 
 # plot 1
-t_seq <- seq(0, max(tempos), length.out = 100)
-s_weibull <- exp(-(t_seq / alpha_est)^gamma_est)
 
-#plot 2
-# 1. Preparar os dados (remover S(t)=0 ou 1 para evitar log de erro)
-indices <- which(km_c_bx$sobrevivencia > 0 & km_c_bx$sobrevivencia < 1)
+indices <- which(km_c_bx$sobrevivencia > 0) 
 t_km <- km_c_bx$tempo[indices]
 s_km <- km_c_bx$sobrevivencia[indices]
 
+t_plot <- c(0, t_km)
+s_plot <- c(1, s_km)
+
+alpha_est <- ajust3$par[1]
+gamma_est <- ajust3$par[2]
+t_seq <- seq(0, max(t_plot), length.out = 100)
+s_weibull <- pweibull(t_seq, shape = gamma_est, scale = alpha_est, lower.tail = FALSE)
+
+#plot 2
+
 # 2. Transformações lineares
+
 y_weibull <- log(-log(s_km))
 x_weibull <- log(t_km)
 
 ```
 
-![](weibull.jpeg){fig-align="center"}
 
-![](lin_weibul.jpeg){fig-align="center"}
+```{r}
+#| echo: false
+ 
+plot(t_plot, s_plot, type = "s", lwd = 2,
+       xlab = "Tempo (t)", ylab = "S(t)", 
+       main = "Ajuste Weibull vs. Kaplan-Meier",
+       xlim = c(0, max(t_plot)), 
+       ylim = c(0, 1),
+       xaxs = "i", yaxs = "i") # 'i' faz os eixos encostarem exatamente no 0 e 1
+  
+  lines(t_seq, s_weibull, col = "darkred", lwd = 2, lty = 2)
+  
+  legend("topright", legend = c("Kaplan-Meier", "Weibull Ajustada"),
+         col = c("black", "darkred"), lty = c(1, 2), lwd = 2)
+
+```
+
+```{r}
+#| echo: false
+plot(x_weibull, y_weibull, pch = 16, col = "purple",
+     xlab = "log(t)", ylab = "log(-log(S(t)))",
+     main = "Gráfico de Linearização Weibull")
+
+# 4. Adicionar a reta teórica baseada no seu ajuste
+# Intercepto: -gamma * log(alpha) | Inclinação: gamma
+abline(a = -gamma_est * log(alpha_est), b = gamma_est, col = "red", lwd = 2)
+
+```
+
+

@@ -61,8 +61,70 @@ S_loglogistica <- function(theta, t, delta) {
   
   return(-LOG_L)
 }
-```
-Aplicando o $optim$ se obtem os valores estimados dos parãmetros: [ 2.7373688, 0.7993457] e estatística de 66.03053.
+inicio <- c(log(mean(tempos)), 0)
 
+fit_ll <- optim(par = inicio, fn = S_loglogistica, t = tempos, 
+                delta = cens, method = "BFGS")
+```
+
+Aplicando o $optim$ se obtem os valores estimados dos parâmetros: [ 2.7373688, 0.7993457] e estatística de 66.03053.
+
+```{r}
+alpha_est <- exp(fit_ll$par[1])
+gamma_est <- exp(fit_ll$par[2])
+
+# Sequência de tempo começando do zero para o gráfico encostar no eixo Y
+t_seq <- seq(0, max(tempos, na.rm = TRUE), length.out = 100)
+
+# Calcular a sobrevivência teórica CORRETA
+s_loglogis <- 1 / (1 + (t_seq / alpha_est)^gamma_est)
+
+indices_lin <- which(km_c_bx$sobrevivencia > 0 & km_c_bx$sobrevivencia < 1)
+t_km <- km_c_bx$tempo[indices_lin]
+s_km <- km_c_bx$sobrevivencia[indices_lin]
+
+y_lin <- log((1 - s_km) / s_km)
+x_lin <- log(t_km)
+```
+
+
+```{r}
+#| echo: false
+plot(km_c_bx$tempo, km_c_bx$sobrevivencia, 
+     type = "s", lwd = 2,
+     xlab = "Tempo (t)", ylab = "S(t)", 
+     main = "Ajuste Log-Logístico vs. Kaplan-Meier",
+     xlim = c(0, max(tempos)),
+     ylim = c(0, 1),
+     xaxs = "i", yaxs = "i")   
+
+lines(t_seq, s_loglogis, col = "darkgreen", lwd = 2, lty = 2)
+
+legend("topright", 
+       legend = c("Kaplan-Meier", "Log-Logística Ajustada"),
+       col = c("black", "darkgreen"), 
+       lty = c(1, 2), 
+       lwd = 2,
+       bty = "n")
+```
+
+
+```{r}
+
+plot(x_lin, y_lin, 
+     pch = 16, col = "darkblue",
+     xlab = "log(t)", 
+     ylab = "log((1 - S(t)) / S(t))",
+     main = "Gráfico de Linearização: Log-Logística")
+
+alpha_est <- exp(fit_ll$par[1])
+gamma_est <- exp(fit_ll$par[2])
+
+# O intercepto é -gamma * log(alpha) e a inclinação é gamma
+abline(a = -gamma_est * log(alpha_est), b = gamma_est, 
+       col = "red", lwd = 2, lty = 2)
+
+grid()
+```
 
 
