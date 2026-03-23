@@ -1,6 +1,7 @@
 library(survival)
 library(ggplot2)
 library(ggfortify)
+library(ggsurvfit)
 library(tidyverse)
 library(janitor)
 library(knitr)
