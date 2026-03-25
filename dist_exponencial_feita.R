@@ -159,56 +159,10 @@ S_t(30)
 
 # Pegando a hessiana dos ajuste
 
-f_theta <- ajus11$hessian
+f_theta <- solve(ajus11$hessian)
 
 
-# Variância e EP de cada distribuição
-# Calculando a Var(theta) 
-
-var_theta <- f_theta
-
-ep_theta <- 
-
-## Calculando os intervalos de confiança
-
-limite_inf <- round(exp(-(ajus11$par - 1.96 * as.vector(ep_theta)))*t_teorico,4)
-limite_sup <- round(exp(-(ajus11$par + 1.96 * as.vector(ep_theta)))*t_teorico,4)
-
-## Plotando em gráfico com intervalo de confiança
- 
-
-# Criando o gráfico
-
-c(t_teorico, rev(t_teorico)) == c(limite_sup, rev(limite_inf))
-
-plot(km_c_bx$tempo, km_c_bx$sobrevivencia,
-     type = "n",
-     lwd=2,
-     main = "Ajuste Manual: Dados vs. Modelo Exponencial",
-     ylim = c(min(limite_inf),max(limite_sup)),
-     xlab = "Tempo", ylab = "Sobrevivência"
-     )
-polygon(c(t_teorico, rev(t_teorico)),
-        c(limite_sup, rev(limite_inf)),
-        col = rgb(1,0,0, alpha = 0.15),
-        border = NA
-        )
-lines(km_c_bx$tempo, km_c_bx$sobrevivencia, 
-      type = "s", lwd = 1)
-lines(t_teorico, s_teorico, col = "red", lwd = 2, lty = 2)
-legend("topright", 
-       legend = c("Kaplan-Meier (Dados)", "Exponencial (Modelo)", "IC 95% (modelo)"),
-       col = c("black", "red", rgb(1,0,0,alpha=0.3)), 
-       lty = c(1, 2, 1), 
-       lwd = c(2,2,8)
-       )
-
-#ggplot(tempos, aes(x = grupo, y = media)) +
-#  geom_bar(stat = "identity", fill = "skyblue") +
-#  geom_errorbar(aes(ymin = limite_inf, ymax = limite_sup), width = 0.2) +
-#  theme_minimal() 
-
-
+# 1. Definir tempos para o plot
 
 ###########################################
 
