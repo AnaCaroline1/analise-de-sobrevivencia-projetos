@@ -40,7 +40,8 @@ ajus11 <- optim(par = 1,
                 hessian = T)
 
 
-ajus11$par
+
+
 
 n <- length(tempos) # tamanho da amostra
 x <- rexp(n,ajus11$par)
@@ -90,7 +91,7 @@ ekm <- function(tempos,status){
 km_c_bx <- ekm(tempos,cens)
 km_c_bx
 
-t_teorico <- seq(0, max(tempos),length.out=50)
+t_teorico <- seq(0, max(tempos),length.out=20)
 s_teorico <- exp(-t_teorico/ajus11$par)
 
 plot(km_c_bx$tempo, km_c_bx$sobrevivencia,
@@ -160,13 +161,55 @@ S_t(30)
 
 f_theta <- ajus11$hessian
 
+
+# Variância e EP de cada distribuição
 # Calculando a Var(theta) 
 
-var_theta <- 1/f_theta
+var_theta <- f_theta
 
-ep_theta <- sqrt(diag(var_theta))
+ep_theta <- 
 
-limite_inf <- ajus11$par - 1.96 * ep_theta
-limite_sup <- ajus11$par + 1.96 * ep_theta
+## Calculando os intervalos de confiança
+
+limite_inf <- round(exp(-(ajus11$par - 1.96 * as.vector(ep_theta)))*t_teorico,4)
+limite_sup <- round(exp(-(ajus11$par + 1.96 * as.vector(ep_theta)))*t_teorico,4)
+
+## Plotando em gráfico com intervalo de confiança
+ 
+
+# Criando o gráfico
+
+c(t_teorico, rev(t_teorico)) == c(limite_sup, rev(limite_inf))
+
+plot(km_c_bx$tempo, km_c_bx$sobrevivencia,
+     type = "n",
+     lwd=2,
+     main = "Ajuste Manual: Dados vs. Modelo Exponencial",
+     ylim = c(min(limite_inf),max(limite_sup)),
+     xlab = "Tempo", ylab = "Sobrevivência"
+     )
+polygon(c(t_teorico, rev(t_teorico)),
+        c(limite_sup, rev(limite_inf)),
+        col = rgb(1,0,0, alpha = 0.15),
+        border = NA
+        )
+lines(km_c_bx$tempo, km_c_bx$sobrevivencia, 
+      type = "s", lwd = 1)
+lines(t_teorico, s_teorico, col = "red", lwd = 2, lty = 2)
+legend("topright", 
+       legend = c("Kaplan-Meier (Dados)", "Exponencial (Modelo)", "IC 95% (modelo)"),
+       col = c("black", "red", rgb(1,0,0,alpha=0.3)), 
+       lty = c(1, 2, 1), 
+       lwd = c(2,2,8)
+       )
+
+#ggplot(tempos, aes(x = grupo, y = media)) +
+#  geom_bar(stat = "identity", fill = "skyblue") +
+#  geom_errorbar(aes(ymin = limite_inf, ymax = limite_sup), width = 0.2) +
+#  theme_minimal() 
+
+
 
 ###########################################
+
+
