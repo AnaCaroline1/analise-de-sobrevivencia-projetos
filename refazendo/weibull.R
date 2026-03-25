@@ -27,7 +27,7 @@ log_vero_surv_weibull_R <- function(theta, t, status) {
 tempos  
 cens
 
-ajust3 <- optim(par = c(1, 1), log_vero_surv_weibull_R, t = tempos, status = cens, method = "BFGS")
+ajust3 <- optim(par = c(1, 1), log_vero_surv_weibull_R, t = tempos, status = cens, method = "BFGS",hessian = T)
 #############################################
 
 ekm <- function(tempos,status){
@@ -97,3 +97,51 @@ plot(x_weibull, y_weibull, pch = 16, col = "purple",
 # 4. Adicionar a reta teórica baseada no seu ajuste
 # Intercepto: -gamma * log(alpha) | Inclinação: gamma
 abline(a = -gamma_est * log(alpha_est), b = gamma_est, col = "red", lwd = 2)
+
+
+# Calculando os intervalos de confiança
+
+Sigma <- solve(ajust3$hessian) 
+
+# 1. Definir tempos para o plot
+t_seq <- seq(0, max(tempos), length.out = 100)
+
+# 2. Calcular S(t) e o Erro Padrão para cada t
+s_pred <- numeric(length(t_seq))
+se_s   <- numeric(length(t_seq))
+
+for(i in 1:length(t_seq)) {
+  ti <- t_seq[i]
+  # S(t) estimado
+  s_pred[i] <- exp(-(ti/alpha_est)^gamma_est)
+  
+  # Gradiente no ponto ti
+  d_alpha <- s_pred[i] * gamma_est * (ti^gamma_est / alpha_est^(gamma_est+1))
+  d_gamma <- -s_pred[i] * (ti/alpha_est)^gamma_est * log(ti/alpha_est + 1e-6)
+  grad <- c(d_alpha, d_gamma)
+  
+  # Variância via Delta Method
+  var_s <- t(grad) %*% Sigma %*% grad
+  se_s[i] <- sqrt(var_s)
+}
+
+# 3. Limites do IC (95%)
+ic_inf <- pmax(0, s_pred - 1.96 * se_s) # Garante que não seja < 0
+ic_sup <- pmin(1, s_pred + 1.96 * se_s) # Garante que não seja > 1
+
+plot(t_plot, s_plot, type = "s", lwd = 2,
+     xlab = "Tempo (t)", ylab = "S(t)", 
+     main = "Ajuste Weibull vs. Kaplan-Meier",
+     xlim = c(0, max(t_plot)), 
+     ylim = c(0, 1),
+     ) # 'i' faz os eixos encostarem exatamente no 0 e 1
+
+lines(t_seq, s_weibull, col = "darkred", lwd = 2, lty = 2)
+lines(t_seq, ic_inf, col = "red", lty = 2)
+lines(t_seq, ic_sup, col = "red", lty = 2)
+
+# Opcional: Polígono de preenchimento
+polygon(c(t_seq, rev(t_seq)), c(ic_inf, rev(ic_sup)), 
+        col = rgb(1, 0, 0, 0.2), border = NA)
+legend("topright", legend = c("Kaplan-Meier", "Weibull Ajustada"),
+       col = c("black", "darkred"), lty = c(1, 2), lwd = 2)
