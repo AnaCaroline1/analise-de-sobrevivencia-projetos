@@ -1,4 +1,0 @@
-"0",""
-"0"," plot(st, stw_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1), "
-"0","      xlab = ""S(t): Kaplan-Meier"", ylab=""S(t): weibull"","
-"0","      cex.lab=1.5,cex.axis=1.3)"

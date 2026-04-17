@@ -27,7 +27,9 @@ log_vero_surv_weibull_R <- function(theta, t, status) {
 tempos  
 cens
 
-ajust3 <- optim(par = c(1, 1), log_vero_surv_weibull_R, t = tempos, status = cens, method = "BFGS",hessian = T)
+ajust3 <- optim(par = c(1, 1), log_vero_surv_weibull_R,
+                t = tempos, status = cens,
+                method = "BFGS",hessian = T)
 #############################################
 
 ekm <- function(tempos,status){
@@ -134,6 +136,8 @@ plot(t_plot, s_plot, type = "s", lwd = 2,
      main = "Ajuste Weibull vs. Kaplan-Meier",
      xlim = c(0, max(t_plot)), 
      ylim = c(0, 1),
+     xaxs = "i",
+     yaxs = "i"
      ) # 'i' faz os eixos encostarem exatamente no 0 e 1
 
 lines(t_seq, s_weibull, col = "darkred", lwd = 2, lty = 2)

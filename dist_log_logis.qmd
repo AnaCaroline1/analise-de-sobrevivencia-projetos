@@ -6,7 +6,7 @@ $$
 f(t) = \frac{\gamma}{\alpha^{\gamma}} \cdot t^{(\gamma-1)} \left[ 1 + \left(\frac{t}{\alpha} \right)^\gamma \right]^{-2}
 $$
 
-## Função de Sobrevivência 
+## Função de Sobrevivência
 
 $$
 S(t) = \frac{1}{1 + \left(\frac{t}{\alpha} \right)^\gamma}
@@ -43,7 +43,7 @@ $$
 = \sum_{i=1}^{n} \left[ \delta_i \left[ \log(\gamma) - \gamma \log(\alpha) + (\gamma-1) \log(t_i) - \log \left( 1 + \left( \frac{t_i}{\alpha} \right)^\gamma \right) + \log \left( \frac{1}{1 + \left( \frac{t_i}{\alpha} \right)^\gamma} \right) \right] \right]
 $$
 
-## Aplicação 
+## Aplicação
 
 ```{r}
 #| eval: false
@@ -67,16 +67,22 @@ fit_ll <- optim(par = inicio, fn = S_loglogistica, t = tempos,
                 delta = cens, method = "BFGS")
 ```
 
-Aplicando o $optim$ se obtem os valores estimados dos parâmetros: [ 2.7373688, 0.7993457] e estatística de 66.03053.
+Aplicando o $optim$ se obtem os valores estimados dos parâmetros: \[ 2.7373688, 0.7993457\] e estatística de 66.03053.
 
 ```{r}
+
+# Parte refeita
+
+# 1. Extração correta dos parâmetros 
+#(voltando para a escala original)
+
 alpha_est <- exp(fit_ll$par[1])
 gamma_est <- exp(fit_ll$par[2])
 
 # Sequência de tempo começando do zero para o gráfico encostar no eixo Y
 t_seq <- seq(0, max(tempos, na.rm = TRUE), length.out = 100)
 
-# Calcular a sobrevivência teórica CORRETA
+# Calcular a sobrevivência teórica
 s_loglogis <- 1 / (1 + (t_seq / alpha_est)^gamma_est)
 
 indices_lin <- which(km_c_bx$sobrevivencia > 0 & km_c_bx$sobrevivencia < 1)
@@ -86,7 +92,6 @@ s_km <- km_c_bx$sobrevivencia[indices_lin]
 y_lin <- log((1 - s_km) / s_km)
 x_lin <- log(t_km)
 ```
-
 
 ```{r}
 #| echo: false
@@ -108,15 +113,25 @@ legend("topright",
        bty = "n")
 ```
 
-
 ```{r}
 
+indices_lin <- which(km_c_bx$sobrevivencia > 0 & km_c_bx$sobrevivencia < 1)
+t_km <- km_c_bx$tempo[indices_lin]
+s_km <- km_c_bx$sobrevivencia[indices_lin]
+
+# 2. Definir as coordenadas de linearização
+y_lin <- log((1 - s_km) / s_km)
+x_lin <- log(t_km)
+
+# 3. Criar o gráfico de dispersão
 plot(x_lin, y_lin, 
      pch = 16, col = "darkblue",
      xlab = "log(t)", 
      ylab = "log((1 - S(t)) / S(t))",
      main = "Gráfico de Linearização: Log-Logística")
 
+# 4. Adicionar a reta teórica baseada nos seus parâmetros estimados (fit_ll)
+# Lembre-se: alpha_est e gamma_est devem ser os valores na escala original
 alpha_est <- exp(fit_ll$par[1])
 gamma_est <- exp(fit_ll$par[2])
 
@@ -125,6 +140,11 @@ abline(a = -gamma_est * log(alpha_est), b = gamma_est,
        col = "red", lwd = 2, lty = 2)
 
 grid()
+
 ```
 
+## Intervalo de confiança
 
+```{r}
+
+```

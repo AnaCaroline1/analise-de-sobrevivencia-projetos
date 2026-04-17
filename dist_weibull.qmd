@@ -13,7 +13,8 @@ $$
 S(t) = exp\left[ - \left(\frac{t_{i}}{\alpha}\right)^{\gamma}\right]
 $$
 
-Os parâmetros de escala e forma, $\alpha$ e $\gamma$ são positivos. O parâmetro $\alpha$ tem mesma medida de unidade de $t$ e $\gamma$ não tendo unidade de medida.
+Os parâmetros de escala e forma, $\alpha$ e $\gamma$ são positivos.
+O parâmetro $\alpha$ tem mesma medida de unidade de $t$ e $\gamma$ não tendo unidade de medida.
 
 ## Função de verossimilhança é dada por:
 
@@ -57,24 +58,39 @@ $$
 -\log\left[S(t)\right] = \left( \frac{t}{\alpha}^{\lambda}\right)
 $$
 
-tal que, de acordo com a equação $y= a +bx$, se tem $y=\log\left[-\log\left[S(t)\right]\right]$, $a = -\lambda\log(\alpha)$, $b=\lambda$, $x=\log(t)$. Portanto, para que o modelo de Weibull seja considerado apropriado, gráfico $\log\left[-\log\left[S(t)\right]\right]$ *versus* $\log(t)$ deve ser aproximadamente linear, com $\hat{S}(t)$ correspondendo ao estimador de Kaplan-Meier. Se além de linear, apresentar inclinação igual a 1, haverá evidências a favor do modelo exponencial.
+tal que, de acordo com a equação $y= a +bx$, se tem $y=\log\left[-\log\left[S(t)\right]\right]$, $a = -\lambda\log(\alpha)$, $b=\lambda$, $x=\log(t)$.
+Portanto, para que o modelo de Weibull seja considerado apropriado, gráfico $\log\left[-\log\left[S(t)\right]\right]$ *versus* $\log(t)$ deve ser aproximadamente linear, com $\hat{S}(t)$ correspondendo ao estimador de Kaplan-Meier.
+Se além de linear, apresentar inclinação igual a 1, haverá evidências a favor do modelo exponencial.
 
 ## Aplicação
 
 ```{r}
 #| eval: false
-log_vero_surv_weibull <- function(theta, t, status){
-  
-  alpha <- theta[1] 
+log_vero_surv_weibull_R <- function(theta, t, status) {
+  alpha <- theta[1]
   gamma <- theta[2]
-  r <- status
   
-  Log_L <- sum(r*(log(gamma)-gamma*log(alpha)+(gamma-1)*log(t))-(t/alpha)^gamma)
+  # Evita valores não positivos para os parâmetros durante a otimização
+  if (alpha <= 0 || gamma <= 0) return(1e10)
   
-  if(!is.finite(Log_L)) return(1e10) #garante o tempo positivo apenas
+  # log(f(t)): log-densidade para os eventos (status == 1)
+  log_f <- dweibull(t, shape = gamma, scale = alpha, log = TRUE)
   
-  return(-Log_L)
+  # log(S(t)): log-sobrevivência para as censuras (status == 0)
+  # lower.tail = FALSE retorna P(X > x), e log.p = TRUE retorna o log disso
+  log_S <- pweibull(t, shape = gamma, scale = alpha, lower.tail = FALSE, log.p = TRUE)
+  
+  # Soma ponderada pelo status:
+  # Se status=1, contribui log_f. Se status=0, contribui log_S.
+  Log_L <- sum(status * log_f + (1 - status) * log_S)
+  
+  if (!is.finite(Log_L)) return(1e10)
+  
+  return(-Log_L) # Retorna negativo para minimizar
 }
+ajust3 <- optim(par = c(1, 1), log_vero_surv_weibull_R,
+                t = tempos, status = cens,
+                method = "BFGS",hessian = T)
 ```
 
 ```{r}
@@ -102,7 +118,6 @@ y_weibull <- log(-log(s_km))
 x_weibull <- log(t_km)
 
 ```
-
 
 ```{r}
 #| echo: false
@@ -133,4 +148,58 @@ abline(a = -gamma_est * log(alpha_est), b = gamma_est, col = "red", lwd = 2)
 
 ```
 
+## Intervalo de confiança
 
+```{r}
+
+Sigma <- solve(ajust3$hessian) 
+
+# 1. Definir tempos para o plot
+t_seq <- seq(0, max(tempos), length.out = 100)
+
+# 2. Calcular S(t) e o Erro Padrão para cada t
+s_pred <- numeric(length(t_seq))
+se_s   <- numeric(length(t_seq))
+
+for(i in 1:length(t_seq)) {
+  ti <- t_seq[i]
+  # S(t) estimado
+  s_pred[i] <- exp(-(ti/alpha_est)^gamma_est)
+  
+  # Gradiente no ponto ti
+  d_alpha <- s_pred[i] * gamma_est * (ti^gamma_est / alpha_est^(gamma_est+1))
+  d_gamma <- -s_pred[i] * (ti/alpha_est)^gamma_est * log(ti/alpha_est + 1e-6)
+  grad <- c(d_alpha, d_gamma)
+  
+  # Variância via Delta Method
+  var_s <- t(grad) %*% Sigma %*% grad
+  se_s[i] <- sqrt(var_s)
+}
+
+```
+
+```{r}
+# 3. Limites do IC (95%)
+ic_inf <- pmax(0, s_pred - 1.96 * se_s) # Garante que não seja < 0
+ic_sup <- pmin(1, s_pred + 1.96 * se_s) # Garante que não seja > 1
+
+plot(t_plot, s_plot, type = "s", lwd = 2,
+     xlab = "Tempo (t)", ylab = "S(t)", 
+     main = "Ajuste Weibull vs. Kaplan-Meier",
+     xlim = c(0, max(t_plot)), 
+     ylim = c(0, 1),
+     xaxs = "i",
+     yaxs = "i"
+     ) # 'i' faz os eixos encostarem exatamente no 0 e 1
+
+lines(t_seq, s_weibull, col = "darkred", lwd = 2, lty = 2)
+lines(t_seq, ic_inf, col = "red", lty = 2)
+lines(t_seq, ic_sup, col = "red", lty = 2)
+
+# Opcional: Polígono de preenchimento
+polygon(c(t_seq, rev(t_seq)), c(ic_inf, rev(ic_sup)), 
+        col = rgb(1, 0, 0, 0.2), border = NA)
+legend("topright", legend = c("Kaplan-Meier", "Weibull Ajustada"),
+       col = c("black", "darkred"), lty = c(1, 2), lwd = 2)
+
+```
