@@ -323,7 +323,7 @@ window.Quarto = {
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
@@ -375,8 +375,8 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./outras_funções_comp.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Funções no optim</span></span></a>
+  <a href="./fucoes_optim_IC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Aplicação: Intervalo de Confiança</span></span></a>
   </div>
 </li>
     </ul>
@@ -384,20 +384,9 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Sumário</h2>
-   
-  <ul>
-  <li><a href="#função-de-verossimilhança" id="toc-função-de-verossimilhança" class="nav-link active" data-scroll-target="#função-de-verossimilhança"><span class="header-section-number">3.1</span> Função de verossimilhança</a></li>
-  <li><a href="#log-verossimilhança-da-log-normal" id="toc-log-verossimilhança-da-log-normal" class="nav-link" data-scroll-target="#log-verossimilhança-da-log-normal"><span class="header-section-number">3.2</span> Log-verossimilhança da Log-Normal:</a></li>
-  <li><a href="#lineiarização-da-função-de-sobrevivência-da-log-normal" id="toc-lineiarização-da-função-de-sobrevivência-da-log-normal" class="nav-link" data-scroll-target="#lineiarização-da-função-de-sobrevivência-da-log-normal"><span class="header-section-number">3.3</span> Lineiarização da função de sobrevivência da log-normal</a></li>
-  <li><a href="#aplicação-pacientes-com-câncer-de-bexiga" id="toc-aplicação-pacientes-com-câncer-de-bexiga" class="nav-link" data-scroll-target="#aplicação-pacientes-com-câncer-de-bexiga"><span class="header-section-number">3.4</span> Aplicação: Pacientes com câncer de bexiga</a></li>
-  </ul>
-</nav>
-    </div>
+    
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page-right" id="quarto-document-content">
 
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -407,7 +396,7 @@ window.Quarto = {
 
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page-right">
 
     
   
@@ -455,37 +444,67 @@ S(t)= \Phi \left(\frac{-\log(t) + \mu}{\sigma} \right)
 <h2 data-number="3.4" class="anchored" data-anchor-id="aplicação-pacientes-com-câncer-de-bexiga"><span class="header-section-number">3.4</span> Aplicação: Pacientes com câncer de bexiga</h2>
 <p>1º Função de log-verossimilhança</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>log_vero_surv_lnorm <span class="ot">&lt;-</span> <span class="cf">function</span>(theta,t,status){</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  mu    <span class="ot">&lt;-</span> theta[<span class="dv">1</span>]</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  sigma <span class="ot">&lt;-</span> theta[<span class="dv">2</span>]</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  log_S <span class="ot">&lt;-</span> <span class="fu">plnorm</span>(t, <span class="at">meanlog =</span> mu, <span class="at">sdlog =</span> sigma, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>, <span class="at">log.p =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  log_f <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">0.5</span><span class="sc">*</span><span class="fu">log</span>(<span class="dv">2</span><span class="sc">*</span>pi) <span class="sc">-</span> <span class="fu">log</span>(t) <span class="sc">-</span> <span class="fu">log</span>(sigma) <span class="sc">-</span> (<span class="dv">1</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>sigma<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">*</span> (<span class="fu">log</span>(t) <span class="sc">-</span> mu)<span class="sc">^</span><span class="dv">2</span></span>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Refeita</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>log_vero_surv_lnorm <span class="ot">&lt;-</span> <span class="cf">function</span>(theta,t,status){</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  mu    <span class="ot">&lt;-</span> theta[<span class="dv">1</span>]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  sigma <span class="ot">&lt;-</span> theta[<span class="dv">2</span>]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  log_S <span class="ot">&lt;-</span> <span class="fu">plnorm</span>(t, <span class="at">meanlog =</span> mu, <span class="at">sdlog =</span> sigma, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>, <span class="at">log.p =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  L_LOG <span class="ot">&lt;-</span> <span class="fu">sum</span>(status <span class="sc">*</span> log_f <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> status) <span class="sc">*</span> log_S)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  log_f <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">0.5</span><span class="sc">*</span><span class="fu">log</span>(<span class="dv">2</span><span class="sc">*</span>pi) <span class="sc">-</span> <span class="fu">log</span>(t) <span class="sc">-</span> <span class="fu">log</span>(sigma) <span class="sc">-</span> (<span class="dv">1</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>sigma<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">*</span> (<span class="fu">log</span>(t) <span class="sc">-</span> mu)<span class="sc">^</span><span class="dv">2</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>L_LOG)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  L_LOG <span class="ot">&lt;-</span> <span class="fu">sum</span>(status <span class="sc">*</span> log_f <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> status) <span class="sc">*</span> log_S)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>L_LOG)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
 <p>2º Obtendo os parâmetros estimados pelo modelo</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ajust2 <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>),<span class="at">f=</span>log_vero_surv_lnorm,</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">t =</span> tempos,</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">status =</span> cens)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">status =</span> cens</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                , <span class="at">hessian =</span> T)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
 <p>O valor <span class="math inline">\(par = \left\{\hat{\mu};\hat{\sigma}\right\}\)</span> é de <span class="math inline">\(\hat{\mu} = 2.717182\)</span> e <span class="math inline">\(\hat{\sigma} =0.764918\)</span> sendo o valor da estatistica da log-verrossimilhança para o modelo de 65.7399.</p>
 <p>3º Comparação gráfica entre a curva de sobrevivência teórica e a curva KM. Bem como observar o comportamento dos dados, ao modelo.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mu_est <span class="ot">&lt;-</span> ajust2<span class="sc">$</span>par[<span class="dv">1</span>]</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sigma_est <span class="ot">&lt;-</span> ajust2<span class="sc">$</span>par[<span class="dv">2</span>]</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>s_lnorm <span class="ot">&lt;-</span> <span class="fu">pnorm</span>((<span class="fu">log</span>(t_teorico) <span class="sc">-</span> mu_est) <span class="sc">/</span> sigma_est, </span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>indices <span class="ot">&lt;-</span> <span class="fu">which</span>(km_c_bx<span class="sc">$</span>sobrevivencia <span class="sc">&gt;</span> <span class="dv">0</span>) </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>t_km <span class="ot">&lt;-</span> km_c_bx<span class="sc">$</span>tempo[indices]</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>s_km <span class="ot">&lt;-</span> km_c_bx<span class="sc">$</span>sobrevivencia[indices]</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>t_plot <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, t_km)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>s_plot <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, s_km)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>t_teorico <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">max</span>(t_plot),<span class="at">length.out=</span><span class="dv">100</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>s_lnorm <span class="ot">&lt;-</span> <span class="fu">pnorm</span>((<span class="fu">log</span>(t_teorico) <span class="sc">-</span> mu_est) <span class="sc">/</span> sigma_est, </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>                 <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>y_coord <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="dv">1</span> <span class="sc">-</span> s_km)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>x_coord <span class="ot">&lt;-</span> <span class="fu">log</span>(t_km)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="Captura de tela 2026-02-26 233841.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+<p><img src="images/clipboard-3198937992.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-123164404.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
 </figure>
 </div>
 
@@ -906,7 +925,7 @@ S(t)= \Phi \left(\frac{-\log(t) + \mu}{\sigma} \right)
     }
   });
   </script>
-<nav class="page-navigation">
+<nav class="page-navigation column-page-right">
   <div class="nav-page nav-page-previous">
       <a href="./dist_weibull.html" class="pagination-link" aria-label="Distribuição Weibull">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Distribuição Weibull</span></span>

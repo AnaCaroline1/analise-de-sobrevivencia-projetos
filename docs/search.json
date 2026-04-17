@@ -44,7 +44,7 @@
     "href": "index.html",
     "title": "Análise de sobrevivência aplicado a dados epidemiológicos",
     "section": "",
-    "text": "Objetivo\nVerificar comportamento de distribuições de probabilidade em dados para aplicação de análise de sobrevivência. Para tal, se deve obter estimadores de máximo verossimilhança utilizando as funções \\(optim\\) e \\(optimize\\) para identificar os valores dos parâmetros estimados, convergência dos dados sob a distribuição de interesse.\nAlém da aplicabilidade, se deve conhecer cada distribuição, seus pressupostos, características, propriedades e comportamento gráfico em relação aos dados.\nPara comparação, se utiliza-se os pacotes implementados do \\(R\\) para aplicar análise de sobrevivência com o \\(survival\\), vizualização gráfica com o pacote \\(ggplot2\\) e leitura de banco de dados com \\(readxl\\).\nAplicando a função de sobrevivência com funções criadas apartir dos resultados de convergência para certa distribuição.\nOs dados utilizados são:\n\ncancer_de_pele.txt\npacientes com câncer de bexiga\n\n\n1 e 2 foram bases retiradas do repositório dos autores do livro Análise de Sobrevivência, Colossimo & Giolo: Acesse aqui;",
+    "text": "Objetivo\nVerificar comportamento de distribuições de probabilidade em dados para aplicação de análise de sobrevivência. Para tal, se deve obter estimadores de máximo verossimilhança utilizando as funções \\(optim\\) e \\(optimize\\) para identificar os valores dos parâmetros estimados, convergência dos dados sob a distribuição de interesse.\nAlém da aplicabilidade, se deve conhecer cada distribuição, seus pressupostos, características, propriedades e comportamento gráfico em relação aos dados.\nPara comparação, se utiliza os pacotes implementados do \\(R\\) para aplicar análise de sobrevivência com o \\(survival\\), vizualização gráfica e leitura de banco de dados com \\(readxl\\).\nAplicando a função de sobrevivência com funções criadas apartir dos resultados de convergência para certa distribuição.\nOs dados utilizados são:",
     "crumbs": [
       "Objetivo"
     ]
@@ -104,7 +104,7 @@
     "href": "dist_exponencial.html#linearização-da-função-de-sobrevivência",
     "title": "1  Distribuição Exponencial",
     "section": "1.4 Linearização da função de sobrevivência",
-    "text": "1.4 Linearização da função de sobrevivência\n\n“Para comparar o comportamento do modelo com os dados utilizados, se pode aplicar a linearização da função de sobrevivência de cada modelo construindo gráficos que sejam aproximadamente lineares, caso o modelo seja apropiado. Violação de lienaridade pode ser verificada visualmente de forma rápida.”\n\n\n1.4.1 Linearização da função de sobrevivência exponencial\nPara o modelo exponencial, a função de sobre vivência é dada por\n\\[\nS(t)= exp\\left[-\\frac{t}{\\alpha}\\right]\n\\]\nLogo,\n\\[-\\log[S(t)] = \\frac{t}{\\alpha} = \\left(\\frac{1}{\\alpha}\\right)t\\]\ncorresponde à equação da reta \\(y = a+bx\\), \\(y=-log[S(t)]\\), \\(a=0\\), \\(b=1/\\alpha\\) e \\(x= t\\). Sendo o modelo apropriado no caso \\(y\\) versus t deve aproximadamente linear passando pela origem, com \\(\\hat{S}(t)\\) correspodendo ao estimador de Kaplan-Meier.",
+    "text": "1.4 Linearização da função de sobrevivência\n\n“Para comparar o comportamento do modelo com os dados utilizados, se pode aplicar a linearização da função de sobrevivência de cada modelo, construindo gráficos que sejam aproximadamente lineares, caso o modelo seja apropiado. Violação de lienaridade pode ser verificada visualmente de forma rápida.”\n\n\n1.4.1 Linearização da função de sobrevivência exponencial\nPara o modelo exponencial, a função de sobre vivência é dada por\n\\[\nS(t)= exp\\left[-\\frac{t}{\\alpha}\\right]\n\\]\nLogo,\n\\[-\\log[S(t)] = \\frac{t}{\\alpha} = \\left(\\frac{1}{\\alpha}\\right)t\\]\ncorresponde à equação da reta \\(y = a+bx\\), \\(y=-log[S(t)]\\), \\(a=0\\), \\(b=1/\\alpha\\) e \\(x= t\\). Sendo o modelo apropriado no caso \\(y\\) versus t deve aproximadamente linear passando pela origem, com \\(\\hat{S}(t)\\) correspodendo ao estimador de Kaplan-Meier.",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Distribuição Exponencial</span>"
     ]
@@ -144,7 +144,7 @@
     "href": "dist_exponencial.html#aplicação-pacientes-com-câncer-de-bexiga",
     "title": "1  Distribuição Exponencial",
     "section": "1.5 Aplicação: pacientes com câncer de bexiga",
-    "text": "1.5 Aplicação: pacientes com câncer de bexiga\n1º Função log-verossimilhança encontrado\n\nlog_vero_surv_exponencial &lt;- function(theta, t, status) {\n  alpha &lt;- theta[1]\n  \n  if(alpha &lt;= 0) return(Inf)\n  \n  logv &lt;- sum(-status * log(alpha) -(t/alpha))\n  \n  # Log-verossimilhança total (negativa para o optim)\n  return(-logv)\n}\n\n2º Estimador de Kaplan-Meier\nDado por:\n\\[\n\\hat{S}(t)= \\prod_{t_{j}\\leq t} \\left(1 - \\frac{d_{j}}{n_{j}}\\right)\n\\]\n\nekm &lt;- function(tempos,status){\n  ordem &lt;- order(tempos)\n  t &lt;- tempos[ordem]\n  s &lt;- status[ordem]\n  \n  n &lt;- length(t)\n  surv &lt;- numeric(n)\n  p_surv &lt;- 1\n  \n  for(i in 1:n) {\n    n_risco &lt;- n - i + 1\n    if(s[i] == 1) {\n      p_surv &lt;- p_surv * ((n_risco - 1) / n_risco)\n    }\n    surv[i] &lt;- p_surv\n  }\n  \n  return(list(tempo = t, sobrevivencia = surv))\n}\n\n3º Aplicando o pacote \\(optim\\) para estimar \\(\\hat{\\alpha}\\)\n\najus11 &lt;- optim(par = 1,\n                fn=log_vero_surv_exponencial, \n                t = tempos,\n                status = cens, \n                method=\"Brent\",#para um parâmetro\n                lower = 0.001,\n                upper = 1000)\n\nO valor \\(\\hat{\\alpha}\\) é de 20.41177 sendo o valor da estatistica da log-verrossimilhança para o modelo de 68.27389.\n4º Obtendo o valor de \\(\\hat{\\alpha}\\), se pode verificar graficamente a curva de sobrevivência teórica à curva de Kaplan-Meier.\n\nt_teorico &lt;- seq(0, max(tempos),length.out=50)\ns_teorico &lt;- exp(-t_teorico/ajus11$par)\n\n\n\n\n\n\n5º E pela linearidade, se pode observar o comportamento dos dados ao modelo.\n\nrisco_acumulado_km &lt;- -log(km_c_bx$sobrevivencia)\n\n\n\n\n\n\nNo gráfico de verificação de risco ou linearidade, se observa o risco acumulado versus o tempo. Se o risco fosse constante para o modelo Exponencial, os pontos deveriam formar uma linha reta partindo da origem. No caso, entretanto, os pontos formam uma curva para cima, indicando que o risco de o evento ocorrer aumenta com o tempo (risco de reincidência do tumor). No início, o risco é vagaroso (tempo 0 a 15 meses), após o tempo 20, a inclinação aumenta bruscamente.",
+    "text": "1.5 Aplicação: pacientes com câncer de bexiga\n1º Função log-verossimilhança encontrado\n\n\nCode\nlog_vero_surv_exponencial &lt;- function(theta, t, status) {\n  alpha &lt;- theta[1]\n  \n  if(alpha &lt;= 0) return(Inf)\n  \n  logv &lt;- sum(-status * log(alpha) -(t/alpha))\n  \n  # Log-verossimilhança total (negativa para o optim)\n  return(-logv)\n}\n\n\n2º Estimador de Kaplan-Meier\nDado por:\n\\[\n\\hat{S}(t)= \\prod_{t_{j}\\leq t} \\left(1 - \\frac{d_{j}}{n_{j}}\\right)\n\\]\n\n\nCode\nekm &lt;- function(tempos,status){\n  ordem &lt;- order(tempos)\n  t &lt;- tempos[ordem]\n  s &lt;- status[ordem]\n  \n  n &lt;- length(t)\n  surv &lt;- numeric(n)\n  p_surv &lt;- 1\n  \n  for(i in 1:n) {\n    n_risco &lt;- n - i + 1\n    if(s[i] == 1) {\n      p_surv &lt;- p_surv * ((n_risco - 1) / n_risco)\n    }\n    surv[i] &lt;- p_surv\n  }\n  \n  return(list(tempo = t, sobrevivencia = surv))\n}\n\n\n3º Aplicando o pacote \\(optim\\) para estimar \\(\\hat{\\alpha}\\)\n\n\nCode\najus11 &lt;- optim(par = 1,\n                fn=log_vero_surv_exponencial, \n                t = tempos,\n                status = cens, \n                method=\"Brent\",#para um parâmetro\n                lower = 0.001,\n                upper = 1000)\n\n\nO valor \\(\\hat{\\alpha}\\) é de 20.41177 sendo o valor da estatistica da log-verrossimilhança para o modelo de 68.27389.\n4º Obtendo o valor de \\(\\hat{\\alpha}\\), se pode verificar graficamente a curva de sobrevivência teórica à curva de Kaplan-Meier.\n\n\nCode\nt_teorico &lt;- seq(0, max(tempos),length.out=50)\ns_teorico &lt;- exp(-t_teorico/ajus11$par)\n\n\n\n\n\n\n\n5º E pela linearidade, se pode observar o comportamento dos dados ao modelo.\n\n\nCode\nrisco_acumulado_km &lt;- -log(km_c_bx$sobrevivencia)\n\n\n\n\n\n\n\nNo gráfico de verificação de risco ou linearidade, se observa o risco acumulado versus o tempo. Se o risco fosse constante para o modelo Exponencial, os pontos deveriam formar uma linha reta partindo da origem. No caso, entretanto, os pontos formam uma curva para cima, indicando que o risco de o evento ocorrer aumenta com o tempo (risco de reincidência do tumor). No início, o risco é vagaroso (tempo 0 a 15 meses), após o tempo 20, a inclinação aumenta bruscamente.",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Distribuição Exponencial</span>"
     ]
@@ -254,7 +254,7 @@
     "href": "dist_log_norm.html#aplicação-pacientes-com-câncer-de-bexiga",
     "title": "3  Distribuição Log-normal",
     "section": "3.4 Aplicação: Pacientes com câncer de bexiga",
-    "text": "3.4 Aplicação: Pacientes com câncer de bexiga\n1º Função de log-verossimilhança\n\nlog_vero_surv_lnorm &lt;- function(theta,t,status){\n  mu    &lt;- theta[1]\n  sigma &lt;- theta[2]\n  log_S &lt;- plnorm(t, meanlog = mu, sdlog = sigma, lower.tail = FALSE, log.p = TRUE)\n  \n  log_f &lt;- -0.5*log(2*pi) - log(t) - log(sigma) - (1/(2*sigma^2)) * (log(t) - mu)^2\n  \n  L_LOG &lt;- sum(status * log_f + (1 - status) * log_S)\n  \n  return(-L_LOG)\n\n}\n\n2º Obtendo os parâmetros estimados pelo modelo\n\najust2 &lt;- optim(par=c(1,1),f=log_vero_surv_lnorm,\n                   t = tempos,\n                   status = cens)\n\nO valor \\(par = \\left\\{\\hat{\\mu};\\hat{\\sigma}\\right\\}\\) é de \\(\\hat{\\mu} = 2.717182\\) e \\(\\hat{\\sigma} =0.764918\\) sendo o valor da estatistica da log-verrossimilhança para o modelo de 65.7399.\n3º Comparação gráfica entre a curva de sobrevivência teórica e a curva KM. Bem como observar o comportamento dos dados, ao modelo.\n\nmu_est &lt;- ajust2$par[1]\nsigma_est &lt;- ajust2$par[2]\n\ns_lnorm &lt;- pnorm((log(t_teorico) - mu_est) / sigma_est, \n                 lower.tail = FALSE)",
+    "text": "3.4 Aplicação: Pacientes com câncer de bexiga\n1º Função de log-verossimilhança\n\n\nCode\n# Refeita\n\nlog_vero_surv_lnorm &lt;- function(theta,t,status){\n  mu    &lt;- theta[1]\n  sigma &lt;- theta[2]\n  log_S &lt;- plnorm(t, meanlog = mu, sdlog = sigma, lower.tail = FALSE, log.p = TRUE)\n  \n  log_f &lt;- -0.5*log(2*pi) - log(t) - log(sigma) - (1/(2*sigma^2)) * (log(t) - mu)^2\n  \n  L_LOG &lt;- sum(status * log_f + (1 - status) * log_S)\n  \n  return(-L_LOG)\n\n}\n\n\n2º Obtendo os parâmetros estimados pelo modelo\n\n\nCode\najust2 &lt;- optim(par=c(1,1),f=log_vero_surv_lnorm,\n                   t = tempos,\n                   status = cens\n                , hessian = T)\n\n\nO valor \\(par = \\left\\{\\hat{\\mu};\\hat{\\sigma}\\right\\}\\) é de \\(\\hat{\\mu} = 2.717182\\) e \\(\\hat{\\sigma} =0.764918\\) sendo o valor da estatistica da log-verrossimilhança para o modelo de 65.7399.\n3º Comparação gráfica entre a curva de sobrevivência teórica e a curva KM. Bem como observar o comportamento dos dados, ao modelo.\n\n\nCode\nmu_est &lt;- ajust2$par[1]\nsigma_est &lt;- ajust2$par[2]\n\n\nindices &lt;- which(km_c_bx$sobrevivencia &gt; 0) \nt_km &lt;- km_c_bx$tempo[indices]\ns_km &lt;- km_c_bx$sobrevivencia[indices]\n\nt_plot &lt;- c(0, t_km)\ns_plot &lt;- c(1, s_km)\n\n\nt_teorico &lt;- seq(0, max(t_plot),length.out=100)\ns_lnorm &lt;- pnorm((log(t_teorico) - mu_est) / sigma_est, \n                 lower.tail = FALSE)\n\ny_coord &lt;- qnorm(1 - s_km)\nx_coord &lt;- log(t_km)",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Distribuição Log-normal</span>"
     ]
@@ -264,7 +264,7 @@
     "href": "dist_log_logis.html#aplicação",
     "title": "4  Distribuição Log-logística",
     "section": "4.3 Aplicação",
-    "text": "4.3 Aplicação\n\nS_loglogistica &lt;- function(theta, t, delta) {\n  \n  alpha &lt;- exp(theta[1])\n  gamma &lt;- exp(theta[2])\n  \n  log_f &lt;- log(gamma) - (gamma * log(alpha)) + (gamma - 1) * log(t) - 2 * log(1 + (t/alpha)^gamma)\n  \n  log_S &lt;- -log(1 + (t/alpha)^gamma)\n  \n  LOG_L &lt;- sum(delta * log_f + (1 - delta) * log_S)\n  \n  return(-LOG_L)\n}\n\nAplicando o \\(optim\\) se obtem os valores estimados dos parãmetros: [ 2.7373688, 0.7993457] e estatística de 66.03053.",
+    "text": "4.3 Aplicação\n\n\nCode\nS_loglogistica &lt;- function(theta, t, delta) {\n  \n  alpha &lt;- exp(theta[1])\n  gamma &lt;- exp(theta[2])\n  \n  log_f &lt;- log(gamma) - (gamma * log(alpha)) + (gamma - 1) * log(t) - 2 * log(1 + (t/alpha)^gamma)\n  \n  log_S &lt;- -log(1 + (t/alpha)^gamma)\n  \n  LOG_L &lt;- sum(delta * log_f + (1 - delta) * log_S)\n  \n  return(-LOG_L)\n}\ninicio &lt;- c(log(mean(tempos)), 0)\n\nfit_ll &lt;- optim(par = inicio, fn = S_loglogistica, t = tempos, \n                delta = cens, method = \"BFGS\")\n\n\nAplicando o \\(optim\\) se obtem os valores estimados dos parâmetros: [ 2.7373688, 0.7993457] e estatística de 66.03053.\n\n\nCode\n# Parte refeita\n\n# 1. Extração correta dos parâmetros \n#(voltando para a escala original)\n\nalpha_est &lt;- exp(fit_ll$par[1])\ngamma_est &lt;- exp(fit_ll$par[2])\n\n# Sequência de tempo começando do zero para o gráfico encostar no eixo Y\nt_seq &lt;- seq(0, max(tempos, na.rm = TRUE), length.out = 100)\n\n# Calcular a sobrevivência teórica\ns_loglogis &lt;- 1 / (1 + (t_seq / alpha_est)^gamma_est)\n\nindices_lin &lt;- which(km_c_bx$sobrevivencia &gt; 0 & km_c_bx$sobrevivencia &lt; 1)\nt_km &lt;- km_c_bx$tempo[indices_lin]\ns_km &lt;- km_c_bx$sobrevivencia[indices_lin]\n\ny_lin &lt;- log((1 - s_km) / s_km)\nx_lin &lt;- log(t_km)\n\nindices_lin &lt;- which(km_c_bx$sobrevivencia &gt; 0 & km_c_bx$sobrevivencia &lt; 1)\nt_km &lt;- km_c_bx$tempo[indices_lin]\ns_km &lt;- km_c_bx$sobrevivencia[indices_lin]\n\n# 2. Definir as coordenadas de linearização\ny_lin &lt;- log((1 - s_km) / s_km)\nx_lin &lt;- log(t_km)",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Distribuição Log-logística</span>"
     ]
@@ -274,9 +274,269 @@
     "href": "dist_weibull.html#aplicação",
     "title": "2  Distribuição Weibull",
     "section": "2.5 Aplicação",
-    "text": "2.5 Aplicação\n\nlog_vero_surv_weibull &lt;- function(theta, t, status){\n  \n  alpha &lt;- theta[1] \n  gamma &lt;- theta[2]\n  r &lt;- status\n  \n  Log_L &lt;- sum(r*(log(gamma)-gamma*log(alpha)+(gamma-1)*log(t))-(t/alpha)^gamma)\n  \n  if(!is.finite(Log_L)) return(1e10) #garante o tempo positivo apenas\n  \n  return(-Log_L)\n}\n\n\n# plot 1\nt_seq &lt;- seq(0, max(tempos), length.out = 100)\ns_weibull &lt;- exp(-(t_seq / alpha_est)^gamma_est)\n\n#plot 2\n# 1. Preparar os dados (remover S(t)=0 ou 1 para evitar log de erro)\nindices &lt;- which(km_c_bx$sobrevivencia &gt; 0 & km_c_bx$sobrevivencia &lt; 1)\nt_km &lt;- km_c_bx$tempo[indices]\ns_km &lt;- km_c_bx$sobrevivencia[indices]\n\n# 2. Transformações lineares\ny_weibull &lt;- log(-log(s_km))\nx_weibull &lt;- log(t_km)",
+    "text": "2.5 Aplicação\n\n\nCode\nlog_vero_surv_weibull_R &lt;- function(theta, t, status) {\n  alpha &lt;- theta[1]\n  gamma &lt;- theta[2]\n  \n  # Evita valores não positivos para os parâmetros durante a otimização\n  if (alpha &lt;= 0 || gamma &lt;= 0) return(1e10)\n  \n  # log(f(t)): log-densidade para os eventos (status == 1)\n  log_f &lt;- dweibull(t, shape = gamma, scale = alpha, log = TRUE)\n  \n  # log(S(t)): log-sobrevivência para as censuras (status == 0)\n  # lower.tail = FALSE retorna P(X &gt; x), e log.p = TRUE retorna o log disso\n  log_S &lt;- pweibull(t, shape = gamma, scale = alpha, lower.tail = FALSE, log.p = TRUE)\n  \n  # Soma ponderada pelo status:\n  # Se status=1, contribui log_f. Se status=0, contribui log_S.\n  Log_L &lt;- sum(status * log_f + (1 - status) * log_S)\n  \n  if (!is.finite(Log_L)) return(1e10)\n  \n  return(-Log_L) # Retorna negativo para minimizar\n}\najust3 &lt;- optim(par = c(1, 1), log_vero_surv_weibull_R,\n                t = tempos, status = cens,\n                method = \"BFGS\",hessian = T)\n\n\n\n\nCode\n# plot 1\n\nindices &lt;- which(km_c_bx$sobrevivencia &gt; 0) \nt_km &lt;- km_c_bx$tempo[indices]\ns_km &lt;- km_c_bx$sobrevivencia[indices]\n\nt_plot &lt;- c(0, t_km)\ns_plot &lt;- c(1, s_km)\n\nalpha_est &lt;- ajust3$par[1]\ngamma_est &lt;- ajust3$par[2]\nt_seq &lt;- seq(0, max(t_plot), length.out = 100)\ns_weibull &lt;- pweibull(t_seq, shape = gamma_est, scale = alpha_est, lower.tail = FALSE)\n\n#plot 2\n\n# 2. Transformações lineares\n\ny_weibull &lt;- log(-log(s_km))\nx_weibull &lt;- log(t_km)",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Distribuição Weibull</span>"
+    ]
+  },
+  {
+    "objectID": "dist_log_logis.html#intervalo-de-confiança",
+    "href": "dist_log_logis.html#intervalo-de-confiança",
+    "title": "4  Distribuição Log-logística",
+    "section": "4.4 Intervalo de confiança",
+    "text": "4.4 Intervalo de confiança",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Distribuição Log-logística</span>"
+    ]
+  },
+  {
+    "objectID": "dist_weibull.html#intervalo-de-confiança",
+    "href": "dist_weibull.html#intervalo-de-confiança",
+    "title": "2  Distribuição Weibull",
+    "section": "2.6 Intervalo de confiança",
+    "text": "2.6 Intervalo de confiança\n\nSigma &lt;- solve(ajust3$hessian) \n\n# 1. Definir tempos para o plot\nt_seq &lt;- seq(0, max(tempos), length.out = 100)\n\n# 2. Calcular S(t) e o Erro Padrão para cada t\ns_pred &lt;- numeric(length(t_seq))\nse_s   &lt;- numeric(length(t_seq))\n\nfor(i in 1:length(t_seq)) {\n  ti &lt;- t_seq[i]\n  # S(t) estimado\n  s_pred[i] &lt;- exp(-(ti/alpha_est)^gamma_est)\n  \n  # Gradiente no ponto ti\n  d_alpha &lt;- s_pred[i] * gamma_est * (ti^gamma_est / alpha_est^(gamma_est+1))\n  d_gamma &lt;- -s_pred[i] * (ti/alpha_est)^gamma_est * log(ti/alpha_est + 1e-6)\n  grad &lt;- c(d_alpha, d_gamma)\n  \n  # Variância via Delta Method\n  var_s &lt;- t(grad) %*% Sigma %*% grad\n  se_s[i] &lt;- sqrt(var_s)\n}\n\n# 3. Limites do IC (95%)\nic_inf &lt;- pmax(0, s_pred - 1.96 * se_s) # Garante que não seja &lt; 0\nic_sup &lt;- pmin(1, s_pred + 1.96 * se_s) # Garante que não seja &gt; 1",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Distribuição Weibull</span>"
+    ]
+  },
+  {
+    "objectID": "dist_log_norm.html#intervalo-de-confiança",
+    "href": "dist_log_norm.html#intervalo-de-confiança",
+    "title": "3  Distribuição Log-normal",
+    "section": "3.5 Intervalo de confiança",
+    "text": "3.5 Intervalo de confiança\n\nSigma &lt;- solve(ajust2$hessian) \n\nmu_est\nsigma_est\n\n# 1. Definir tempos para o plot\nt_seq &lt;- seq(0, max(tempos), length.out = 100)\n\n# 2. Calcular S(t) e o Erro Padrão para cada t\ns_pred &lt;- numeric(length(t_seq))\nse_s   &lt;- numeric(length(t_seq))\nfor(i in 1:length(t_seq)) {\n  ti &lt;- t_seq[i]\n  z &lt;- (log(ti)-mu_est)/sigma_est\n  # S(t) estimado\n  s_pred[i] &lt;- plnorm(ti, meanlog = mu_est, sdlog = sigma_est, lower.tail = FALSE, log.p = F\n                      )\n  \n  # Gradiente no ponto ti\n  d_mu &lt;- dnorm(z)* (1/sigma_est)\n  d_sigma &lt;- dnorm(z)*(z/sigma_est)\n  \n  grad &lt;- c(d_mu, d_sigma)\n  \n  # Variância via Delta Method\n  var_s &lt;- t(grad) %*% Sigma %*% grad\n  se_s[i] &lt;- sqrt(var_s)\n}\n\n\n# 3. Limites do IC (95%)\nic_inf &lt;- pmax(0, s_pred - 1.96 * se_s) # Garante que não seja &lt; 0\nic_sup &lt;- pmin(1, s_pred + 1.96 * se_s) # Garante que não seja &gt; 1",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Distribuição Log-normal</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html",
+    "href": "fucoes_optim_IC.html",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "",
+    "text": "5.1 EXEMPLO PACIENTES COM CÂNCER DE BEXIGA (2006 Enrico Antônio Colosimo, Suely Ruiz Giolo)\nCódigo\nlibrary(survival)\nlibrary(flexsurv)\n\n\n tempos&lt;-c(3,5,6,7,8,9,10,10,12,15,15,18,19,20,22,25,28,30,40,45)\n censura&lt;-c(1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0)",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#weibull-criado",
+    "href": "fucoes_optim_IC.html#weibull-criado",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "5.2 Weibull (Criado)",
+    "text": "5.2 Weibull (Criado)\n\nS_weib &lt;- function(theta, t, delta){\n  \n  alpha &lt;- theta[1] \n  gamma &lt;- theta[2]\n  r &lt;- sum(delta) #soma de todos as falhas\n\n  Log_L &lt;- r*log(gamma)-(r*gamma*log(alpha))+(gamma -1)*sum(delta*log(t))-(alpha^(-gamma))*sum(t^gamma)\n  \n  if(!is.finite(Log_L)) return(1e10) #garante o tempo positivo apenas\n  \n  return(-Log_L)\n}\n\n#?optim()\nresultado &lt;- optim(par = c(1, 1), S_weib, t = tempos, delta = censura, method = \"BFGS\")\nresultado \n\n$par\n[1] 21.334902  1.543351\n\n$value\n[1] 66.13336\n\n$counts\nfunction gradient \n      44       23 \n\n$convergence\n[1] 0\n\n$message\nNULL",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#weibull-survival",
+    "href": "fucoes_optim_IC.html#weibull-survival",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "5.3 Weibull (Survival)",
+    "text": "5.3 Weibull (Survival)\n\nmodelo_weib &lt;- survreg(Surv(tempos, censura) ~ 1, dist = \"weibull\")\nsummary(modelo_weib)\n\n\nCall:\nsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"weibull\")\n             Value Std. Error    z      p\n(Intercept)  3.061      0.160 19.1 &lt;2e-16\nLog(scale)  -0.434      0.189 -2.3  0.022\n\nScale= 0.648 \n\nWeibull distribution\nLoglik(model)= -66.1   Loglik(intercept only)= -66.1\nNumber of Newton-Raphson Iterations: 6 \nn= 20",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#weibull-intervalo-de-confiança",
+    "href": "fucoes_optim_IC.html#weibull-intervalo-de-confiança",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "5.4 Weibull (Intervalo de Confiança)",
+    "text": "5.4 Weibull (Intervalo de Confiança)\n\n# hessian = TRUE\nresultado &lt;- optim(par = c(1, 1), S_weib, t = tempos, delta = censura, \n                   method = \"BFGS\", hessian = TRUE)\n\nvar_covar &lt;- solve(resultado$hessian)\nerros_padrao &lt;- sqrt(diag(var_covar))\n\n# 95% para os dois parâmetros\nz &lt;- qnorm(0.975)\nic_alpha &lt;- resultado$par[1] + c(-1, 1) * z * erros_padrao[1]\nic_gamma &lt;- resultado$par[2] + c(-1, 1) * z * erros_padrao[2]\n\n\n# Variáveis\nn &lt;- length(tempos)\nk &lt;- 2\nlogL &lt;- -resultado$value\n\n# Cálculos\naic_weibull &lt;- 2 * k - 2 * logL\nbic_weibull &lt;- k * log(n) - 2 * logL\nhq_weibull  &lt;- 2 * k * log(log(n)) - 2 * logL\n\ncat(\"AIC Weibull:\", aic_weibull, \"\\n\")\n\nAIC Weibull: 136.2667 \n\ncat(\"BIC Weibull:\", bic_weibull, \"\\n\")\n\nBIC Weibull: 138.2582 \n\ncat(\"HQ  Weibull:\", hq_weibull)\n\nHQ  Weibull: 136.6555",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#log-normal-survival",
+    "href": "fucoes_optim_IC.html#log-normal-survival",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "6.1 Log-Normal (Survival)",
+    "text": "6.1 Log-Normal (Survival)\n\nmodelo_logN &lt;- survreg(Surv(tempos, censura) ~ 1, dist = \"lognormal\")\nsummary(modelo_logN)\n\n\nCall:\nsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"lognormal\")\n             Value Std. Error     z      p\n(Intercept)  2.717      0.176 15.42 &lt;2e-16\nLog(scale)  -0.268      0.174 -1.54   0.12\n\nScale= 0.765 \n\nLog Normal distribution\nLoglik(model)= -65.7   Loglik(intercept only)= -65.7\nNumber of Newton-Raphson Iterations: 6 \nn= 20",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#log-normal-intervalo-de-confiança",
+    "href": "fucoes_optim_IC.html#log-normal-intervalo-de-confiança",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "6.2 Log-Normal (Intervalo de Confiança)",
+    "text": "6.2 Log-Normal (Intervalo de Confiança)\n\nfit_ln &lt;- optim(par = c(mean(log(tempos)), sd(log(tempos))), fn = S_lognorm,\n  t = tempos,\n  delta = censura, \n  method = \"BFGS\",\n  hessian = TRUE\n)\n\n# Informação de Fisher Observada (Matriz 2x2: mu e sigma)\nIf_obs &lt;- fit_ln$hessian\n\n# Matriz de variância-covariância (Inversa da Hessiana)\nvar_covar_ln &lt;- solve(If_obs)\n\n# Erros Padrão\nse_ln &lt;- sqrt(diag(var_covar_ln))\n\n\nz &lt;- qnorm(0.975) # Para 95% de confiança\n\n# IC para Mu\nic_mu &lt;- c(fit_ln$par[1] - z * se_ln[1], fit_ln$par[1] + z * se_ln[1])\n\n# IC para Sigma\nic_sigma &lt;- c(fit_ln$par[2] - z * se_ln[2], fit_ln$par[2] + z * se_ln[2])\n\ncat(\"IC 95% Mu: [\", ic_mu, \"]\\n\")\n\nIC 95% Mu: [ 2.371732 3.062615 ]\n\ncat(\"IC 95% Sigma: [\", ic_sigma, \"]\\n\")\n\nIC 95% Sigma: [ 0.5046711 1.025011 ]\n\n\n\nn &lt;- length(tempos)\nk &lt;- 2\nlogL_ln &lt;- -fit_ln$value # Log-verossimilhança máxima\n\naic_ln &lt;- 2*k - 2*logL_ln\nbic_ln &lt;- k*log(n) - 2*logL_ln\nhq_ln  &lt;- 2*k*log(log(n)) - 2*logL_ln\n\ncat(\"AIC:\", aic_ln, \"| BIC:\", bic_ln, \"| HQ:\", hq_ln)\n\nAIC: 135.4798 | BIC: 137.4713 | HQ: 135.8686\n\n\n\n#km &lt;- survfit(Surv(tempos, censura) ~ 1) # já declarado\n\nt_grid &lt;- seq(0, max(tempos), length.out = 100)\ns_teorico_ln &lt;- plnorm(t_grid, meanlog = fit_ln$par[1], sdlog = fit_ln$par[2], lower.tail = FALSE)\n\nplot(km, \n     conf.int = TRUE, \n     col = \"black\", \n     lty = c(1, 2, 2), \n     main = \"Ajuste Log-Normal vs KM\", \n     xlab = \"Tempo\", \n     ylab = \"S(t)\")\n\nlines(t_grid, s_teorico_ln, col = \"darkgreen\", lwd = 2)",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#log-logística-criada",
+    "href": "fucoes_optim_IC.html#log-logística-criada",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "6.3 Log-Logística (Criada)",
+    "text": "6.3 Log-Logística (Criada)\n\nS_loglogistica &lt;- function(theta, t, delta) {\n\n  alpha &lt;- exp(theta[1])\n  gamma &lt;- exp(theta[2])\n  \n  log_f &lt;- log(gamma) - (gamma * log(alpha)) + (gamma - 1) * log(t) - 2 * log(1 + (t/alpha)^gamma)\n  \n  log_S &lt;- -log(1 + (t/alpha)^gamma)\n  \n  LOG_L &lt;- sum(delta * log_f + (1 - delta) * log_S)\n  \n  return(-LOG_L)\n}\n\n# Chute inicial (log da média dos tempos e log de 1)\ninicio &lt;- c(log(mean(tempos)), 0)\n\nfit_ll &lt;- optim(par = inicio, fn = S_loglogistica, t = tempos, delta = censura, method = \"BFGS\")\nfit_ll\n\n$par\n[1] 2.7373688 0.7993457\n\n$value\n[1] 66.03053\n\n$counts\nfunction gradient \n      21        7 \n\n$convergence\n[1] 0\n\n$message\nNULL",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#log-logística-survival",
+    "href": "fucoes_optim_IC.html#log-logística-survival",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "6.4 Log-Logística (Survival)",
+    "text": "6.4 Log-Logística (Survival)\n\nmodelo_LL &lt;- survreg(Surv(tempos, censura) ~ 1, dist = \"loglogistic\")\nmodelo_LL\n\nCall:\nsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"loglogistic\")\n\nCoefficients:\n(Intercept) \n   2.737415 \n\nScale= 0.4496653 \n\nLoglik(model)= -66   Loglik(intercept only)= -66\nn= 20",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#log-logística-intervalo-de-confiança",
+    "href": "fucoes_optim_IC.html#log-logística-intervalo-de-confiança",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "6.5 Log-Logística (Intervalo de Confiança)",
+    "text": "6.5 Log-Logística (Intervalo de Confiança)\n\n# Rodando com Hessiana\nfit_ll &lt;- optim(par = inicio, fn = S_loglogistica, t = tempos, \n                delta = censura, method = \"BFGS\", hessian = TRUE)\n\n# Variância-Covariância e Erro Padrão (na escala log)\nvar_covar_ll &lt;- solve(fit_ll$hessian)\nse_ll &lt;- sqrt(diag(var_covar_ll))\n\n# IC 95% para os parâmetros (escala original usando exp)\nz &lt;- qnorm(0.975)\nic_alpha_ll &lt;- exp(fit_ll$par[1] + c(-1, 1) * z * se_ll[1])\nic_gamma_ll &lt;- exp(fit_ll$par[2] + c(-1, 1) * z * se_ll[2])\n\ncat(\"IC Alpha:\", ic_alpha_ll, \"\\n\")\n\nIC Alpha: 10.85383 21.98191 \n\ncat(\"IC Gamma:\", ic_gamma_ll)\n\nIC Gamma: 1.509642 3.27664\n\n\n\nn &lt;- length(tempos)\nk &lt;- 2\nlogL_ll &lt;- -fit_ll$value\n\naic_ll &lt;- 2*k - 2*logL_ll\nbic_ll &lt;- k*log(n) - 2*logL_ll\nhq_ll  &lt;- 2*k*log(log(n)) - 2*logL_ll\n\ncat(\"AIC:\", aic_ll, \"| BIC:\", bic_ll, \"| HQ:\", hq_ll)\n\nAIC: 136.0611 | BIC: 138.0525 | HQ: 136.4498\n\n\n\nalpha_ll &lt;- exp(fit_ll$par[1])\ngamma_ll &lt;- exp(fit_ll$par[2])\n\n# Sobrevivência Teórica: S(t) = 1 / (1 + (t/alpha)^gamma)\nst_loglogistica &lt;- 1 / (1 + (t_grid / alpha_ll)^gamma_ll)\n\nplot(km, conf.int = TRUE, col = \"black\", lty = c(1, 2, 2),\n     main = \"Ajuste Log-Logístico vs KM\", xlab = \"Tempo\", ylab = \"S(t)\")\nlines(t_grid, st_loglogistica, col = \"purple\", lwd = 2)",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#gama-criada",
+    "href": "fucoes_optim_IC.html#gama-criada",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "6.6 Gama (Criada)",
+    "text": "6.6 Gama (Criada)\n\nS_gama &lt;- function(theta, t, delta) {\n\n  shape &lt;- exp(theta[1])\n  scale &lt;- exp(theta[2])\n  \n  log_f &lt;- dgamma(t, shape = shape, scale = scale, log = TRUE)\n  \n  log_S &lt;- pgamma(t, shape = shape, scale = scale, lower.tail = FALSE, log.p = TRUE)\n  \n  logl &lt;- sum(delta * log_f + (1 - delta) * log_S)\n  \n  return(-logl)\n}\n\np &lt;- log(mean(tempos))\n\nfit_g &lt;- optim(par = c(0, p), fn = S_gama, t = tempos, delta = censura, method = \"BFGS\")\nfit_g\n\n$par\n[1] 0.7626296 2.1937980\n\n$value\n[1] 65.84754\n\n$counts\nfunction gradient \n      30        9 \n\n$convergence\n[1] 0\n\n$message\nNULL",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#gama-flexsurvreg",
+    "href": "fucoes_optim_IC.html#gama-flexsurvreg",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "6.7 Gama (Flexsurvreg)",
+    "text": "6.7 Gama (Flexsurvreg)\n\nmodelo_gama &lt;- flexsurvreg(Surv(tempos, censura) ~ 1, dist = \"gamma\")\nmodelo_gama\n\nCall:\nflexsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"gamma\")\n\nEstimates: \n       est     L95%    U95%    se    \nshape  2.1439  1.1580  3.9692  0.6737\nrate   0.1115  0.0540  0.2303  0.0413\n\nN = 20,  Events: 17,  Censored: 3\nTotal time at risk: 347\nLog-likelihood = -65.84754, df = 2\nAIC = 135.6951",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#gama-intervalo-de-confiança",
+    "href": "fucoes_optim_IC.html#gama-intervalo-de-confiança",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "6.8 Gama (Intervalo de Confiança)",
+    "text": "6.8 Gama (Intervalo de Confiança)\n\nfit_g &lt;- optim(par = c(0, p), fn = S_gama, t = tempos, \n               delta = censura, method = \"BFGS\", hessian = TRUE)\n\n# Inversa da Hessiana (Matriz de Variância-Covariância no espaço log)\nvar_covar_g &lt;- solve(fit_g$hessian)\nse_g &lt;- sqrt(diag(var_covar_g))\n\n# Intervalos de Confiança (Transformando de volta para a escala original)\nz &lt;- qnorm(0.975)\nic_shape_g &lt;- exp(fit_g$par[1] + c(-1, 1) * z * se_g[1])\nic_scale_g &lt;- exp(fit_g$par[2] + c(-1, 1) * z * se_g[2])\n\ncat(\"IC Shape:\", ic_shape_g, \"\\n\")\n\nIC Shape: 1.158 3.9692 \n\ncat(\"IC Scale:\", ic_scale_g)\n\nIC Scale: 4.341715 18.5288\n\n\n\nn &lt;- length(tempos)\nk &lt;- 2\nlogL_g &lt;- -fit_g$value\n\naic_g &lt;- 2*k - 2*logL_g\nbic_g &lt;- k*log(n) - 2*logL_g\nhq_g  &lt;- 2*k*log(log(n)) - 2*logL_g\n\ncat(\"AIC:\", aic_g, \"| BIC:\", bic_g, \"| HQ:\", hq_g)\n\nAIC: 135.6951 | BIC: 137.6865 | HQ: 136.0838\n\n\n\nshape_hat &lt;- exp(fit_g$par[1])\nscale_hat &lt;- exp(fit_g$par[2])\n\n# Sobrevivência Teórica da Gama\nst_gama &lt;- pgamma(t_grid, shape = shape_hat, scale = scale_hat, lower.tail = FALSE)\n\nplot(km, conf.int = TRUE, col = \"black\", lty = c(1, 2, 2),\n     main = \"Ajuste Gama vs KM\", xlab = \"Tempo\", ylab = \"S(t)\")\nlines(t_grid, st_gama, col = \"orange\", lwd = 2)",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#gama-generalizada-criada",
+    "href": "fucoes_optim_IC.html#gama-generalizada-criada",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "6.9 Gama Generalizada (Criada)",
+    "text": "6.9 Gama Generalizada (Criada)\n\nS_gamaG &lt;- function(theta, t, delta) {\n\n  alpha &lt;- exp(theta[1])\n  gamma &lt;- exp(theta[2])\n  s     &lt;- exp(theta[3])\n  \n  log_f &lt;- log(gamma)-lgamma(s)-(gamma*s*log(alpha))+(gamma * s - 1)*log(t)-(t / alpha)^gamma\n  \n  log_S &lt;- pgamma((t / alpha)^gamma, shape = s, lower.tail = FALSE, log.p = TRUE)\n  \n  logl &lt;- sum(delta * log_f + (1 - delta) * log_S)\n  \n  if(!is.finite(logl)) return(1e10)\n  \n  return(-logl)\n}\n\ni &lt;- c(log(mean(tempos)), 0, 0) \n\nresultado_gg &lt;- optim(par = i, fn = S_gamaG, t = tempos, delta = censura, method = \"BFGS\")\nresultado_gg\n\n$par\n[1] -2.8700735 -0.8786525  2.3651648\n\n$value\n[1] 65.6936\n\n$counts\nfunction gradient \n     202      100 \n\n$convergence\n[1] 1\n\n$message\nNULL",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#gama-generalizada-flexsurvreg",
+    "href": "fucoes_optim_IC.html#gama-generalizada-flexsurvreg",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "6.10 Gama Generalizada (Flexsurvreg)",
+    "text": "6.10 Gama Generalizada (Flexsurvreg)\n\nmodelo_GG &lt;- flexsurvreg(Surv(tempos, censura) ~ 1, dist = \"gengamma\")\nmodelo_GG\n\nCall:\nflexsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"gengamma\")\n\nEstimates: \n       est     L95%    U95%    se    \nmu      2.805   2.168   3.442   0.325\nsigma   0.743   0.498   1.110   0.152\nQ       0.247  -1.291   1.786   0.785\n\nN = 20,  Events: 17,  Censored: 3\nTotal time at risk: 347\nLog-likelihood = -65.69074, df = 3\nAIC = 137.3815",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#gama-generalizada-intervalo-de-confiança",
+    "href": "fucoes_optim_IC.html#gama-generalizada-intervalo-de-confiança",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "6.11 Gama Generalizada (Intervalo de COnfiança)",
+    "text": "6.11 Gama Generalizada (Intervalo de COnfiança)\n\nresultado_gg &lt;- optim(par = i, fn = S_gamaG, t = tempos, \n                      delta = censura, method = \"BFGS\", hessian = TRUE)\n\n# Variância-Covariância (espaço log)\nvar_covar_gg &lt;- solve(resultado_gg$hessian)\nse_gg &lt;- sqrt(diag(var_covar_gg))\n\nWarning in sqrt(diag(var_covar_gg)): NaNs produzidos\n\n# IC 95% agora para os três parâmetros\nz &lt;- qnorm(0.975)\nic_alpha_gg &lt;- exp(resultado_gg$par[1] + c(-1, 1) * z * se_gg[1])\nic_gamma_gg &lt;- exp(resultado_gg$par[2] + c(-1, 1) * z * se_gg[2])\nic_s_gg     &lt;- exp(resultado_gg$par[3] + c(-1, 1) * z * se_gg[3])\n\n\nn &lt;- length(tempos)\nk &lt;- 3\nlogL_gg &lt;- -resultado_gg$value\n\naic_gg &lt;- 2*k - 2*logL_gg\nbic_gg &lt;- k*log(n) - 2*logL_gg\nhq_gg  &lt;- 2*k*log(log(n)) - 2*logL_gg\n\ncat(\"AIC GG:\", aic_gg, \"| BIC GG:\", bic_gg, \"| HQ GG:\", hq_gg)\n\nAIC GG: 137.3872 | BIC GG: 140.3744 | HQ GG: 137.9703\n\n\n\n# Parâmetros convertidos\na_gg &lt;- exp(resultado_gg$par[1])\ng_gg &lt;- exp(resultado_gg$par[2])\ns_gg &lt;- exp(resultado_gg$par[3])\n\n# Sobrevivência Teórica GG\nst_gg &lt;- pgamma((t_grid / a_gg)^g_gg, shape = s_gg, lower.tail = FALSE)\n\nplot(km, conf.int = TRUE, main = \"Ajuste Gama Generalizada vs KM\")\nlines(t_grid, st_gg, col = \"cyan\", lwd = 2)",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#exemplo-pacientes-com-câncer-de-bexiga-2006-enrico-antônio-colosimo-suely-ruiz-giolo",
+    "href": "fucoes_optim_IC.html#exemplo-pacientes-com-câncer-de-bexiga-2006-enrico-antônio-colosimo-suely-ruiz-giolo",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "",
+    "text": "5.1.1 Exponencial (Criado)\n\nS_exp &lt;- function(alpha, t, delta){\n  \n  log_L &lt;- -sum(delta * log(alpha)) - (1/alpha) * sum(t)\n  \n  return(-log_L)\n}\n\najuste &lt;- optimize(f = S_exp, c(0.01, 100), tempos, censura)\najuste\n\n$minimum\n[1] 20.41178\n\n$objective\n[1] 68.27389\n\n\n\n\n5.1.2 Exponencial (Survival)\n\nmodelo_exp &lt;- survreg(Surv(tempos, censura) ~ 1, dist = \"exponential\")\nsummary(modelo_exp)\n\n\nCall:\nsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"exponential\")\n            Value Std. Error    z      p\n(Intercept) 3.016      0.243 12.4 &lt;2e-16\n\nScale fixed at 1 \n\nExponential distribution\nLoglik(model)= -68.3   Loglik(intercept only)= -68.3\nNumber of Newton-Raphson Iterations: 4 \nn= 20 \n\n\n\n\n5.1.3 Exponencial (Intervalo de Confiança)\n\n# usando a hessiana ao trocar pelo optim\nfit_exp_hessian &lt;- optim(par = 10, fn = S_exp, t = tempos, delta = censura, \n                         method = \"BFGS\", hessian = TRUE)\n\n#IF\nI_obs &lt;- fit_exp_hessian$hessian\n\n#Variancia\nvariancia &lt;- solve(I_obs)\nse_alpha &lt;- sqrt(variancia) # Erro Padrão\n\n\nalpha_hat &lt;- fit_exp_hessian$par\nz &lt;- qnorm(0.975) # 1.96\n\nic_inf &lt;- alpha_hat - z * se_alpha\nic_sup &lt;- alpha_hat + z * se_alpha\n\ncat(\"IC 95% para Alpha: [\", ic_inf, \";\", ic_sup, \"]\\n\")\n\nIC 95% para Alpha: [ 10.70879 ; 30.11414 ]\n\n\n\nlogL_max &lt;- -fit_exp_hessian$value \nn &lt;- length(tempos)\nk &lt;- 1 \n\n# Critérios de Seleção\naic_exp &lt;- 2*k - 2*logL_max\nbic_exp &lt;- k*log(n) - 2*logL_max\nhq_exp  &lt;- 2*k * log(log(n)) - 2*logL_max \n\ncat(\"AIC:\", aic_exp, \"| BIC:\", bic_exp, \"| HQ:\", hq_exp)\n\nAIC: 138.5478 | BIC: 139.5435 | HQ: 138.7422\n\n\n\n# KM\nkm &lt;- survfit(Surv(tempos, censura) ~ 1)\n\n# Curva Exponencial\nt_grid &lt;- seq(0, 50, length.out = 100)\nst_teorico &lt;- exp(-t_grid / alpha_hat)\n\nplot(km, main = \"Ajuste Exponencial vs Kaplan-Meier\", \n     xlab = \"Tempo\", \n     ylab = \"S(t)\")\nlines(t_grid, st_teorico, col = \"red\", lwd = 2)",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#distribuição-exponencial",
+    "href": "fucoes_optim_IC.html#distribuição-exponencial",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "5.2 Distribuição Exponencial",
+    "text": "5.2 Distribuição Exponencial\n\n5.2.1 Exponencial (Criado)\n\n\nCódigo\nS_exp &lt;- function(alpha, t, delta){\n  \n  log_L &lt;- -sum(delta * log(alpha)) - (1/alpha) * sum(t)\n  \n  return(-log_L)\n}\n\najuste &lt;- optimize(f = S_exp, c(0.01, 100), tempos, censura)\najuste\n\n\n$minimum\n[1] 20.41178\n\n$objective\n[1] 68.27389\n\n\n\n\n5.2.2 Exponencial (Survival)\n\n\nCódigo\nmodelo_exp &lt;- survreg(Surv(tempos, censura) ~ 1, dist = \"exponential\")\nsummary(modelo_exp)\n\n\n\nCall:\nsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"exponential\")\n            Value Std. Error    z      p\n(Intercept) 3.016      0.243 12.4 &lt;2e-16\n\nScale fixed at 1 \n\nExponential distribution\nLoglik(model)= -68.3   Loglik(intercept only)= -68.3\nNumber of Newton-Raphson Iterations: 4 \nn= 20 \n\n\n\n\n5.2.3 Exponencial (Intervalo de Confiança)\n\n\nCódigo\n# usando a hessiana ao trocar pelo optim\nfit_exp_hessian &lt;- optim(par = 10, fn = S_exp, t = tempos, delta = censura, \n                         method = \"BFGS\", hessian = TRUE)\n\n#IF\nI_obs &lt;- fit_exp_hessian$hessian\n\n#Variancia\nvariancia &lt;- solve(I_obs)\nse_alpha &lt;- sqrt(variancia) # Erro Padrão\n\n\n\n\nCódigo\nalpha_hat &lt;- fit_exp_hessian$par\nz &lt;- qnorm(0.975) # 1.96\n\nic_inf &lt;- alpha_hat - z * se_alpha\nic_sup &lt;- alpha_hat + z * se_alpha\n\ncat(\"IC 95% para Alpha: [\", ic_inf, \";\", ic_sup, \"]\\n\")\n\n\nIC 95% para Alpha: [ 10.70879 ; 30.11414 ]\n\n\n\n\nCódigo\nlogL_max &lt;- -fit_exp_hessian$value \nn &lt;- length(tempos)\nk &lt;- 1 \n\n# Critérios de Seleção\naic_exp &lt;- 2*k - 2*logL_max\nbic_exp &lt;- k*log(n) - 2*logL_max\nhq_exp  &lt;- 2*k * log(log(n)) - 2*logL_max \n\ncat(\"AIC:\", aic_exp, \"| BIC:\", bic_exp, \"| HQ:\", hq_exp)\n\n\nAIC: 138.5478 | BIC: 139.5435 | HQ: 138.7422\n\n\n\n\nCódigo\n# KM\nkm &lt;- survfit(Surv(tempos, censura) ~ 1)\n\n# Curva Exponencial\nt_grid &lt;- seq(0, 50, length.out = 100)\nst_teorico &lt;- exp(-t_grid / alpha_hat)\n\nplot(km, main = \"Ajuste Exponencial vs Kaplan-Meier\", \n     xlab = \"Tempo\", \n     ylab = \"S(t)\")\nlines(t_grid, st_teorico, col = \"red\", lwd = 2)",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#distribuição-weibull",
+    "href": "fucoes_optim_IC.html#distribuição-weibull",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "5.3 Distribuição Weibull",
+    "text": "5.3 Distribuição Weibull\n\n5.3.1 Weibull (Criado)\n\n\nCódigo\nS_weib &lt;- function(theta, t, delta){\n  \n  alpha &lt;- theta[1] \n  gamma &lt;- theta[2]\n  r &lt;- sum(delta) #soma de todos as falhas\n\n  Log_L &lt;- r*log(gamma)-(r*gamma*log(alpha))+(gamma -1)*sum(delta*log(t))-(alpha^(-gamma))*sum(t^gamma)\n  \n  if(!is.finite(Log_L)) return(1e10) #garante o tempo positivo apenas\n  \n  return(-Log_L)\n}\n\n#?optim()\nresultado &lt;- optim(par = c(1, 1), S_weib, t = tempos, delta = censura, method = \"BFGS\")\nresultado \n\n\n$par\n[1] 21.334902  1.543351\n\n$value\n[1] 66.13336\n\n$counts\nfunction gradient \n      44       23 \n\n$convergence\n[1] 0\n\n$message\nNULL\n\n\n\n\n5.3.2 Weibull (Survival)\n\n\nCódigo\nmodelo_weib &lt;- survreg(Surv(tempos, censura) ~ 1, dist = \"weibull\")\nsummary(modelo_weib)\n\n\n\nCall:\nsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"weibull\")\n             Value Std. Error    z      p\n(Intercept)  3.061      0.160 19.1 &lt;2e-16\nLog(scale)  -0.434      0.189 -2.3  0.022\n\nScale= 0.648 \n\nWeibull distribution\nLoglik(model)= -66.1   Loglik(intercept only)= -66.1\nNumber of Newton-Raphson Iterations: 6 \nn= 20 \n\n\n\n\n5.3.3 Weibull (Intervalo de Confiança)\n\n\nCódigo\n# hessian = TRUE\nresultado &lt;- optim(par = c(1, 1), S_weib, t = tempos, delta = censura, \n                   method = \"BFGS\", hessian = TRUE)\n\nvar_covar &lt;- solve(resultado$hessian)\nerros_padrao &lt;- sqrt(diag(var_covar))\n\n# 95% para os dois parâmetros\nz &lt;- qnorm(0.975)\nic_alpha &lt;- resultado$par[1] + c(-1, 1) * z * erros_padrao[1]\nic_gamma &lt;- resultado$par[2] + c(-1, 1) * z * erros_padrao[2]\n\n\n\n\nCódigo\n# Variáveis\nn &lt;- length(tempos)\nk &lt;- 2\nlogL &lt;- -resultado$value\n\n# Cálculos\naic_weibull &lt;- 2 * k - 2 * logL\nbic_weibull &lt;- k * log(n) - 2 * logL\nhq_weibull  &lt;- 2 * k * log(log(n)) - 2 * logL\n\ncat(\"AIC Weibull:\", aic_weibull, \"\\n\")\n\n\nAIC Weibull: 136.2667 \n\n\nCódigo\ncat(\"BIC Weibull:\", bic_weibull, \"\\n\")\n\n\nBIC Weibull: 138.2582 \n\n\nCódigo\ncat(\"HQ  Weibull:\", hq_weibull)\n\n\nHQ  Weibull: 136.6555",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#distribuição-log-normal",
+    "href": "fucoes_optim_IC.html#distribuição-log-normal",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "5.4 Distribuição Log-Normal",
+    "text": "5.4 Distribuição Log-Normal\n\n5.4.1 Log-Normal (Criado)\n\n\nCódigo\nS_lognorm &lt;- function(theta, t, delta) {\n  \n  mu    &lt;- theta[1]\n  sigma &lt;- theta[2]\n  \n\n  log_S &lt;- plnorm(t, meanlog = mu, sdlog = sigma, lower.tail = FALSE, log.p = TRUE)\n  \n  log_f &lt;- -0.5*log(2*pi) - log(t) - log(sigma) - (1/(2*sigma^2)) * (log(t) - mu)^2\n  \n  L_LOG &lt;- sum(delta * log_f + (1 - delta) * log_S)\n  \n  return(-L_LOG)\n}\n\n\n\n\nCódigo\no_mu &lt;- mean(log(tempos))\no_sigma &lt;- sd(log(tempos))\n\nfit_ln &lt;- optim(par = c(o_mu, o_sigma), fn = S_lognorm,t = tempos,delta = censura, method = \"BFGS\"\n)\nfit_ln\n\n\n$par\n[1] 2.7171735 0.7648411\n\n$value\n[1] 65.7399\n\n$counts\nfunction gradient \n      14        6 \n\n$convergence\n[1] 0\n\n$message\nNULL\n\n\n\n\n5.4.2 Log-Normal (Survival)\n\n\nCódigo\nmodelo_logN &lt;- survreg(Surv(tempos, censura) ~ 1, dist = \"lognormal\")\nsummary(modelo_logN)\n\n\n\nCall:\nsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"lognormal\")\n             Value Std. Error     z      p\n(Intercept)  2.717      0.176 15.42 &lt;2e-16\nLog(scale)  -0.268      0.174 -1.54   0.12\n\nScale= 0.765 \n\nLog Normal distribution\nLoglik(model)= -65.7   Loglik(intercept only)= -65.7\nNumber of Newton-Raphson Iterations: 6 \nn= 20 \n\n\n\n\n5.4.3 Log-Normal (Intervalo de Confiança)\n\n\nCódigo\nfit_ln &lt;- optim(par = c(mean(log(tempos)), sd(log(tempos))), fn = S_lognorm,\n  t = tempos,\n  delta = censura, \n  method = \"BFGS\",\n  hessian = TRUE\n)\n\n# Informação de Fisher Observada (Matriz 2x2: mu e sigma)\nIf_obs &lt;- fit_ln$hessian\n\n# Matriz de variância-covariância (Inversa da Hessiana)\nvar_covar_ln &lt;- solve(If_obs)\n\n# Erros Padrão\nse_ln &lt;- sqrt(diag(var_covar_ln))\n\n\n\n\nCódigo\nz &lt;- qnorm(0.975) # Para 95% de confiança\n\n# IC para Mu\nic_mu &lt;- c(fit_ln$par[1] - z * se_ln[1], fit_ln$par[1] + z * se_ln[1])\n\n# IC para Sigma\nic_sigma &lt;- c(fit_ln$par[2] - z * se_ln[2], fit_ln$par[2] + z * se_ln[2])\n\ncat(\"IC 95% Mu: [\", ic_mu, \"]\\n\")\n\n\nIC 95% Mu: [ 2.371732 3.062615 ]\n\n\nCódigo\ncat(\"IC 95% Sigma: [\", ic_sigma, \"]\\n\")\n\n\nIC 95% Sigma: [ 0.5046711 1.025011 ]\n\n\n\n\nCódigo\nn &lt;- length(tempos)\nk &lt;- 2\nlogL_ln &lt;- -fit_ln$value # Log-verossimilhança máxima\n\naic_ln &lt;- 2*k - 2*logL_ln\nbic_ln &lt;- k*log(n) - 2*logL_ln\nhq_ln  &lt;- 2*k*log(log(n)) - 2*logL_ln\n\ncat(\"AIC:\", aic_ln, \"| BIC:\", bic_ln, \"| HQ:\", hq_ln)\n\n\nAIC: 135.4798 | BIC: 137.4713 | HQ: 135.8686\n\n\n\n\nCódigo\n#km &lt;- survfit(Surv(tempos, censura) ~ 1) # já declarado\n\nt_grid &lt;- seq(0, max(tempos), length.out = 100)\ns_teorico_ln &lt;- plnorm(t_grid, meanlog = fit_ln$par[1], sdlog = fit_ln$par[2], lower.tail = FALSE)\n\nplot(km, \n     conf.int = TRUE, \n     col = \"black\", \n     lty = c(1, 2, 2), \n     main = \"Ajuste Log-Normal vs KM\", \n     xlab = \"Tempo\", \n     ylab = \"S(t)\")\n\nlines(t_grid, s_teorico_ln, col = \"darkgreen\", lwd = 2)",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#distribuição-log-logistica",
+    "href": "fucoes_optim_IC.html#distribuição-log-logistica",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "5.5 Distribuição Log-logistica",
+    "text": "5.5 Distribuição Log-logistica\n\n5.5.1 Log-Logística (Criada)\n\n\nCódigo\nS_loglogistica &lt;- function(theta, t, delta) {\n\n  alpha &lt;- exp(theta[1])\n  gamma &lt;- exp(theta[2])\n  \n  log_f &lt;- log(gamma) - (gamma * log(alpha)) + (gamma - 1) * log(t) - 2 * log(1 + (t/alpha)^gamma)\n  \n  log_S &lt;- -log(1 + (t/alpha)^gamma)\n  \n  LOG_L &lt;- sum(delta * log_f + (1 - delta) * log_S)\n  \n  return(-LOG_L)\n}\n\n# Chute inicial (log da média dos tempos e log de 1)\ninicio &lt;- c(log(mean(tempos)), 0)\n\nfit_ll &lt;- optim(par = inicio, fn = S_loglogistica, t = tempos, delta = censura, method = \"BFGS\")\nfit_ll\n\n\n$par\n[1] 2.7373688 0.7993457\n\n$value\n[1] 66.03053\n\n$counts\nfunction gradient \n      21        7 \n\n$convergence\n[1] 0\n\n$message\nNULL\n\n\n\n\n5.5.2 Log-Logística (Survival)\n\n\nCódigo\nmodelo_LL &lt;- survreg(Surv(tempos, censura) ~ 1, dist = \"loglogistic\")\nmodelo_LL\n\n\nCall:\nsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"loglogistic\")\n\nCoefficients:\n(Intercept) \n   2.737415 \n\nScale= 0.4496653 \n\nLoglik(model)= -66   Loglik(intercept only)= -66\nn= 20 \n\n\n\n\n5.5.3 Log-Logística (Intervalo de Confiança)\n\n\nCódigo\n# Rodando com Hessiana\nfit_ll &lt;- optim(par = inicio, fn = S_loglogistica, t = tempos, \n                delta = censura, method = \"BFGS\", hessian = TRUE)\n\n# Variância-Covariância e Erro Padrão (na escala log)\nvar_covar_ll &lt;- solve(fit_ll$hessian)\nse_ll &lt;- sqrt(diag(var_covar_ll))\n\n# IC 95% para os parâmetros (escala original usando exp)\nz &lt;- qnorm(0.975)\nic_alpha_ll &lt;- exp(fit_ll$par[1] + c(-1, 1) * z * se_ll[1])\nic_gamma_ll &lt;- exp(fit_ll$par[2] + c(-1, 1) * z * se_ll[2])\n\ncat(\"IC Alpha:\", ic_alpha_ll, \"\\n\")\n\n\nIC Alpha: 10.85383 21.98191 \n\n\nCódigo\ncat(\"IC Gamma:\", ic_gamma_ll)\n\n\nIC Gamma: 1.509642 3.27664\n\n\n\n\nCódigo\nn &lt;- length(tempos)\nk &lt;- 2\nlogL_ll &lt;- -fit_ll$value\n\naic_ll &lt;- 2*k - 2*logL_ll\nbic_ll &lt;- k*log(n) - 2*logL_ll\nhq_ll  &lt;- 2*k*log(log(n)) - 2*logL_ll\n\ncat(\"AIC:\", aic_ll, \"| BIC:\", bic_ll, \"| HQ:\", hq_ll)\n\n\nAIC: 136.0611 | BIC: 138.0525 | HQ: 136.4498\n\n\n\n\nCódigo\nalpha_ll &lt;- exp(fit_ll$par[1])\ngamma_ll &lt;- exp(fit_ll$par[2])\n\n# Sobrevivência Teórica: S(t) = 1 / (1 + (t/alpha)^gamma)\nst_loglogistica &lt;- 1 / (1 + (t_grid / alpha_ll)^gamma_ll)\n\nplot(km, conf.int = TRUE, col = \"black\", lty = c(1, 2, 2),\n     main = \"Ajuste Log-Logístico vs KM\", xlab = \"Tempo\", ylab = \"S(t)\")\nlines(t_grid, st_loglogistica, col = \"purple\", lwd = 2)",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#distribuição-gama",
+    "href": "fucoes_optim_IC.html#distribuição-gama",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "5.6 Distribuição Gama",
+    "text": "5.6 Distribuição Gama\n\n5.6.1 Gama (Criada)\n\n\nCódigo\nS_gama &lt;- function(theta, t, delta) {\n\n  shape &lt;- exp(theta[1])\n  scale &lt;- exp(theta[2])\n  \n  log_f &lt;- dgamma(t, shape = shape, scale = scale, log = TRUE)\n  \n  log_S &lt;- pgamma(t, shape = shape, scale = scale, lower.tail = FALSE, log.p = TRUE)\n  \n  logl &lt;- sum(delta * log_f + (1 - delta) * log_S)\n  \n  return(-logl)\n}\n\np &lt;- log(mean(tempos))\n\nfit_g &lt;- optim(par = c(0, p), fn = S_gama, t = tempos, delta = censura, method = \"BFGS\")\nfit_g\n\n\n$par\n[1] 0.7626296 2.1937980\n\n$value\n[1] 65.84754\n\n$counts\nfunction gradient \n      30        9 \n\n$convergence\n[1] 0\n\n$message\nNULL\n\n\n\n\n5.6.2 Gama (Flexsurvreg)\n\n\nCódigo\nmodelo_gama &lt;- flexsurvreg(Surv(tempos, censura) ~ 1, dist = \"gamma\")\nmodelo_gama\n\n\nCall:\nflexsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"gamma\")\n\nEstimates: \n       est     L95%    U95%    se    \nshape  2.1439  1.1580  3.9692  0.6737\nrate   0.1115  0.0540  0.2303  0.0413\n\nN = 20,  Events: 17,  Censored: 3\nTotal time at risk: 347\nLog-likelihood = -65.84754, df = 2\nAIC = 135.6951\n\n\n\n\n5.6.3 Gama (Intervalo de Confiança)\n\n\nCódigo\nfit_g &lt;- optim(par = c(0, p), fn = S_gama, t = tempos, \n               delta = censura, method = \"BFGS\", hessian = TRUE)\n\n# Inversa da Hessiana (Matriz de Variância-Covariância no espaço log)\nvar_covar_g &lt;- solve(fit_g$hessian)\nse_g &lt;- sqrt(diag(var_covar_g))\n\n# Intervalos de Confiança (Transformando de volta para a escala original)\nz &lt;- qnorm(0.975)\nic_shape_g &lt;- exp(fit_g$par[1] + c(-1, 1) * z * se_g[1])\nic_scale_g &lt;- exp(fit_g$par[2] + c(-1, 1) * z * se_g[2])\n\ncat(\"IC Shape:\", ic_shape_g, \"\\n\")\n\n\nIC Shape: 1.158 3.9692 \n\n\nCódigo\ncat(\"IC Scale:\", ic_scale_g)\n\n\nIC Scale: 4.341715 18.5288\n\n\n\n\nCódigo\nn &lt;- length(tempos)\nk &lt;- 2\nlogL_g &lt;- -fit_g$value\n\naic_g &lt;- 2*k - 2*logL_g\nbic_g &lt;- k*log(n) - 2*logL_g\nhq_g  &lt;- 2*k*log(log(n)) - 2*logL_g\n\ncat(\"AIC:\", aic_g, \"| BIC:\", bic_g, \"| HQ:\", hq_g)\n\n\nAIC: 135.6951 | BIC: 137.6865 | HQ: 136.0838\n\n\n\n\nCódigo\nshape_hat &lt;- exp(fit_g$par[1])\nscale_hat &lt;- exp(fit_g$par[2])\n\n# Sobrevivência Teórica da Gama\nst_gama &lt;- pgamma(t_grid, shape = shape_hat, scale = scale_hat, lower.tail = FALSE)\n\nplot(km, conf.int = TRUE, col = \"black\", lty = c(1, 2, 2),\n     main = \"Ajuste Gama vs KM\", xlab = \"Tempo\", ylab = \"S(t)\")\nlines(t_grid, st_gama, col = \"orange\", lwd = 2)",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "fucoes_optim_IC.html#distribuição-gama-generalizada",
+    "href": "fucoes_optim_IC.html#distribuição-gama-generalizada",
+    "title": "5  Aplicação: Intervalo de Confiança",
+    "section": "5.7 Distribuição Gama Generalizada",
+    "text": "5.7 Distribuição Gama Generalizada\n\n5.7.1 Gama Generalizada (Criada)\n\n\nCódigo\nS_gamaG &lt;- function(theta, t, delta) {\n\n  alpha &lt;- exp(theta[1])\n  gamma &lt;- exp(theta[2])\n  s     &lt;- exp(theta[3])\n  \n  log_f &lt;- log(gamma)-lgamma(s)-(gamma*s*log(alpha))+(gamma * s - 1)*log(t)-(t / alpha)^gamma\n  \n  log_S &lt;- pgamma((t / alpha)^gamma, shape = s, lower.tail = FALSE, log.p = TRUE)\n  \n  logl &lt;- sum(delta * log_f + (1 - delta) * log_S)\n  \n  if(!is.finite(logl)) return(1e10)\n  \n  return(-logl)\n}\n\ni &lt;- c(log(mean(tempos)), 0, 0) \n\nresultado_gg &lt;- optim(par = i, fn = S_gamaG, t = tempos, delta = censura, method = \"BFGS\")\nresultado_gg\n\n\n$par\n[1] -2.8700735 -0.8786525  2.3651648\n\n$value\n[1] 65.6936\n\n$counts\nfunction gradient \n     202      100 \n\n$convergence\n[1] 1\n\n$message\nNULL\n\n\n\n\n5.7.2 Gama Generalizada (Flexsurvreg)\n\n\nCódigo\nmodelo_GG &lt;- flexsurvreg(Surv(tempos, censura) ~ 1, dist = \"gengamma\")\nmodelo_GG\n\n\nCall:\nflexsurvreg(formula = Surv(tempos, censura) ~ 1, dist = \"gengamma\")\n\nEstimates: \n       est     L95%    U95%    se    \nmu      2.805   2.168   3.442   0.325\nsigma   0.743   0.498   1.110   0.152\nQ       0.247  -1.291   1.786   0.785\n\nN = 20,  Events: 17,  Censored: 3\nTotal time at risk: 347\nLog-likelihood = -65.69074, df = 3\nAIC = 137.3815\n\n\n\n\n5.7.3 Gama Generalizada (Intervalo de COnfiança)\n\n\nCódigo\nresultado_gg &lt;- optim(par = i, fn = S_gamaG, t = tempos, \n                      delta = censura, method = \"BFGS\", hessian = TRUE)\n\n# Variância-Covariância (espaço log)\nvar_covar_gg &lt;- solve(resultado_gg$hessian)\nse_gg &lt;- sqrt(diag(var_covar_gg))\n\n# IC 95% agora para os três parâmetros\nz &lt;- qnorm(0.975)\nic_alpha_gg &lt;- exp(resultado_gg$par[1] + c(-1, 1) * z * se_gg[1])\nic_gamma_gg &lt;- exp(resultado_gg$par[2] + c(-1, 1) * z * se_gg[2])\nic_s_gg     &lt;- exp(resultado_gg$par[3] + c(-1, 1) * z * se_gg[3])\n\n\n\n\nCódigo\nn &lt;- length(tempos)\nk &lt;- 3\nlogL_gg &lt;- -resultado_gg$value\n\naic_gg &lt;- 2*k - 2*logL_gg\nbic_gg &lt;- k*log(n) - 2*logL_gg\nhq_gg  &lt;- 2*k*log(log(n)) - 2*logL_gg\n\ncat(\"AIC GG:\", aic_gg, \"| BIC GG:\", bic_gg, \"| HQ GG:\", hq_gg)\n\n\nAIC GG: 137.3872 | BIC GG: 140.3744 | HQ GG: 137.9703\n\n\n\n\nCódigo\n# Parâmetros convertidos\na_gg &lt;- exp(resultado_gg$par[1])\ng_gg &lt;- exp(resultado_gg$par[2])\ns_gg &lt;- exp(resultado_gg$par[3])\n\n# Sobrevivência Teórica GG\nst_gg &lt;- pgamma((t_grid / a_gg)^g_gg, shape = s_gg, lower.tail = FALSE)\n\nplot(km, conf.int = TRUE, main = \"Ajuste Gama Generalizada vs KM\")\nlines(t_grid, st_gg, col = \"cyan\", lwd = 2)",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Aplicação: Intervalo de Confiança</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#footnotes",
+    "href": "index.html#footnotes",
+    "title": "Análise de sobrevivência aplicado a dados epidemiológicos",
+    "section": "",
+    "text": "Base retirada do repositório dos autores do livro Análise de Sobrevivência, Colossimo & Giolo: Acesse aqui;↩︎",
+    "crumbs": [
+      "Objetivo"
     ]
   }
 ]

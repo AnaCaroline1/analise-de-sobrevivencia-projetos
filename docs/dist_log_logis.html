@@ -65,7 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./outras_funções_comp.html" rel="next">
+<link href="./fucoes_optim_IC.html" rel="next">
 <link href="./dist_log_norm.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -323,7 +323,7 @@ window.Quarto = {
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
@@ -375,8 +375,8 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./outras_funções_comp.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Funções no optim</span></span></a>
+  <a href="./fucoes_optim_IC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Aplicação: Intervalo de Confiança</span></span></a>
   </div>
 </li>
     </ul>
@@ -384,19 +384,9 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Sumário</h2>
-   
-  <ul>
-  <li><a href="#função-de-sobrevivência" id="toc-função-de-sobrevivência" class="nav-link active" data-scroll-target="#função-de-sobrevivência"><span class="header-section-number">4.1</span> Função de Sobrevivência</a></li>
-  <li><a href="#função-verossimilhança" id="toc-função-verossimilhança" class="nav-link" data-scroll-target="#função-verossimilhança"><span class="header-section-number">4.2</span> Função verossimilhança</a></li>
-  <li><a href="#aplicação" id="toc-aplicação" class="nav-link" data-scroll-target="#aplicação"><span class="header-section-number">4.3</span> Aplicação</a></li>
-  </ul>
-</nav>
-    </div>
+    
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page-right" id="quarto-document-content">
 
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -406,7 +396,7 @@ window.Quarto = {
 
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page-right">
 
     
   
@@ -455,6 +445,8 @@ L(\theta | t) = \prod_{i=1}^{n} \left[ \left( \frac{\gamma}{\alpha^\gamma} \cdot
 <section id="aplicação" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="aplicação"><span class="header-section-number">4.3</span> Aplicação</h2>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>S_loglogistica <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, delta) {</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">1</span>])</span>
@@ -467,9 +459,57 @@ L(\theta | t) = \prod_{i=1}^{n} \left[ \left( \frac{\gamma}{\alpha^\gamma} \cdot
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  LOG_L <span class="ot">&lt;-</span> <span class="fu">sum</span>(delta <span class="sc">*</span> log_f <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> delta) <span class="sc">*</span> log_S)</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>LOG_L)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>inicio <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">log</span>(<span class="fu">mean</span>(tempos)), <span class="dv">0</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>fit_ll <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> inicio, <span class="at">fn =</span> S_loglogistica, <span class="at">t =</span> tempos, </span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                <span class="at">delta =</span> cens, <span class="at">method =</span> <span class="st">"BFGS"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
-<p>Aplicando o <span class="math inline">\(optim\)</span> se obtem os valores estimados dos parãmetros: [ 2.7373688, 0.7993457] e estatística de 66.03053.</p>
+<p>Aplicando o <span class="math inline">\(optim\)</span> se obtem os valores estimados dos parâmetros: [ 2.7373688, 0.7993457] e estatística de 66.03053.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Parte refeita</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Extração correta dos parâmetros </span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#(voltando para a escala original)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>alpha_est <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_ll<span class="sc">$</span>par[<span class="dv">1</span>])</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>gamma_est <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_ll<span class="sc">$</span>par[<span class="dv">2</span>])</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Sequência de tempo começando do zero para o gráfico encostar no eixo Y</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>t_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">max</span>(tempos, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular a sobrevivência teórica</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>s_loglogis <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> (t_seq <span class="sc">/</span> alpha_est)<span class="sc">^</span>gamma_est)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>indices_lin <span class="ot">&lt;-</span> <span class="fu">which</span>(km_c_bx<span class="sc">$</span>sobrevivencia <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> km_c_bx<span class="sc">$</span>sobrevivencia <span class="sc">&lt;</span> <span class="dv">1</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>t_km <span class="ot">&lt;-</span> km_c_bx<span class="sc">$</span>tempo[indices_lin]</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>s_km <span class="ot">&lt;-</span> km_c_bx<span class="sc">$</span>sobrevivencia[indices_lin]</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>y_lin <span class="ot">&lt;-</span> <span class="fu">log</span>((<span class="dv">1</span> <span class="sc">-</span> s_km) <span class="sc">/</span> s_km)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>x_lin <span class="ot">&lt;-</span> <span class="fu">log</span>(t_km)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>indices_lin <span class="ot">&lt;-</span> <span class="fu">which</span>(km_c_bx<span class="sc">$</span>sobrevivencia <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> km_c_bx<span class="sc">$</span>sobrevivencia <span class="sc">&lt;</span> <span class="dv">1</span>)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>t_km <span class="ot">&lt;-</span> km_c_bx<span class="sc">$</span>tempo[indices_lin]</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>s_km <span class="ot">&lt;-</span> km_c_bx<span class="sc">$</span>sobrevivencia[indices_lin]</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Definir as coordenadas de linearização</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>y_lin <span class="ot">&lt;-</span> <span class="fu">log</span>((<span class="dv">1</span> <span class="sc">-</span> s_km) <span class="sc">/</span> s_km)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>x_lin <span class="ot">&lt;-</span> <span class="fu">log</span>(t_km)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1405919696.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-135417046.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
 
 
 </section>
@@ -888,15 +928,15 @@ L(\theta | t) = \prod_{i=1}^{n} \left[ \left( \frac{\gamma}{\alpha^\gamma} \cdot
     }
   });
   </script>
-<nav class="page-navigation">
+<nav class="page-navigation column-page-right">
   <div class="nav-page nav-page-previous">
       <a href="./dist_log_norm.html" class="pagination-link" aria-label="Distribuição Log-normal">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Distribuição Log-normal</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./outras_funções_comp.html" class="pagination-link" aria-label="Funções no optim">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Funções no optim</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./fucoes_optim_IC.html" class="pagination-link" aria-label="Aplicação: Intervalo de Confiança">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Aplicação: Intervalo de Confiança</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

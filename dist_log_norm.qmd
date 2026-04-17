@@ -1,3 +1,7 @@
+---
+eval: False
+---
+
 # Distribuição Log-normal
 
 A função densidade de probabilidade associada a variável aleatória tempo até o evento $T$ com distribuição log-normal e função de sobrevivência é dada por:
@@ -103,80 +107,6 @@ x_coord <- log(t_km)
 
 ```
 
-```{r}
-#| echo: false
+![](images/clipboard-3198937992.png){fig-align="center" width="90%"}
 
-plot(t_plot,s_plot, type = "s", lwd = 2,
-     xlab = "Tempo (t)", ylab = "S(t)", 
-     main = "Ajuste Log-Normal vs. Kaplan-Meier")
-lines(t_teorico, s_lnorm, col = "blue", lwd = 2, lty = 2)
-legend("topright", legend = c("Kaplan-Meier", "Log-Normal Ajustada"),
-       col = c("black", "blue"), lty = c(1, 2), lwd = 2)
-
-plot(x_coord, y_coord, pch = 16, col = "darkgreen",
-     xlab = "log(t)", ylab = "qnorm(1 - S(t))",
-     main = "Gráfico de Linearização Log-Normal")
-
-# y = (1/sigma) * log(t) - (mu/sigma)
-
-abline(a = -mu_est/sigma_est, b = 1/sigma_est, col = "red", lwd = 2)
-
-```
-
-## Intervalo de confiança
-
-```{r}
-
-Sigma <- solve(ajust2$hessian) 
-
-mu_est
-sigma_est
-
-# 1. Definir tempos para o plot
-t_seq <- seq(0, max(tempos), length.out = 100)
-
-# 2. Calcular S(t) e o Erro Padrão para cada t
-s_pred <- numeric(length(t_seq))
-se_s   <- numeric(length(t_seq))
-for(i in 1:length(t_seq)) {
-  ti <- t_seq[i]
-  z <- (log(ti)-mu_est)/sigma_est
-  # S(t) estimado
-  s_pred[i] <- plnorm(ti, meanlog = mu_est, sdlog = sigma_est, lower.tail = FALSE, log.p = F
-                      )
-  
-  # Gradiente no ponto ti
-  d_mu <- dnorm(z)* (1/sigma_est)
-  d_sigma <- dnorm(z)*(z/sigma_est)
-  
-  grad <- c(d_mu, d_sigma)
-  
-  # Variância via Delta Method
-  var_s <- t(grad) %*% Sigma %*% grad
-  se_s[i] <- sqrt(var_s)
-}
-
-
-```
-
-
-```{r}
-
-# 3. Limites do IC (95%)
-ic_inf <- pmax(0, s_pred - 1.96 * se_s) # Garante que não seja < 0
-ic_sup <- pmin(1, s_pred + 1.96 * se_s) # Garante que não seja > 1
-
-plot(t_plot,s_plot, type = "s", lwd = 2,
-     xlab = "Tempo (t)", ylab = "S(t)", 
-     main = "Ajuste Log-Normal vs. Kaplan-Meier")
-lines(t_teorico, s_lnorm, col = "blue", lwd = 2, lty = 2)
-lines(t_seq, ic_inf, col = "blue", lty = 2)
-lines(t_seq, ic_sup, col = "blue", lty = 2)
-# Opcional: Polígono de preenchimento
-polygon(c(t_seq, rev(t_seq)), c(ic_inf, rev(ic_sup)), 
-        col = rgb(1, 0, 0, 0.2), border = NA)
-legend("topright", legend = c("Kaplan-Meier", "Log-Normal Ajustada"),
-       col = c("black", "blue"), lty = c(1, 2), lwd = 2)
-
-
-```
+![](images/clipboard-123164404.png){fig-align="center" width="90%"}

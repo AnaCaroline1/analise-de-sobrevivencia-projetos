@@ -323,7 +323,7 @@ window.Quarto = {
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
@@ -375,8 +375,8 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./outras_funções_comp.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Funções no optim</span></span></a>
+  <a href="./fucoes_optim_IC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Aplicação: Intervalo de Confiança</span></span></a>
   </div>
 </li>
     </ul>
@@ -384,21 +384,9 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Sumário</h2>
-   
-  <ul>
-  <li><a href="#função-de-verossimilhança-é-dada-por" id="toc-função-de-verossimilhança-é-dada-por" class="nav-link active" data-scroll-target="#função-de-verossimilhança-é-dada-por"><span class="header-section-number">2.1</span> Função de verossimilhança é dada por:</a></li>
-  <li><a href="#log-verossimilhança-da-weibull" id="toc-log-verossimilhança-da-weibull" class="nav-link" data-scroll-target="#log-verossimilhança-da-weibull"><span class="header-section-number">2.2</span> Log-verossimilhança da Weibull:</a></li>
-  <li><a href="#distribuição-log-weibull-gumbel" id="toc-distribuição-log-weibull-gumbel" class="nav-link" data-scroll-target="#distribuição-log-weibull-gumbel"><span class="header-section-number">2.3</span> Distribuição Log-Weibull (Gumbel)</a></li>
-  <li><a href="#linearização-da-função-de-sobrevivência-da-weibull" id="toc-linearização-da-função-de-sobrevivência-da-weibull" class="nav-link" data-scroll-target="#linearização-da-função-de-sobrevivência-da-weibull"><span class="header-section-number">2.4</span> Linearização da função de sobrevivência da Weibull</a></li>
-  <li><a href="#aplicação" id="toc-aplicação" class="nav-link" data-scroll-target="#aplicação"><span class="header-section-number">2.5</span> Aplicação</a></li>
-  </ul>
-</nav>
-    </div>
+    
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page-right" id="quarto-document-content">
 
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -408,7 +396,7 @@ window.Quarto = {
 
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page-right">
 
     
   
@@ -468,42 +456,68 @@ S(t) = \exp\left[- \frac{t}{\alpha}^{\lambda} \right]
 <section id="aplicação" class="level2" data-number="2.5">
 <h2 data-number="2.5" class="anchored" data-anchor-id="aplicação"><span class="header-section-number">2.5</span> Aplicação</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>log_vero_surv_weibull <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, status){</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> theta[<span class="dv">1</span>] </span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  gamma <span class="ot">&lt;-</span> theta[<span class="dv">2</span>]</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> status</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  Log_L <span class="ot">&lt;-</span> <span class="fu">sum</span>(r<span class="sc">*</span>(<span class="fu">log</span>(gamma)<span class="sc">-</span>gamma<span class="sc">*</span><span class="fu">log</span>(alpha)<span class="sc">+</span>(gamma<span class="dv">-1</span>)<span class="sc">*</span><span class="fu">log</span>(t))<span class="sc">-</span>(t<span class="sc">/</span>alpha)<span class="sc">^</span>gamma)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.finite</span>(Log_L)) <span class="fu">return</span>(<span class="fl">1e10</span>) <span class="co">#garante o tempo positivo apenas</span></span>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>log_vero_surv_weibull_R <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, status) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> theta[<span class="dv">1</span>]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  gamma <span class="ot">&lt;-</span> theta[<span class="dv">2</span>]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Evita valores não positivos para os parâmetros durante a otimização</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (alpha <span class="sc">&lt;=</span> <span class="dv">0</span> <span class="sc">||</span> gamma <span class="sc">&lt;=</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="fl">1e10</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># log(f(t)): log-densidade para os eventos (status == 1)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  log_f <span class="ot">&lt;-</span> <span class="fu">dweibull</span>(t, <span class="at">shape =</span> gamma, <span class="at">scale =</span> alpha, <span class="at">log =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>Log_L)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># log(S(t)): log-sobrevivência para as censuras (status == 0)</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># lower.tail = FALSE retorna P(X &gt; x), e log.p = TRUE retorna o log disso</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  log_S <span class="ot">&lt;-</span> <span class="fu">pweibull</span>(t, <span class="at">shape =</span> gamma, <span class="at">scale =</span> alpha, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>, <span class="at">log.p =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Soma ponderada pelo status:</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Se status=1, contribui log_f. Se status=0, contribui log_S.</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  Log_L <span class="ot">&lt;-</span> <span class="fu">sum</span>(status <span class="sc">*</span> log_f <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> status) <span class="sc">*</span> log_S)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.finite</span>(Log_L)) <span class="fu">return</span>(<span class="fl">1e10</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>Log_L) <span class="co"># Retorna negativo para minimizar</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>ajust3 <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>), log_vero_surv_weibull_R,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>                <span class="at">t =</span> tempos, <span class="at">status =</span> cens,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>                <span class="at">method =</span> <span class="st">"BFGS"</span>,<span class="at">hessian =</span> T)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot 1</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>t_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">max</span>(tempos), <span class="at">length.out =</span> <span class="dv">100</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>s_weibull <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>(t_seq <span class="sc">/</span> alpha_est)<span class="sc">^</span>gamma_est)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#plot 2</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Preparar os dados (remover S(t)=0 ou 1 para evitar log de erro)</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>indices <span class="ot">&lt;-</span> <span class="fu">which</span>(km_c_bx<span class="sc">$</span>sobrevivencia <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> km_c_bx<span class="sc">$</span>sobrevivencia <span class="sc">&lt;</span> <span class="dv">1</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>t_km <span class="ot">&lt;-</span> km_c_bx<span class="sc">$</span>tempo[indices]</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>s_km <span class="ot">&lt;-</span> km_c_bx<span class="sc">$</span>sobrevivencia[indices]</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Transformações lineares</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>y_weibull <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="sc">-</span><span class="fu">log</span>(s_km))</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>x_weibull <span class="ot">&lt;-</span> <span class="fu">log</span>(t_km)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>indices <span class="ot">&lt;-</span> <span class="fu">which</span>(km_c_bx<span class="sc">$</span>sobrevivencia <span class="sc">&gt;</span> <span class="dv">0</span>) </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>t_km <span class="ot">&lt;-</span> km_c_bx<span class="sc">$</span>tempo[indices]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>s_km <span class="ot">&lt;-</span> km_c_bx<span class="sc">$</span>sobrevivencia[indices]</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>t_plot <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, t_km)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>s_plot <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, s_km)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>alpha_est <span class="ot">&lt;-</span> ajust3<span class="sc">$</span>par[<span class="dv">1</span>]</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>gamma_est <span class="ot">&lt;-</span> ajust3<span class="sc">$</span>par[<span class="dv">2</span>]</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>t_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">max</span>(t_plot), <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>s_weibull <span class="ot">&lt;-</span> <span class="fu">pweibull</span>(t_seq, <span class="at">shape =</span> gamma_est, <span class="at">scale =</span> alpha_est, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#plot 2</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Transformações lineares</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>y_weibull <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="sc">-</span><span class="fu">log</span>(s_km))</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>x_weibull <span class="ot">&lt;-</span> <span class="fu">log</span>(t_km)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="weibull.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+<p><img src="images/clipboard-1676290066.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
 </figure>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="lin_weibul.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+<p><img src="images/clipboard-359680000.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
 </figure>
 </div>
 
@@ -924,7 +938,7 @@ S(t) = \exp\left[- \frac{t}{\alpha}^{\lambda} \right]
     }
   });
   </script>
-<nav class="page-navigation">
+<nav class="page-navigation column-page-right">
   <div class="nav-page nav-page-previous">
       <a href="./dist_exponencial.html" class="pagination-link" aria-label="Distribuição Exponencial">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Distribuição Exponencial</span></span>

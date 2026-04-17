@@ -323,7 +323,7 @@ window.Quarto = {
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
@@ -375,8 +375,8 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./outras_funções_comp.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Funções no optim</span></span></a>
+  <a href="./fucoes_optim_IC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Aplicação: Intervalo de Confiança</span></span></a>
   </div>
 </li>
     </ul>
@@ -384,24 +384,9 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Sumário</h2>
-   
-  <ul>
-  <li><a href="#função-de-verossimilhança" id="toc-função-de-verossimilhança" class="nav-link active" data-scroll-target="#função-de-verossimilhança"><span class="header-section-number">1.1</span> Função de verossimilhança</a></li>
-  <li><a href="#a-log-verossimilhança-da-exponencial" id="toc-a-log-verossimilhança-da-exponencial" class="nav-link" data-scroll-target="#a-log-verossimilhança-da-exponencial"><span class="header-section-number">1.2</span> A Log-verossimilhança da exponencial</a></li>
-  <li><a href="#sobre-o-modelo" id="toc-sobre-o-modelo" class="nav-link" data-scroll-target="#sobre-o-modelo"><span class="header-section-number">1.3</span> Sobre o modelo</a></li>
-  <li><a href="#linearização-da-função-de-sobrevivência" id="toc-linearização-da-função-de-sobrevivência" class="nav-link" data-scroll-target="#linearização-da-função-de-sobrevivência"><span class="header-section-number">1.4</span> Linearização da função de sobrevivência</a>
-  <ul class="collapse">
-  <li><a href="#linearização-da-função-de-sobrevivência-exponencial" id="toc-linearização-da-função-de-sobrevivência-exponencial" class="nav-link" data-scroll-target="#linearização-da-função-de-sobrevivência-exponencial"><span class="header-section-number">1.4.1</span> Linearização da função de sobrevivência exponencial</a></li>
-  </ul></li>
-  <li><a href="#aplicação-pacientes-com-câncer-de-bexiga" id="toc-aplicação-pacientes-com-câncer-de-bexiga" class="nav-link" data-scroll-target="#aplicação-pacientes-com-câncer-de-bexiga"><span class="header-section-number">1.5</span> Aplicação: pacientes com câncer de bexiga</a></li>
-  </ul>
-</nav>
-    </div>
+    
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page-right" id="quarto-document-content">
 
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -411,7 +396,7 @@ window.Quarto = {
 
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page-right">
 
     
   
@@ -471,7 +456,7 @@ L(\theta | t) = \prod_{i=1}^{n} \left[\left(\frac{1}{\alpha} \cdot exp\left[-\fr
 <section id="linearização-da-função-de-sobrevivência" class="level2" data-number="1.4">
 <h2 data-number="1.4" class="anchored" data-anchor-id="linearização-da-função-de-sobrevivência"><span class="header-section-number">1.4</span> Linearização da função de sobrevivência</h2>
 <blockquote class="blockquote">
-<p>“Para comparar o comportamento do modelo com os dados utilizados, se pode aplicar a linearização da função de sobrevivência de cada modelo construindo gráficos que sejam aproximadamente lineares, caso o modelo seja apropiado. Violação de lienaridade pode ser verificada visualmente de forma rápida.”</p>
+<p>“Para comparar o comportamento do modelo com os dados utilizados, se pode aplicar a linearização da função de sobrevivência de cada modelo, construindo gráficos que sejam aproximadamente lineares, caso o modelo seja apropiado. Violação de lienaridade pode ser verificada visualmente de forma rápida.”</p>
 </blockquote>
 <section id="linearização-da-função-de-sobrevivência-exponencial" class="level3" data-number="1.4.1">
 <h3 data-number="1.4.1" class="anchored" data-anchor-id="linearização-da-função-de-sobrevivência-exponencial"><span class="header-section-number">1.4.1</span> Linearização da função de sobrevivência exponencial</h3>
@@ -488,6 +473,8 @@ S(t)= exp\left[-\frac{t}{\alpha}\right]
 <h2 data-number="1.5" class="anchored" data-anchor-id="aplicação-pacientes-com-câncer-de-bexiga"><span class="header-section-number">1.5</span> Aplicação: pacientes com câncer de bexiga</h2>
 <p>1º Função log-verossimilhança encontrado</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>log_vero_surv_exponencial <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, status) {</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> theta[<span class="dv">1</span>]</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  </span>
@@ -498,6 +485,7 @@ S(t)= exp\left[-\frac{t}{\alpha}\right]
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Log-verossimilhança total (negativa para o optim)</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>logv)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
 <p>2º Estimador de Kaplan-Meier</p>
 <p>Dado por:</p>
@@ -505,6 +493,8 @@ S(t)= exp\left[-\frac{t}{\alpha}\right]
 \hat{S}(t)= \prod_{t_{j}\leq t} \left(1 - \frac{d_{j}}{n_{j}}\right)
 \]</span></p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ekm <span class="ot">&lt;-</span> <span class="cf">function</span>(tempos,status){</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  ordem <span class="ot">&lt;-</span> <span class="fu">order</span>(tempos)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> tempos[ordem]</span>
@@ -524,9 +514,12 @@ S(t)= exp\left[-\frac{t}{\alpha}\right]
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">tempo =</span> t, <span class="at">sobrevivencia =</span> surv))</span>
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
 <p>3º Aplicando o pacote <span class="math inline">\(optim\)</span> para estimar <span class="math inline">\(\hat{\alpha}\)</span></p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ajus11 <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="dv">1</span>,</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">fn=</span>log_vero_surv_exponencial, </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">t =</span> tempos,</span>
@@ -534,25 +527,32 @@ S(t)= exp\left[-\frac{t}{\alpha}\right]
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">method=</span><span class="st">"Brent"</span>,<span class="co">#para um parâmetro</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">lower =</span> <span class="fl">0.001</span>,</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">upper =</span> <span class="dv">1000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
 <p>O valor <span class="math inline">\(\hat{\alpha}\)</span> é de 20.41177 sendo o valor da estatistica da log-verrossimilhança para o modelo de 68.27389.</p>
 <p>4º Obtendo o valor de <span class="math inline">\(\hat{\alpha}\)</span>, se pode verificar graficamente a curva de sobrevivência teórica à curva de Kaplan-Meier.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>t_teorico <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">max</span>(tempos),<span class="at">length.out=</span><span class="dv">50</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>s_teorico <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>t_teorico<span class="sc">/</span>ajus11<span class="sc">$</span>par)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="modelo_vs_dados.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+<p><img src="imagens_ajustes_ver_1/modelo_vs_dados.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
 </figure>
 </div>
 <p>5º E pela linearidade, se pode observar o comportamento dos dados ao modelo.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>risco_acumulado_km <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fu">log</span>(km_c_bx<span class="sc">$</span>sobrevivencia)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="verificacao_linearidade.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+<p><img src="imagens_ajustes_ver_1/verificacao_linearidade.jpeg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
 </figure>
 </div>
 <p>No gráfico de verificação de risco ou linearidade, se observa o risco acumulado versus o tempo. Se o risco fosse constante para o modelo Exponencial, os pontos deveriam formar uma linha reta partindo da origem. No caso, entretanto, os pontos formam uma curva para cima, indicando que o risco de o evento ocorrer aumenta com o tempo (risco de reincidência do tumor). No início, o risco é vagaroso (tempo 0 a 15 meses), após o tempo 20, a inclinação aumenta bruscamente.</p>
@@ -974,7 +974,7 @@ S(t)= exp\left[-\frac{t}{\alpha}\right]
     }
   });
   </script>
-<nav class="page-navigation">
+<nav class="page-navigation column-page-right">
   <div class="nav-page nav-page-previous">
       <a href="./index.html" class="pagination-link" aria-label="Objetivo">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Objetivo</span>
@@ -987,6 +987,19 @@ S(t)= exp\left[-\frac{t}{\alpha}\right]
   </div>
 </nav>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Universidade Federal do Pará | ICEN</p>
+</div>   
+    <div class="nav-footer-center">
+<p>Faculdade de Estatística</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
 
 
 

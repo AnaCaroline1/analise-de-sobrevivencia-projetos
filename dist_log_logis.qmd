@@ -1,3 +1,7 @@
+---
+eval: False
+---
+
 # Distribuição Log-logística
 
 A função densidade de probabilidade associada a variável aleatória tempo até o evento $T$ com distribuição log-logística é dada por:
@@ -46,7 +50,6 @@ $$
 ## Aplicação
 
 ```{r}
-#| eval: false
 
 S_loglogistica <- function(theta, t, delta) {
   
@@ -91,29 +94,6 @@ s_km <- km_c_bx$sobrevivencia[indices_lin]
 
 y_lin <- log((1 - s_km) / s_km)
 x_lin <- log(t_km)
-```
-
-```{r}
-#| echo: false
-plot(km_c_bx$tempo, km_c_bx$sobrevivencia, 
-     type = "s", lwd = 2,
-     xlab = "Tempo (t)", ylab = "S(t)", 
-     main = "Ajuste Log-Logístico vs. Kaplan-Meier",
-     xlim = c(0, max(tempos)),
-     ylim = c(0, 1),
-     xaxs = "i", yaxs = "i")   
-
-lines(t_seq, s_loglogis, col = "darkgreen", lwd = 2, lty = 2)
-
-legend("topright", 
-       legend = c("Kaplan-Meier", "Log-Logística Ajustada"),
-       col = c("black", "darkgreen"), 
-       lty = c(1, 2), 
-       lwd = 2,
-       bty = "n")
-```
-
-```{r}
 
 indices_lin <- which(km_c_bx$sobrevivencia > 0 & km_c_bx$sobrevivencia < 1)
 t_km <- km_c_bx$tempo[indices_lin]
@@ -122,29 +102,8 @@ s_km <- km_c_bx$sobrevivencia[indices_lin]
 # 2. Definir as coordenadas de linearização
 y_lin <- log((1 - s_km) / s_km)
 x_lin <- log(t_km)
-
-# 3. Criar o gráfico de dispersão
-plot(x_lin, y_lin, 
-     pch = 16, col = "darkblue",
-     xlab = "log(t)", 
-     ylab = "log((1 - S(t)) / S(t))",
-     main = "Gráfico de Linearização: Log-Logística")
-
-# 4. Adicionar a reta teórica baseada nos seus parâmetros estimados (fit_ll)
-# Lembre-se: alpha_est e gamma_est devem ser os valores na escala original
-alpha_est <- exp(fit_ll$par[1])
-gamma_est <- exp(fit_ll$par[2])
-
-# O intercepto é -gamma * log(alpha) e a inclinação é gamma
-abline(a = -gamma_est * log(alpha_est), b = gamma_est, 
-       col = "red", lwd = 2, lty = 2)
-
-grid()
-
 ```
 
-## Intervalo de confiança
+![](images/clipboard-1405919696.png){fig-align="center" width="90%"}
 
-```{r}
-
-```
+![](images/clipboard-135417046.png){fig-align="center" width="90%"}

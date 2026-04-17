@@ -1,3 +1,7 @@
+---
+eval: False
+---
+
 # Distribuição Exponencial
 
 A função densidade de probabilidade associada a variável aleatória tempo até o evento $t$ com distribuição exponencial e função de sobrevivência é dada por:
@@ -56,11 +60,12 @@ Que é exatamente a média amostral de $t_{i}$.
 
 ## Sobre o modelo
 
-O modelo mais simples, caracterizado pela ausência de memória. Sendo aplicado em situações onde a falha ocorre de forma aleatória e estável, limitado para casos em que se quer obter o envelhecimento ou desgaste.
+O modelo mais simples, caracterizado pela ausência de memória.
+Sendo aplicado em situações onde a falha ocorre de forma aleatória e estável, limitado para casos em que se quer obter o envelhecimento ou desgaste.
 
 ## Linearização da função de sobrevivência
 
-> "Para comparar o comportamento do modelo com os dados utilizados, se pode aplicar a linearização da função de sobrevivência de cada modelo construindo gráficos que sejam aproximadamente lineares, caso o modelo seja apropiado. Violação de lienaridade pode ser verificada visualmente de forma rápida."
+> "Para comparar o comportamento do modelo com os dados utilizados, se pode aplicar a linearização da função de sobrevivência de cada modelo, construindo gráficos que sejam aproximadamente lineares, caso o modelo seja apropiado. Violação de lienaridade pode ser verificada visualmente de forma rápida."
 
 ### Linearização da função de sobrevivência exponencial
 
@@ -74,7 +79,8 @@ Logo,
 
 $$-\log[S(t)] = \frac{t}{\alpha} = \left(\frac{1}{\alpha}\right)t$$
 
-corresponde à equação da reta $y = a+bx$, $y=-log[S(t)]$, $a=0$, $b=1/\alpha$ e $x= t$. Sendo o modelo apropriado no caso $y$ versus t deve aproximadamente linear passando pela origem, com $\hat{S}(t)$ correspodendo ao estimador de Kaplan-Meier.
+corresponde à equação da reta $y = a+bx$, $y=-log[S(t)]$, $a=0$, $b=1/\alpha$ e $x= t$.
+Sendo o modelo apropriado no caso $y$ versus t deve aproximadamente linear passando pela origem, com $\hat{S}(t)$ correspodendo ao estimador de Kaplan-Meier.
 
 ## Aplicação: pacientes com câncer de bexiga
 
@@ -98,7 +104,7 @@ log_vero_surv_exponencial <- function(theta, t, status) {
 
 2º Estimador de Kaplan-Meier
 
-Dado por: 
+Dado por:
 
 $$
 \hat{S}(t)= \prod_{t_{j}\leq t} \left(1 - \frac{d_{j}}{n_{j}}\right)
@@ -142,7 +148,8 @@ ajus11 <- optim(par = 1,
 
 O valor $\hat{\alpha}$ é de 20.41177 sendo o valor da estatistica da log-verrossimilhança para o modelo de 68.27389.
 
-4º Obtendo o valor de $\hat{\alpha}$, se pode verificar graficamente a curva de sobrevivência teórica à curva de Kaplan-Meier. 
+4º Obtendo o valor de $\hat{\alpha}$, se pode verificar graficamente a curva de sobrevivência teórica à curva de Kaplan-Meier.
+
 ```{r}
 #| eval: false
 
@@ -151,8 +158,7 @@ s_teorico <- exp(-t_teorico/ajus11$par)
 
 ```
 
-
-![](modelo_vs_dados.jpeg){fig-align="center"}
+![](imagens_ajustes_ver_1/modelo_vs_dados.jpeg){fig-align="center" width="90%"}
 
 5º E pela linearidade, se pode observar o comportamento dos dados ao modelo.
 
@@ -161,7 +167,9 @@ s_teorico <- exp(-t_teorico/ajus11$par)
 risco_acumulado_km <- -log(km_c_bx$sobrevivencia)
 ```
 
+![](imagens_ajustes_ver_1/verificacao_linearidade.jpeg){fig-align="center" width="90%"}
 
-![](verificacao_linearidade.jpeg){fig-align="center"}
-
-No gráfico de verificação de risco ou linearidade, se observa o risco acumulado versus o tempo. Se o risco fosse constante para o modelo Exponencial, os pontos deveriam formar uma linha reta partindo da origem. No caso, entretanto, os pontos formam uma curva para cima, indicando que o risco de o evento ocorrer aumenta com o tempo (risco de reincidência do tumor). No início, o risco é vagaroso (tempo 0 a 15 meses), após o tempo 20, a inclinação aumenta bruscamente.
+No gráfico de verificação de risco ou linearidade, se observa o risco acumulado versus o tempo.
+Se o risco fosse constante para o modelo Exponencial, os pontos deveriam formar uma linha reta partindo da origem.
+No caso, entretanto, os pontos formam uma curva para cima, indicando que o risco de o evento ocorrer aumenta com o tempo (risco de reincidência do tumor).
+No início, o risco é vagaroso (tempo 0 a 15 meses), após o tempo 20, a inclinação aumenta bruscamente.
