@@ -1,12 +1,14 @@
 # Funções no optim
 
+
+
 ```{r, message=FALSE}
 #| echo: false
 #install.packages("survival")
 #install.packages("flexsurv")
 library(survival)
 library(flexsurv)
-
+## Modo de revisão
 
 # EXEMPLO PACIENTES COM CÂNCER DE BEXIGA (2006 Enrico Antônio Colosimo, Suely Ruiz Giolo)
  tempos<-c(3,5,6,7,8,9,10,10,12,15,15,18,19,20,22,25,28,30,40,45)
