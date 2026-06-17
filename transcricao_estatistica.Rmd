@@ -1,0 +1,51 @@
+---
+title: "Transcrição de Notas de Probabilidade e Estatística"
+author: "Transcrito por Gemini"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+# Função densidade da exponencial
+
+$$f(t) = rac{1}{lpha} \cdot \exp \left[ -rac{t}{lpha} 
+ight]$$
+$$	ext{onde } lpha = \exp(eta_0)$$
+
+# Função de sobrevivência para t
+
+$$S(t|x) = \exp \left[ -rac{t}{\exp(eta_0 + eta'x)} 
+ight]$$
+
+# Verosimilhança e Log-Verosimilhança
+
+$$L(	heta) = \prod_{i=1}^{n} \left[ rac{1}{lpha} \cdot \exp \left[ -rac{t}{lpha} 
+ight] 
+ight]^{\delta_i} \cdot \left[ \exp \left[ -rac{t}{\exp(eta_0 + eta'x)} 
+ight] 
+ight]^{(1-\delta_i)}$$
+
+$$l(	heta) = \sum_{i=1}^{n} \delta_i \log \left[ rac{1}{lpha} \cdot \exp \left[ -rac{t}{lpha} 
+ight] 
+ight] + (1-\delta_i) \log \left[ \exp \left[ -rac{t}{\exp(eta_0 + eta'x)} 
+ight] 
+ight]$$
+
+$$= \sum_{i=1}^{n} \left[ \delta_i \left( \log \left( rac{1}{lpha} 
+ight) + \left( -rac{t}{lpha} 
+ight) 
+ight) + (1-\delta_i) \left( -rac{t}{\exp(eta_0 + eta'x)} 
+ight) 
+ight]$$
+
+$$	ext{considerando } lpha = \exp eta_0:$$
+
+$$= \sum_{i=1}^{n} \left[ \delta_i \left[ -\log(eta_0) + \left( -rac{t}{lpha} 
+ight) 
+ight] + (1-\delta_i) \left( -rac{t}{\exp(eta_0 + eta'x)} 
+ight) 
+ight]$$
+
+$$= \sum_{i=1}^{n} \left[ \delta_i \left[ -\log(eta_0) - rac{t}{\exp(eta_0)} 
+ight] + (1-\delta_i) \left( -rac{t}{\exp(eta_0 + eta'x)} 
+ight) 
+ight]$$

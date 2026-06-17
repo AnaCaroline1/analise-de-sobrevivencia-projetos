@@ -1,0 +1,110 @@
+# Modelos de Regressão Paramétrico
+
+## Introdução
+
+Em análise de sobrevivência os modelos de regressão paramétricos são ferramentas que assumem que o tempo de falha (ou seu logarítimo) segue uma distribuição de probabilidade específica, como Exponencial, Weibull ou Log-normal.
+
+O objetivo é avaliar o efeito de covariáveis (fatores de risco) sobre o tempo de sobrevivência de forma mais eficiente do que análises estratificadas, no caso onde se tem muitas variáveis no processo.
+
+Sob o modelo de regressão linear, a resposta se relaciona com as covariáveis ou variáveis explicativas por meio de uma relação linear ou Modelos Lineares Generalizados (MLG).
+
+Para que o modelo seja apropriado, quando há somente uma covariável, o gráfico de dispersão desta covariável e a resposta de mostrar evidência de relação linear, ou seja, a nuvem de pontos neste gráfico deve indicar que uma reta é uma boa aproximação para a relação entre as variáveis.
+
+A equação da reta corresponde ao componente determinístico do modelo de regressão linear, com variação representando o componente estocástico, assumindo distribuição normal.
+
+$$Y = \beta_{0} +\beta_{1} x + \epsilon$$
+
+Em que
+
+**Y** $\rightarrow$ é a resposta;
+
+x $\rightarrow$ é o valor da covariável X;
+
+$\beta_{0} \; e \; \beta_{1} \rightarrow$ são os parâmetros a estimar;
+
+$\epsilon \rightarrow$ é o erro aleatório com distribuição normal.
+
+## Modelos para dados de sobrevivência
+
+Considerando uma situação de uma única covariável, em que o **objetivo** é estudar a **relação** da **covariável** com a **variável** resposta **tempo** até a **ocorrência** de um **evento de interesse**.
+
+A resposta corresponde ao tempo $T$ até a ocorrência do evento e há a presença de censuras, o que se deseja é utilizar o modelo de regressão com o objetivo de estudar relação entre as variáveis T e X.
+
+No entanto, o tipo de resposta e comportamento das variáveis inviabilizam em geral a utilização direta do modelo de regressão linear simples.
+
+A principal razão é a distribuição associada à resposta $T$ que tende ser **assimétrica** na direção dos maiores **tempos**, o que torna inapropriada assumir a distribuição normal para o componente estocástico do modelo e outra razão é a possibilidade de uma relação não linear entre $T$ e $X$.
+
+A literatura estatística enfrenta o desafio de modelagem e análise e sobrevivência de duas formas:
+
+1.  transformar a resposta na tentativa de retornar ao modelo linear não necessariamente com erros seguindo a distribuição normal ou;
+
+2.  Modelar diretamente a função taxa de falha com termos multiplicativos associados ao tempo e a estrutura de regressão.
+
+Essas duas propostas caracterizam duas classes de modelos mais utilizados em anais sobrevivência: a dos modelos de tempo de vida acelerado e a dos modelos que assumem a proporcionalidade das taxas de falha.
+
+## Modelos de Tempo de Vida Acelerado (AFT)
+
+Utilizada em contexto paramétrico, os **AFT** são pertencentes à classe de modelos paramétricos em que as covariáveis atuam **acelerando ou retardando** a passagem de tempo até ocorrer o evento de interesse.
+
+$$S(t | x) = S_{0}[t/exp(\beta x)]$$
+
+Sendo este modelo estendido ou geral para $p$ covariáveis medidas para cada indivíduo do estudo, a função de sobrevivência fica expressa por
+
+$$S(t | x) = S_{0}[t/exp(\beta' x)]$$
+em que $\beta = (\beta_1,..., \beta_p)'$ e $x = (x_1, ... , x_p)'$ são vetores de dimensão $p \times 1$, $S_0$ corresponde à função de sobrevivência de base, função de sobrevivência no tempo $t$ para um indivíduo em que $x=0$.O modelo também pode ser representados na escala logarítimica da resposta por
+
+$$Y = log(T) = \beta_0 + \beta'x + \sigma \nu$$
+
+Em que
+
+$\beta_{0} \rightarrow$ é o intercepto;
+
+$\sigma > 0 \rightarrow$ é o parâmetro de escala;
+
+$\nu \; \rightarrow$ é o termo aleatório correspondendo ao erro, que segue alguma distribuição de probabilidade.
+
+Ao aplicar o logaritmo do tempo de sobrevivência, se está linearizando a relação com as covariáveis, onde a escolha de distribuição do erro define diretamente a distribuição do tempo $T$ e o formato de $\lambda$ e $S(t)$
+ que alimentam a equação da verossimilhança.
+ 
+O modelo logarítimo e a equação de sobrevivência são equivalentes,
+
+$$S(t | x) = P(T > t|x) = P[exp(\beta_0 + \beta'x + \sigma \nu) > t]$$ 
+$$= P[exp(\beta_0 + \sigma \nu)> t/exp(\beta x)]$$ 
+$$= S_{0}[t/exp(\beta' x)]$$
+
+Onde a função de sobrevivência base, $S_0(t)$, corresponde à função de sobrevivência para um indivíduo em que $x = 0$ é
+
+$$S_{0}(t) =S(t|x=0)= P[exp(\beta_0 + \sigma \nu]$$
+
+Onde o fator de aceleração para a forma geral da função de sobrevivência é $exp(-\beta'x)$, sendo a taxa de falha geral para $t \ge 0$, por
+
+$$\lambda(t | x ) = exp(-\beta'x)\lambda_0[t/exp(\beta'x)]$$
+
+em que $\lambda_0(t)$ corresponde à função taxa de falha de base.
+
+#### Modelo tempo de vida acelerado log-normal
+
+## Modelos de Taxa de Falha Proporcional (PH)
+
+Utilizado em contexto semi-paramétrico, os **PH** através do modelo de regressão de Cox é utilizado em estudos clínicos epidemiológicos, incorporando facilmente covariáveis dependentes do tempo.
+
+O livro cita que outros modelos como o Exponencial e o Weibull podem ser interpretados como modelos de riscos proporcionais.
+
+$$S(t | x) = [S_{0}(t)]^{exp(\beta x)}$$
+
+
+## Identidades de Sobrevivência
+
+Para aplicação dos modelos paramétricos, se utilizou a seguinte relação matemática.
+
+$$\lambda(t) = \frac{f(t)}{S(t)}$$
+
+$$ f(t)= \lambda(t) \cdot S(t)$$
+Aplicando a verossimilhança, temos que
+
+$$L = \prod_{i=1}^{n} [\lambda(t_i) \cdot S(t_i)]^{\delta_i}\cdot[S(t_i)]^{(1-\delta_i)}$$
+$$L = \prod_{i=1}^{n} [\lambda(t_i)]^{\delta_i} \cdot [S(t_i)]^{\delta_i + 1-\delta_i}$$
+$$L = \prod_{i=1}^{n}[\lambda(t_i)]^{\delta_i} \cdot S(t_i)$$
+Aplicando a Log-verossimilhança, obtemos:
+
+$$\log L = \sum_{i=1}^{n} [\delta_{i}\log\lambda(t_{i}) + \log S(t_{i})]$$

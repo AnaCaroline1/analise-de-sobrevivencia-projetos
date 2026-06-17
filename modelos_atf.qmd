@@ -1,0 +1,236 @@
+---
+title: "Aplicação: Modelos de Tempo de Vida Acelerados"
+---
+```{r include=FALSE}
+source("_common.R")
+```
+## Modelo ATF Exponencial
+
+$$\log L = \sum_{i=1}^{n} \left[ \delta_{i} [-(\beta_{0}+\beta'x)] - \frac{t_{i}}{\exp(\beta_{0}+\beta' x_{i})} \right]$$
+
+
+```{r echo=FALSE}
+library(survival)
+library(survminer)
+```
+
+```{r}
+log_vero_expo_atf <- function(par, t, delta, X) {
+  
+  mu <- X %*% par
+  
+  ll <- sum( delta * (-mu) - (t / exp(mu)) )
+  
+  return(-ll)
+}
+
+
+X <- model.matrix(~grupos + idade, data = df_cc_bx)
+
+p <- ncol(X)
+beta_ini <- rep(0,p)
+
+fit <- optim(
+  par = beta_ini,
+  fn = log_vero_expo_atf,
+  t = df_cc_bx$tempos,
+  delta = df_cc_bx$cens,
+  X = X,
+  method = "BFGS",
+  hessian = TRUE
+)
+
+modelo_exp <- survreg(Surv(df_cc_bx$tempos, df_cc_bx$cens) ~.,df_cc_bx, dist = "exponential")
+
+```
+
+```{r}
+
+res_modelo <- summary(modelo_exp)
+
+beta_surv <- coef(modelo_exp)
+
+# Estimativas e erros-padrão
+
+beta_hat <- fit$par
+
+vcov_hat <- solve(fit$hessian)
+
+se_hat <- sqrt(diag(vcov_hat))
+
+resultado <- data.frame(
+  Estimativa = beta_hat,
+  EP = se_hat,
+  z = beta_hat/se_hat,
+  pvalor = 2 *(1-pnorm(beta_hat/se_hat))
+)
+
+comparando_estimativas <- cbind(resultado,as.data.frame(res_modelo$table))
+
+resultado
+
+comparando_estimativas
+
+
+
+```
+
+```{r}
+# Intervalo de confiança
+
+IC_inf_exp <- beta_hat - 1.96*se_hat
+IC_sup_exp <- beta_hat + 1.96*se_hat
+
+resultado$IC95_inf <- IC_inf_exp
+resultado$IC95_sup <- IC_sup_exp
+
+
+km <- survfit(Surv(tempos, cens) ~ grupos, data = df_cc_bx)
+
+ggsurvplot(km,data = df_cc_bx,conf.int = T)
+
+
+
+```
+
+## Modelo ATF Weibull
+
+$$
+\log L = \sum_{i=1}^{n} \left[ \delta_i \Big( \log(\gamma) + (\gamma - 1)\log(t_i) - \gamma(\beta_0 + \boldsymbol{\beta}'\mathbf{x}_i) \Big) - \left( \frac{t_i}{\exp(\beta_0 + \boldsymbol{\beta}'\mathbf{x}_i)} \right)^\gamma \right]
+$$
+```{r}
+log_vero_weibull_atf <- function(par, t, delta, X){
+
+  gama <- par[1]
+  beta <- par[-1]
+  
+  if (gama <= 0) return(Inf)
+  
+  mu <- X %*% beta
+  
+  lambda_log <- log(gama) + (gama - 1)*log(t) - gama * (mu)
+  surv_t <- (t/exp(mu))^gama
+  
+  ll <- sum(delta * lambda_log - surv_t)
+  
+  return(-ll)
+}
+
+par1<-c(1,rep(0,p))
+
+fit_w <- optim(
+  par = par1,
+  fn = log_vero_weibull_atf,
+  t = df_cc_bx$tempos,
+  delta = df_cc_bx$cens,
+  X = X,
+  method = "BFGS",
+  hessian = T
+)
+
+modelo_weibull <- survreg(Surv(df_cc_bx$tempos, df_cc_bx$cens) ~.,df_cc_bx, dist = "weibull")
+res_modelo_wei <- summary(modelo_weibull)
+```
+
+
+```{r}
+# Estimativas
+
+gamma <- fit_w$par[1]
+beta_hat_wei <- fit_w$par[-1]
+
+# Matriz de covariâncias
+
+vcov <- solve(fit_w$hessian)
+
+# Erros-padrão
+
+se <- sqrt(diag(vcov))
+
+
+resultado_weibull <- data.frame(
+  Estimativa = fit_w$par,
+  EP = se,
+  z= fit_w$par/se,
+  pvalor = 2*(1-pnorm(abs(fit_w$par / se)))
+)
+
+sigma_surv <- modelo_weibull$scale
+gama_surv <- 1/sigma_surv
+beta_surv <- coef(modelo_weibull)
+
+# O valor da gama precisa se calculado por ser
+# utilizado valor extremo no pacote.
+
+comparacao <- data.frame(
+  Parametro = c("gama", names(beta_surv)),
+  Survival = c(gama_surv, beta_surv)
+)
+
+comparando_estimativas1 <- cbind(resultado_weibull,comparacao, as.data.frame(res_modelo_wei$table))
+comparando_estimativas1
+```
+
+
+```{r}
+#| warning: false
+# Intervalo de confiança
+
+IC_inf <- beta_hat_wei - 1.96*se
+IC_sup <- beta_hat_wei + 1.96*se
+
+resultado_weibull$IC95_inf <- IC_inf
+resultado_weibull$IC95_sup <- IC_sup
+
+resultado_weibull
+```
+
+```{r}
+# Modelo que melhor se ajustou
+
+k <- length(beta_hat)
+log_link_est <- fit$value
+log_link_pk <- modelo_exp$loglik[2]
+
+# Exponencial
+
+# Modelo estimado pela aplicação
+
+AIC_exp_esp <- -2*(-log_link_est) + 2*k
+BIC_exp_esp <- -2*(-log_link_est) + log(nrow(df_cc_bx))*k
+
+
+# Modelo estimado pela pacote
+
+AIC_exp_pk <- -2*(log_link_pk) + 2*k
+BIC_exp_pk <- -2*(log_link_pk) + log(nrow(df_cc_bx))*k
+
+# Weibull
+
+
+k1 <- length(beta_hat_wei)
+log_link_est1 <- fit_w$value
+log_link_pk1 <- modelo_weibull$loglik[2]
+
+
+# Modelo estimado pela aplicação
+
+AIC_wei_esp <- -2*(-log_link_est1) + 2*k1
+BIC_wei_esp <- -2*(-log_link_est1) + log(nrow(df_cc_bx))*k1
+
+
+# Modelo estimado pela pacote
+
+AIC_wei_pk <- -2*(log_link_pk1) + 2*k1
+BIC_wei_pk <- -2*(log_link_pk1) + log(nrow(df_cc_bx))*k1
+
+modelo_ajustado <- as.data.frame(cbind(AIC_exp_esp,AIC_exp_pk,BIC_exp_esp,BIC_exp_pk,AIC_wei_esp,AIC_wei_pk,BIC_wei_esp,BIC_wei_pk))
+
+modelo_ajustado
+
+```
+
+$$ΔAIC=141.0671−134.9579=6.1092$$
+$$ΔBIC=144.0543−137.9451=6.1092$$
+
+Os modelos paramétricos Exponencial e Weibull foram ajustados por máxima verossimilhança. O modelo Weibull apresentou menores valores de AIC (134,96) e BIC (137,95) em comparação ao modelo Exponencial (AIC = 141,07; BIC = 144,05), indicando melhor ajuste aos dados. A diferença de aproximadamente 6 unidades em ambos os critérios fornece evidência favorável ao modelo Weibull, sugerindo que a taxa de risco não permanece constante ao longo do tempo.

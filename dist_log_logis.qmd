@@ -2,6 +2,10 @@
 eval: False
 ---
 
+```{r}
+source("_common.R")
+```
+
 # Distribuição Log-logística
 
 A função densidade de probabilidade associada a variável aleatória tempo até o evento $T$ com distribuição log-logística é dada por:

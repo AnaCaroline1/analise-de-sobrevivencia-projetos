@@ -2,20 +2,15 @@
 title: "Aplicação: Intervalo de Confiança"
 ---
 
-```{r include=FALSE}
-source("_common.R")
-```
 ## EXEMPLO PACIENTES COM CÂNCER DE BEXIGA (2006 Enrico Antônio Colosimo, Suely Ruiz Giolo)
 
-```{r message=FALSE, include=FALSE}
-#| warning: false
+```{r, message=FALSE}
 library(survival)
 library(flexsurv)
 
 
-tempos <- c(3,5,6,7,8,9,10,10,12,15,15,18,19,20,22,25,28,30,40,45) 
-
-censura <- c(1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0)
+ tempos<-c(3,5,6,7,8,9,10,10,12,15,15,18,19,20,22,25,28,30,40,45)
+ censura<-c(1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0)
 ```
 
 ## Distribuição Exponencial

@@ -1,0 +1,104 @@
+# Aplicação com dados reais:
+
+Os dados a seguir foram retirados do site do Portal de dados abertos do SUS, sobre casos de pacientes com Dengue, foi aplicado tratamento aos dados para que fossem trabalhados apenas as observações registradas no ano de 2025.
+
+## Apuração dos Dados
+
+1.  Data da notificação(dt_notific)
+2.  Data dos primeiros sintomas / diagnóstico (dt_sin_prin)
+3.  Sexo(cs_sexo)
+4.  Raça/Cor(cs_raca)
+5.  Data da investigação(dt_invest)
+6.  Isolamento viral: Data da coleta (dt_viral)
+7.  Ocorreu hospitalização (hospitaliz)
+8.  Data da internação(dt_interna)
+9.  Classificação final(classi_fin)
+10. Evolução do caso (evolucao)
+
+```{r}
+#| eval: False
+#| include: False
+  
+library(tidyverse) # pacotes base para tratamento dos dados
+library(janitor) # limpeza de todas as coluna com caracteres especiais e letras maiúsculas ou com diferença de formatação.
+
+library(arrow)
+library(lubridate) # transformar as datas
+
+```
+
+O tratamento nos dados sobre a Dengue, consistiu em filtrar informações observadas no ano de 2025 fechado, portanto, de 1.651.712 de observações, chega-se ao número de 753 observações.
+
+```{r}
+dengue <- read_parquet("df_dengue_2025.parquet")
+
+head(dengue)
+```
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+### Aplicação como dados: análise de dados da dengue no ano de 2025.
+
+#### Tempo de hopitalização (recuperação)
+
+Análise com foco na duração da internação, onde o evento é a alta hospitalar (cura).
+
+```{r}
+library(survival)
+
+head(ovarian)
+
+tempo <- ovarian$futime
+censura <- ovarian$fustat
+tratamento <- ovarian$rx
+```
+
+
+```{r}
+# Ajuste sem covariáveis
+
+alfa_estimado_manual <- sum(tempo) / sum(censura)
+cat("Alfa estimado manualmente (intercepto bruto):", alfa_estimado_manual, "\n")
+cat("Em escala de regressão (log):", log(alfa_estimado_manual), "\n\n")
+```
+
+
+```{r}
+# Ajuste com covariáveis
+
+log_verossimilhanca_exp <- function(beta) {
+  beta0 <- beta[1]
+  beta1 <- beta[2]
+  
+  # Y = log(tempo)
+  y <- log(tempo)
+  
+  # Parte sistemática do modelo (Preditor Linear)
+  preditor <- beta0 + beta1 * tratamento
+  
+  # Construindo a log-verossimilhança conforme a equação (4.8) da literatura
+  # l(beta) = sum [ delta_i * (y_i - beta0 - beta1*x_i) - exp{y_i - beta0 - beta1*x_i} ]
+  log_L <- sum( censura * (y - preditor) - exp(y - preditor) )
+  
+  return(-log_L)
+}
+
+chutes_iniciais <- c(0, 0)
+
+otimizacao <- optim(par = chutes_iniciais, fn = log_verossimilhanca_exp)
+
+betas_manuais <- otimizacao$par
+
+cat("--- REGRESSÃO EXPONENCIAL MANUAL ---\n")
+cat("\nBeta0 (Intercepto) estimado:", betas_manuais[1], "\n")
+cat("Beta1 (Tratamento) estimado:", betas_manuais[2], "\n\n")
+
+# Comparando com função pronta do pacote survival
+
+modelo_pacote <- survreg(Surv(futime, fustat) ~ rx, data = ovarian, dist = 'exponential')
+
+cat("--- REGRESSÃO EXPONENCIAL PACOTE SURVIVAL ---\n\n")
+print(modelo_pacote$coefficients)
+```

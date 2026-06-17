@@ -1,0 +1,21 @@
+---
+title: "modelo_atf_Exponencial"
+output: html_document
+---
+
+# Implementação do modelo de tempo de vida acelerado exponencial
+
+A função densidade pela distribuição exponencial, pode ser reescrita por:
+
+$$f(t) = \lambda(t) \cdot S(t)$$
+Essa relação vem da taxa de falha ou função de risco, definida como a taxa instantânea de falha em um tempo $t$, dado que o indivíduo ou componente sobreviveu até instante t.
+
+Sendo a função taxa de falha dada por:
+
+$$\lambda(t | x ) = exp(-\beta'x)\lambda_0[t/exp(\beta'x)]$$ 
+
+onde $\lambda_0(t) = 1/\alpha$, como $\alpha = exp(\beta_0)$.
+
+
+
+As funções de verossimilhança para os modelos $T$ e $Y$, são 

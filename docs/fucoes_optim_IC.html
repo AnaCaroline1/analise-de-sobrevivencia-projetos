@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="pt" xml:lang="pt"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
+<meta name="generator" content="quarto-1.9.36">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>5&nbsp; Aplicação: Intervalo de Confiança – Análise de sobrevivência aplicado a dados epidemiológicos</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -65,22 +68,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./modelos_de_regressao_parametrico.html" rel="next">
 <link href="./dist_log_logis.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-f418161beb48e0141c760e455f12af2c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-2641b481724464e61c86985d8c912b6f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-4c6d65c679321d81af7ec8b61b1d5a24.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-2641b481724464e61c86985d8c912b6f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-ffc4c3fc79587ee79da4865b6a08975e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-acff971833d9769290026d534105daaa.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-ffc4c3fc79587ee79da4865b6a08975e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -95,17 +98,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "Nenhum resultado",
-    "search-matching-documents-text": "documentos correspondentes",
-    "search-copy-link-title": "Copiar link para a busca",
-    "search-hide-matches-text": "Esconder correspondências adicionais",
-    "search-more-match-text": "mais correspondência neste documento",
-    "search-more-matches-text": "mais correspondências neste documento",
-    "search-clear-button-title": "Limpar",
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancelar",
-    "search-submit-button-title": "Enviar",
-    "search-label": "Procurar"
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
@@ -280,36 +283,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./fucoes_optim_IC.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Aplicação: Intervalo de Confiança</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="Procurar" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="./index.html" class="sidebar-logo-link">
-      </a>
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Análise de sobrevivência aplicado a dados epidemiológicos</a> 
         <div class="sidebar-tools-main">
-    <a href="./Análise-de-sobrevivência-aplicado-a-dados-epidemiológicos.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Alternar modo escuro"><i class="bi"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Procurar"></div>
+        <div id="quarto-search" class="" title="Search"></div>
         </div>
         </div>
     <div class="sidebar-menu-container"> 
@@ -350,14 +350,82 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Aplicação: Intervalo de Confiança</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./modelos_de_regressao_parametrico.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelos de Regressão Paramétrico</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./modelo_atf_exponencial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelo tempo de vida acelerado exponencial</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./modelo_atf_weibull.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelo tempo de vida acelerado acelerado Weibull</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./modelos_atf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Aplicação: Modelos de Tempo de Vida Acelerados</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Sumário</h2>
+   
+  <ul>
+  <li><a href="#exemplo-pacientes-com-câncer-de-bexiga-2006-enrico-antônio-colosimo-suely-ruiz-giolo" id="toc-exemplo-pacientes-com-câncer-de-bexiga-2006-enrico-antônio-colosimo-suely-ruiz-giolo" class="nav-link active" data-scroll-target="#exemplo-pacientes-com-câncer-de-bexiga-2006-enrico-antônio-colosimo-suely-ruiz-giolo"><span class="header-section-number">5.1</span> EXEMPLO PACIENTES COM CÂNCER DE BEXIGA (2006 Enrico Antônio Colosimo, Suely Ruiz Giolo)</a></li>
+  <li><a href="#distribuição-exponencial" id="toc-distribuição-exponencial" class="nav-link" data-scroll-target="#distribuição-exponencial"><span class="header-section-number">5.2</span> Distribuição Exponencial</a>
+  <ul class="collapse">
+  <li><a href="#exponencial-criado" id="toc-exponencial-criado" class="nav-link" data-scroll-target="#exponencial-criado"><span class="header-section-number">5.2.1</span> Exponencial (Criado)</a></li>
+  <li><a href="#exponencial-survival" id="toc-exponencial-survival" class="nav-link" data-scroll-target="#exponencial-survival"><span class="header-section-number">5.2.2</span> Exponencial (Survival)</a></li>
+  <li><a href="#exponencial-intervalo-de-confiança" id="toc-exponencial-intervalo-de-confiança" class="nav-link" data-scroll-target="#exponencial-intervalo-de-confiança"><span class="header-section-number">5.2.3</span> Exponencial (Intervalo de Confiança)</a></li>
+  </ul></li>
+  <li><a href="#distribuição-weibull" id="toc-distribuição-weibull" class="nav-link" data-scroll-target="#distribuição-weibull"><span class="header-section-number">5.3</span> Distribuição Weibull</a>
+  <ul class="collapse">
+  <li><a href="#weibull-criado" id="toc-weibull-criado" class="nav-link" data-scroll-target="#weibull-criado"><span class="header-section-number">5.3.1</span> Weibull (Criado)</a></li>
+  <li><a href="#weibull-survival" id="toc-weibull-survival" class="nav-link" data-scroll-target="#weibull-survival"><span class="header-section-number">5.3.2</span> Weibull (Survival)</a></li>
+  <li><a href="#weibull-intervalo-de-confiança" id="toc-weibull-intervalo-de-confiança" class="nav-link" data-scroll-target="#weibull-intervalo-de-confiança"><span class="header-section-number">5.3.3</span> Weibull (Intervalo de Confiança)</a></li>
+  </ul></li>
+  <li><a href="#distribuição-log-normal" id="toc-distribuição-log-normal" class="nav-link" data-scroll-target="#distribuição-log-normal"><span class="header-section-number">5.4</span> Distribuição Log-Normal</a>
+  <ul class="collapse">
+  <li><a href="#log-normal-criado" id="toc-log-normal-criado" class="nav-link" data-scroll-target="#log-normal-criado"><span class="header-section-number">5.4.1</span> Log-Normal (Criado)</a></li>
+  <li><a href="#log-normal-survival" id="toc-log-normal-survival" class="nav-link" data-scroll-target="#log-normal-survival"><span class="header-section-number">5.4.2</span> Log-Normal (Survival)</a></li>
+  <li><a href="#log-normal-intervalo-de-confiança" id="toc-log-normal-intervalo-de-confiança" class="nav-link" data-scroll-target="#log-normal-intervalo-de-confiança"><span class="header-section-number">5.4.3</span> Log-Normal (Intervalo de Confiança)</a></li>
+  </ul></li>
+  <li><a href="#distribuição-log-logistica" id="toc-distribuição-log-logistica" class="nav-link" data-scroll-target="#distribuição-log-logistica"><span class="header-section-number">5.5</span> Distribuição Log-logistica</a>
+  <ul class="collapse">
+  <li><a href="#log-logística-criada" id="toc-log-logística-criada" class="nav-link" data-scroll-target="#log-logística-criada"><span class="header-section-number">5.5.1</span> Log-Logística (Criada)</a></li>
+  <li><a href="#log-logística-survival" id="toc-log-logística-survival" class="nav-link" data-scroll-target="#log-logística-survival"><span class="header-section-number">5.5.2</span> Log-Logística (Survival)</a></li>
+  <li><a href="#log-logística-intervalo-de-confiança" id="toc-log-logística-intervalo-de-confiança" class="nav-link" data-scroll-target="#log-logística-intervalo-de-confiança"><span class="header-section-number">5.5.3</span> Log-Logística (Intervalo de Confiança)</a></li>
+  </ul></li>
+  <li><a href="#distribuição-gama" id="toc-distribuição-gama" class="nav-link" data-scroll-target="#distribuição-gama"><span class="header-section-number">5.6</span> Distribuição Gama</a>
+  <ul class="collapse">
+  <li><a href="#gama-criada" id="toc-gama-criada" class="nav-link" data-scroll-target="#gama-criada"><span class="header-section-number">5.6.1</span> Gama (Criada)</a></li>
+  <li><a href="#gama-flexsurvreg" id="toc-gama-flexsurvreg" class="nav-link" data-scroll-target="#gama-flexsurvreg"><span class="header-section-number">5.6.2</span> Gama (Flexsurvreg)</a></li>
+  <li><a href="#gama-intervalo-de-confiança" id="toc-gama-intervalo-de-confiança" class="nav-link" data-scroll-target="#gama-intervalo-de-confiança"><span class="header-section-number">5.6.3</span> Gama (Intervalo de Confiança)</a></li>
+  </ul></li>
+  <li><a href="#distribuição-gama-generalizada" id="toc-distribuição-gama-generalizada" class="nav-link" data-scroll-target="#distribuição-gama-generalizada"><span class="header-section-number">5.7</span> Distribuição Gama Generalizada</a>
+  <ul class="collapse">
+  <li><a href="#gama-generalizada-criada" id="toc-gama-generalizada-criada" class="nav-link" data-scroll-target="#gama-generalizada-criada"><span class="header-section-number">5.7.1</span> Gama Generalizada (Criada)</a></li>
+  <li><a href="#gama-generalizada-flexsurvreg" id="toc-gama-generalizada-flexsurvreg" class="nav-link" data-scroll-target="#gama-generalizada-flexsurvreg"><span class="header-section-number">5.7.2</span> Gama Generalizada (Flexsurvreg)</a></li>
+  <li><a href="#gama-generalizada-intervalo-de-confiança" id="toc-gama-generalizada-intervalo-de-confiança" class="nav-link" data-scroll-target="#gama-generalizada-intervalo-de-confiança"><span class="header-section-number">5.7.3</span> Gama Generalizada (Intervalo de COnfiança)</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -367,7 +435,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<div class="quarto-title-meta column-page-right">
+<div class="quarto-title-meta">
 
     
   
@@ -381,35 +449,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="exemplo-pacientes-com-câncer-de-bexiga-2006-enrico-antônio-colosimo-suely-ruiz-giolo" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="exemplo-pacientes-com-câncer-de-bexiga-2006-enrico-antônio-colosimo-suely-ruiz-giolo"><span class="header-section-number">5.1</span> EXEMPLO PACIENTES COM CÂNCER DE BEXIGA (2006 Enrico Antônio Colosimo, Suely Ruiz Giolo)</h2>
-<div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survival)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flexsurv)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a> tempos<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>,<span class="dv">10</span>,<span class="dv">10</span>,<span class="dv">12</span>,<span class="dv">15</span>,<span class="dv">15</span>,<span class="dv">18</span>,<span class="dv">19</span>,<span class="dv">20</span>,<span class="dv">22</span>,<span class="dv">25</span>,<span class="dv">28</span>,<span class="dv">30</span>,<span class="dv">40</span>,<span class="dv">45</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a> censura<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
 </section>
 <section id="distribuição-exponencial" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="distribuição-exponencial"><span class="header-section-number">5.2</span> Distribuição Exponencial</h2>
 <section id="exponencial-criado" class="level3" data-number="5.2.1">
 <h3 data-number="5.2.1" class="anchored" data-anchor-id="exponencial-criado"><span class="header-section-number">5.2.1</span> Exponencial (Criado)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>S_exp <span class="ot">&lt;-</span> <span class="cf">function</span>(alpha, t, delta){</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  log_L <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fu">sum</span>(delta <span class="sc">*</span> <span class="fu">log</span>(alpha)) <span class="sc">-</span> (<span class="dv">1</span><span class="sc">/</span>alpha) <span class="sc">*</span> <span class="fu">sum</span>(t)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>log_L)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>ajuste <span class="ot">&lt;-</span> <span class="fu">optimize</span>(<span class="at">f =</span> S_exp, <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="dv">100</span>), tempos, censura)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>ajuste</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>S_exp <span class="ot">&lt;-</span> <span class="cf">function</span>(alpha, t, delta){</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  log_L <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fu">sum</span>(delta <span class="sc">*</span> <span class="fu">log</span>(alpha)) <span class="sc">-</span> (<span class="dv">1</span><span class="sc">/</span>alpha) <span class="sc">*</span> <span class="fu">sum</span>(t)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>log_L)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>ajuste <span class="ot">&lt;-</span> <span class="fu">optimize</span>(<span class="at">f =</span> S_exp, <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="dv">100</span>), tempos, censura)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>ajuste</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$minimum
 [1] 20.41178
@@ -422,11 +476,8 @@ $objective
 <section id="exponencial-survival" class="level3" data-number="5.2.2">
 <h3 data-number="5.2.2" class="anchored" data-anchor-id="exponencial-survival"><span class="header-section-number">5.2.2</span> Exponencial (Survival)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>modelo_exp <span class="ot">&lt;-</span> <span class="fu">survreg</span>(<span class="fu">Surv</span>(tempos, censura) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">dist =</span> <span class="st">"exponential"</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_exp)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>modelo_exp <span class="ot">&lt;-</span> <span class="fu">survreg</span>(<span class="fu">Surv</span>(tempos, censura) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">dist =</span> <span class="st">"exponential"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_exp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -446,72 +497,60 @@ n= 20 </code></pre>
 <section id="exponencial-intervalo-de-confiança" class="level3" data-number="5.2.3">
 <h3 data-number="5.2.3" class="anchored" data-anchor-id="exponencial-intervalo-de-confiança"><span class="header-section-number">5.2.3</span> Exponencial (Intervalo de Confiança)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># usando a hessiana ao trocar pelo optim</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>fit_exp_hessian <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="dv">10</span>, <span class="at">fn =</span> S_exp, <span class="at">t =</span> tempos, <span class="at">delta =</span> censura, </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"BFGS"</span>, <span class="at">hessian =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#IF</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>I_obs <span class="ot">&lt;-</span> fit_exp_hessian<span class="sc">$</span>hessian</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#Variancia</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>variancia <span class="ot">&lt;-</span> <span class="fu">solve</span>(I_obs)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>se_alpha <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(variancia) <span class="co"># Erro Padrão</span></span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># usando a hessiana ao trocar pelo optim</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>fit_exp_hessian <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="dv">10</span>, <span class="at">fn =</span> S_exp, <span class="at">t =</span> tempos, <span class="at">delta =</span> censura, </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"BFGS"</span>, <span class="at">hessian =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#IF</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>I_obs <span class="ot">&lt;-</span> fit_exp_hessian<span class="sc">$</span>hessian</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#Variancia</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>variancia <span class="ot">&lt;-</span> <span class="fu">solve</span>(I_obs)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>se_alpha <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(variancia) <span class="co"># Erro Padrão</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>alpha_hat <span class="ot">&lt;-</span> fit_exp_hessian<span class="sc">$</span>par</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>) <span class="co"># 1.96</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>ic_inf <span class="ot">&lt;-</span> alpha_hat <span class="sc">-</span> z <span class="sc">*</span> se_alpha</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>ic_sup <span class="ot">&lt;-</span> alpha_hat <span class="sc">+</span> z <span class="sc">*</span> se_alpha</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"IC 95% para Alpha: ["</span>, ic_inf, <span class="st">";"</span>, ic_sup, <span class="st">"]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>alpha_hat <span class="ot">&lt;-</span> fit_exp_hessian<span class="sc">$</span>par</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>) <span class="co"># 1.96</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>ic_inf <span class="ot">&lt;-</span> alpha_hat <span class="sc">-</span> z <span class="sc">*</span> se_alpha</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>ic_sup <span class="ot">&lt;-</span> alpha_hat <span class="sc">+</span> z <span class="sc">*</span> se_alpha</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"IC 95% para Alpha: ["</span>, ic_inf, <span class="st">";"</span>, ic_sup, <span class="st">"]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>IC 95% para Alpha: [ 10.70879 ; 30.11414 ]</code></pre>
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>logL_max <span class="ot">&lt;-</span> <span class="sc">-</span>fit_exp_hessian<span class="sc">$</span>value </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(tempos)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">1</span> </span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Critérios de Seleção</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>aic_exp <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_max</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>bic_exp <span class="ot">&lt;-</span> k<span class="sc">*</span><span class="fu">log</span>(n) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_max</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>hq_exp  <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k <span class="sc">*</span> <span class="fu">log</span>(<span class="fu">log</span>(n)) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_max </span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"AIC:"</span>, aic_exp, <span class="st">"| BIC:"</span>, bic_exp, <span class="st">"| HQ:"</span>, hq_exp)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>logL_max <span class="ot">&lt;-</span> <span class="sc">-</span>fit_exp_hessian<span class="sc">$</span>value </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(tempos)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">1</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Critérios de Seleção</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>aic_exp <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_max</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>bic_exp <span class="ot">&lt;-</span> k<span class="sc">*</span><span class="fu">log</span>(n) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_max</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>hq_exp  <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k <span class="sc">*</span> <span class="fu">log</span>(<span class="fu">log</span>(n)) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_max </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"AIC:"</span>, aic_exp, <span class="st">"| BIC:"</span>, bic_exp, <span class="st">"| HQ:"</span>, hq_exp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>AIC: 138.5478 | BIC: 139.5435 | HQ: 138.7422</code></pre>
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># KM</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(tempos, censura) <span class="sc">~</span> <span class="dv">1</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Curva Exponencial</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>t_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">50</span>, <span class="at">length.out =</span> <span class="dv">100</span>)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>st_teorico <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>t_grid <span class="sc">/</span> alpha_hat)</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(km, <span class="at">main =</span> <span class="st">"Ajuste Exponencial vs Kaplan-Meier"</span>, </span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Tempo"</span>, </span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"S(t)"</span>)</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(t_grid, st_teorico, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># KM</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(tempos, censura) <span class="sc">~</span> <span class="dv">1</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Curva Exponencial</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>t_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">50</span>, <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>st_teorico <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>t_grid <span class="sc">/</span> alpha_hat)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(km, <span class="at">main =</span> <span class="st">"Ajuste Exponencial vs Kaplan-Meier"</span>, </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Tempo"</span>, </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"S(t)"</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(t_grid, st_teorico, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="fucoes_optim_IC_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="fucoes_optim_IC_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -523,25 +562,22 @@ n= 20 </code></pre>
 <section id="weibull-criado" class="level3" data-number="5.3.1">
 <h3 data-number="5.3.1" class="anchored" data-anchor-id="weibull-criado"><span class="header-section-number">5.3.1</span> Weibull (Criado)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>S_weib <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, delta){</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> theta[<span class="dv">1</span>] </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  gamma <span class="ot">&lt;-</span> theta[<span class="dv">2</span>]</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> <span class="fu">sum</span>(delta) <span class="co">#soma de todos as falhas</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  Log_L <span class="ot">&lt;-</span> r<span class="sc">*</span><span class="fu">log</span>(gamma)<span class="sc">-</span>(r<span class="sc">*</span>gamma<span class="sc">*</span><span class="fu">log</span>(alpha))<span class="sc">+</span>(gamma <span class="sc">-</span><span class="dv">1</span>)<span class="sc">*</span><span class="fu">sum</span>(delta<span class="sc">*</span><span class="fu">log</span>(t))<span class="sc">-</span>(alpha<span class="sc">^</span>(<span class="sc">-</span>gamma))<span class="sc">*</span><span class="fu">sum</span>(t<span class="sc">^</span>gamma)</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.finite</span>(Log_L)) <span class="fu">return</span>(<span class="fl">1e10</span>) <span class="co">#garante o tempo positivo apenas</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>Log_L)</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">#?optim()</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>resultado <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>), S_weib, <span class="at">t =</span> tempos, <span class="at">delta =</span> censura, <span class="at">method =</span> <span class="st">"BFGS"</span>)</span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>resultado </span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>S_weib <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, delta){</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> theta[<span class="dv">1</span>] </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  gamma <span class="ot">&lt;-</span> theta[<span class="dv">2</span>]</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> <span class="fu">sum</span>(delta) <span class="co">#soma de todos as falhas</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  Log_L <span class="ot">&lt;-</span> r<span class="sc">*</span><span class="fu">log</span>(gamma)<span class="sc">-</span>(r<span class="sc">*</span>gamma<span class="sc">*</span><span class="fu">log</span>(alpha))<span class="sc">+</span>(gamma <span class="sc">-</span><span class="dv">1</span>)<span class="sc">*</span><span class="fu">sum</span>(delta<span class="sc">*</span><span class="fu">log</span>(t))<span class="sc">-</span>(alpha<span class="sc">^</span>(<span class="sc">-</span>gamma))<span class="sc">*</span><span class="fu">sum</span>(t<span class="sc">^</span>gamma)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.finite</span>(Log_L)) <span class="fu">return</span>(<span class="fl">1e10</span>) <span class="co">#garante o tempo positivo apenas</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>Log_L)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#?optim()</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>resultado <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>), S_weib, <span class="at">t =</span> tempos, <span class="at">delta =</span> censura, <span class="at">method =</span> <span class="st">"BFGS"</span>)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>resultado </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$par
 [1] 21.334902  1.543351
@@ -564,11 +600,8 @@ NULL</code></pre>
 <section id="weibull-survival" class="level3" data-number="5.3.2">
 <h3 data-number="5.3.2" class="anchored" data-anchor-id="weibull-survival"><span class="header-section-number">5.3.2</span> Weibull (Survival)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>modelo_weib <span class="ot">&lt;-</span> <span class="fu">survreg</span>(<span class="fu">Surv</span>(tempos, censura) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">dist =</span> <span class="st">"weibull"</span>)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_weib)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>modelo_weib <span class="ot">&lt;-</span> <span class="fu">survreg</span>(<span class="fu">Surv</span>(tempos, censura) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">dist =</span> <span class="st">"weibull"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_weib)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -589,50 +622,38 @@ n= 20 </code></pre>
 <section id="weibull-intervalo-de-confiança" class="level3" data-number="5.3.3">
 <h3 data-number="5.3.3" class="anchored" data-anchor-id="weibull-intervalo-de-confiança"><span class="header-section-number">5.3.3</span> Weibull (Intervalo de Confiança)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hessian = TRUE</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>resultado <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>), S_weib, <span class="at">t =</span> tempos, <span class="at">delta =</span> censura, </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">method =</span> <span class="st">"BFGS"</span>, <span class="at">hessian =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>var_covar <span class="ot">&lt;-</span> <span class="fu">solve</span>(resultado<span class="sc">$</span>hessian)</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>erros_padrao <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(var_covar))</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 95% para os dois parâmetros</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>ic_alpha <span class="ot">&lt;-</span> resultado<span class="sc">$</span>par[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> erros_padrao[<span class="dv">1</span>]</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>ic_gamma <span class="ot">&lt;-</span> resultado<span class="sc">$</span>par[<span class="dv">2</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> erros_padrao[<span class="dv">2</span>]</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hessian = TRUE</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>resultado <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>), S_weib, <span class="at">t =</span> tempos, <span class="at">delta =</span> censura, </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">method =</span> <span class="st">"BFGS"</span>, <span class="at">hessian =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>var_covar <span class="ot">&lt;-</span> <span class="fu">solve</span>(resultado<span class="sc">$</span>hessian)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>erros_padrao <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(var_covar))</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 95% para os dois parâmetros</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>ic_alpha <span class="ot">&lt;-</span> resultado<span class="sc">$</span>par[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> erros_padrao[<span class="dv">1</span>]</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>ic_gamma <span class="ot">&lt;-</span> resultado<span class="sc">$</span>par[<span class="dv">2</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> erros_padrao[<span class="dv">2</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Variáveis</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(tempos)</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>logL <span class="ot">&lt;-</span> <span class="sc">-</span>resultado<span class="sc">$</span>value</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Cálculos</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>aic_weibull <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> k <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> logL</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>bic_weibull <span class="ot">&lt;-</span> k <span class="sc">*</span> <span class="fu">log</span>(n) <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> logL</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>hq_weibull  <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> k <span class="sc">*</span> <span class="fu">log</span>(<span class="fu">log</span>(n)) <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> logL</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"AIC Weibull:"</span>, aic_weibull, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Variáveis</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(tempos)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>logL <span class="ot">&lt;-</span> <span class="sc">-</span>resultado<span class="sc">$</span>value</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Cálculos</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>aic_weibull <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> k <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> logL</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>bic_weibull <span class="ot">&lt;-</span> k <span class="sc">*</span> <span class="fu">log</span>(n) <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> logL</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>hq_weibull  <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> k <span class="sc">*</span> <span class="fu">log</span>(<span class="fu">log</span>(n)) <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> logL</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"AIC Weibull:"</span>, aic_weibull, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>AIC Weibull: 136.2667 </code></pre>
 </div>
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"BIC Weibull:"</span>, bic_weibull, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"BIC Weibull:"</span>, bic_weibull, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>BIC Weibull: 138.2582 </code></pre>
 </div>
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"HQ  Weibull:"</span>, hq_weibull)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"HQ  Weibull:"</span>, hq_weibull)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>HQ  Weibull: 136.6555</code></pre>
 </div>
@@ -644,34 +665,28 @@ n= 20 </code></pre>
 <section id="log-normal-criado" class="level3" data-number="5.4.1">
 <h3 data-number="5.4.1" class="anchored" data-anchor-id="log-normal-criado"><span class="header-section-number">5.4.1</span> Log-Normal (Criado)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>S_lognorm <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, delta) {</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  mu    <span class="ot">&lt;-</span> theta[<span class="dv">1</span>]</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  sigma <span class="ot">&lt;-</span> theta[<span class="dv">2</span>]</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  log_S <span class="ot">&lt;-</span> <span class="fu">plnorm</span>(t, <span class="at">meanlog =</span> mu, <span class="at">sdlog =</span> sigma, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>, <span class="at">log.p =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  log_f <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">0.5</span><span class="sc">*</span><span class="fu">log</span>(<span class="dv">2</span><span class="sc">*</span>pi) <span class="sc">-</span> <span class="fu">log</span>(t) <span class="sc">-</span> <span class="fu">log</span>(sigma) <span class="sc">-</span> (<span class="dv">1</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>sigma<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">*</span> (<span class="fu">log</span>(t) <span class="sc">-</span> mu)<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  L_LOG <span class="ot">&lt;-</span> <span class="fu">sum</span>(delta <span class="sc">*</span> log_f <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> delta) <span class="sc">*</span> log_S)</span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>L_LOG)</span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>S_lognorm <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, delta) {</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  mu    <span class="ot">&lt;-</span> theta[<span class="dv">1</span>]</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  sigma <span class="ot">&lt;-</span> theta[<span class="dv">2</span>]</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  log_S <span class="ot">&lt;-</span> <span class="fu">plnorm</span>(t, <span class="at">meanlog =</span> mu, <span class="at">sdlog =</span> sigma, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>, <span class="at">log.p =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  log_f <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">0.5</span><span class="sc">*</span><span class="fu">log</span>(<span class="dv">2</span><span class="sc">*</span>pi) <span class="sc">-</span> <span class="fu">log</span>(t) <span class="sc">-</span> <span class="fu">log</span>(sigma) <span class="sc">-</span> (<span class="dv">1</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>sigma<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">*</span> (<span class="fu">log</span>(t) <span class="sc">-</span> mu)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  L_LOG <span class="ot">&lt;-</span> <span class="fu">sum</span>(delta <span class="sc">*</span> log_f <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> delta) <span class="sc">*</span> log_S)</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>L_LOG)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>o_mu <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">log</span>(tempos))</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>o_sigma <span class="ot">&lt;-</span> <span class="fu">sd</span>(<span class="fu">log</span>(tempos))</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>fit_ln <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="fu">c</span>(o_mu, o_sigma), <span class="at">fn =</span> S_lognorm,<span class="at">t =</span> tempos,<span class="at">delta =</span> censura, <span class="at">method =</span> <span class="st">"BFGS"</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>fit_ln</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>o_mu <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">log</span>(tempos))</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>o_sigma <span class="ot">&lt;-</span> <span class="fu">sd</span>(<span class="fu">log</span>(tempos))</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>fit_ln <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="fu">c</span>(o_mu, o_sigma), <span class="at">fn =</span> S_lognorm,<span class="at">t =</span> tempos,<span class="at">delta =</span> censura, <span class="at">method =</span> <span class="st">"BFGS"</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>fit_ln</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$par
 [1] 2.7171735 0.7648411
@@ -694,11 +709,8 @@ NULL</code></pre>
 <section id="log-normal-survival" class="level3" data-number="5.4.2">
 <h3 data-number="5.4.2" class="anchored" data-anchor-id="log-normal-survival"><span class="header-section-number">5.4.2</span> Log-Normal (Survival)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>modelo_logN <span class="ot">&lt;-</span> <span class="fu">survreg</span>(<span class="fu">Surv</span>(tempos, censura) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">dist =</span> <span class="st">"lognormal"</span>)</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_logN)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>modelo_logN <span class="ot">&lt;-</span> <span class="fu">survreg</span>(<span class="fu">Surv</span>(tempos, censura) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">dist =</span> <span class="st">"lognormal"</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_logN)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -719,88 +731,73 @@ n= 20 </code></pre>
 <section id="log-normal-intervalo-de-confiança" class="level3" data-number="5.4.3">
 <h3 data-number="5.4.3" class="anchored" data-anchor-id="log-normal-intervalo-de-confiança"><span class="header-section-number">5.4.3</span> Log-Normal (Intervalo de Confiança)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>fit_ln <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="fu">c</span>(<span class="fu">mean</span>(<span class="fu">log</span>(tempos)), <span class="fu">sd</span>(<span class="fu">log</span>(tempos))), <span class="at">fn =</span> S_lognorm,</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">t =</span> tempos,</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">delta =</span> censura, </span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"BFGS"</span>,</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">hessian =</span> <span class="cn">TRUE</span></span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Informação de Fisher Observada (Matriz 2x2: mu e sigma)</span></span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>If_obs <span class="ot">&lt;-</span> fit_ln<span class="sc">$</span>hessian</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Matriz de variância-covariância (Inversa da Hessiana)</span></span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>var_covar_ln <span class="ot">&lt;-</span> <span class="fu">solve</span>(If_obs)</span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Erros Padrão</span></span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>se_ln <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(var_covar_ln))</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fit_ln <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="fu">c</span>(<span class="fu">mean</span>(<span class="fu">log</span>(tempos)), <span class="fu">sd</span>(<span class="fu">log</span>(tempos))), <span class="at">fn =</span> S_lognorm,</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">t =</span> tempos,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">delta =</span> censura, </span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"BFGS"</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">hessian =</span> <span class="cn">TRUE</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Informação de Fisher Observada (Matriz 2x2: mu e sigma)</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>If_obs <span class="ot">&lt;-</span> fit_ln<span class="sc">$</span>hessian</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Matriz de variância-covariância (Inversa da Hessiana)</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>var_covar_ln <span class="ot">&lt;-</span> <span class="fu">solve</span>(If_obs)</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Erros Padrão</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>se_ln <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(var_covar_ln))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>) <span class="co"># Para 95% de confiança</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co"># IC para Mu</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>ic_mu <span class="ot">&lt;-</span> <span class="fu">c</span>(fit_ln<span class="sc">$</span>par[<span class="dv">1</span>] <span class="sc">-</span> z <span class="sc">*</span> se_ln[<span class="dv">1</span>], fit_ln<span class="sc">$</span>par[<span class="dv">1</span>] <span class="sc">+</span> z <span class="sc">*</span> se_ln[<span class="dv">1</span>])</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="co"># IC para Sigma</span></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>ic_sigma <span class="ot">&lt;-</span> <span class="fu">c</span>(fit_ln<span class="sc">$</span>par[<span class="dv">2</span>] <span class="sc">-</span> z <span class="sc">*</span> se_ln[<span class="dv">2</span>], fit_ln<span class="sc">$</span>par[<span class="dv">2</span>] <span class="sc">+</span> z <span class="sc">*</span> se_ln[<span class="dv">2</span>])</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"IC 95% Mu: ["</span>, ic_mu, <span class="st">"]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>) <span class="co"># Para 95% de confiança</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># IC para Mu</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>ic_mu <span class="ot">&lt;-</span> <span class="fu">c</span>(fit_ln<span class="sc">$</span>par[<span class="dv">1</span>] <span class="sc">-</span> z <span class="sc">*</span> se_ln[<span class="dv">1</span>], fit_ln<span class="sc">$</span>par[<span class="dv">1</span>] <span class="sc">+</span> z <span class="sc">*</span> se_ln[<span class="dv">1</span>])</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co"># IC para Sigma</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>ic_sigma <span class="ot">&lt;-</span> <span class="fu">c</span>(fit_ln<span class="sc">$</span>par[<span class="dv">2</span>] <span class="sc">-</span> z <span class="sc">*</span> se_ln[<span class="dv">2</span>], fit_ln<span class="sc">$</span>par[<span class="dv">2</span>] <span class="sc">+</span> z <span class="sc">*</span> se_ln[<span class="dv">2</span>])</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"IC 95% Mu: ["</span>, ic_mu, <span class="st">"]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>IC 95% Mu: [ 2.371732 3.062615 ]</code></pre>
 </div>
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"IC 95% Sigma: ["</span>, ic_sigma, <span class="st">"]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"IC 95% Sigma: ["</span>, ic_sigma, <span class="st">"]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>IC 95% Sigma: [ 0.5046711 1.025011 ]</code></pre>
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(tempos)</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>logL_ln <span class="ot">&lt;-</span> <span class="sc">-</span>fit_ln<span class="sc">$</span>value <span class="co"># Log-verossimilhança máxima</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>aic_ln <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_ln</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>bic_ln <span class="ot">&lt;-</span> k<span class="sc">*</span><span class="fu">log</span>(n) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_ln</span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>hq_ln  <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k<span class="sc">*</span><span class="fu">log</span>(<span class="fu">log</span>(n)) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_ln</span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"AIC:"</span>, aic_ln, <span class="st">"| BIC:"</span>, bic_ln, <span class="st">"| HQ:"</span>, hq_ln)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(tempos)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>logL_ln <span class="ot">&lt;-</span> <span class="sc">-</span>fit_ln<span class="sc">$</span>value <span class="co"># Log-verossimilhança máxima</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>aic_ln <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_ln</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>bic_ln <span class="ot">&lt;-</span> k<span class="sc">*</span><span class="fu">log</span>(n) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_ln</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>hq_ln  <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k<span class="sc">*</span><span class="fu">log</span>(<span class="fu">log</span>(n)) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_ln</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"AIC:"</span>, aic_ln, <span class="st">"| BIC:"</span>, bic_ln, <span class="st">"| HQ:"</span>, hq_ln)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>AIC: 135.4798 | BIC: 137.4713 | HQ: 135.8686</code></pre>
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">#km &lt;- survfit(Surv(tempos, censura) ~ 1) # já declarado</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>t_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">max</span>(tempos), <span class="at">length.out =</span> <span class="dv">100</span>)</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>s_teorico_ln <span class="ot">&lt;-</span> <span class="fu">plnorm</span>(t_grid, <span class="at">meanlog =</span> fit_ln<span class="sc">$</span>par[<span class="dv">1</span>], <span class="at">sdlog =</span> fit_ln<span class="sc">$</span>par[<span class="dv">2</span>], <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(km, </span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">conf.int =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"black"</span>, </span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>), </span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Ajuste Log-Normal vs KM"</span>, </span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Tempo"</span>, </span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"S(t)"</span>)</span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(t_grid, s_teorico_ln, <span class="at">col =</span> <span class="st">"darkgreen"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">#km &lt;- survfit(Surv(tempos, censura) ~ 1) # já declarado</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>t_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">max</span>(tempos), <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>s_teorico_ln <span class="ot">&lt;-</span> <span class="fu">plnorm</span>(t_grid, <span class="at">meanlog =</span> fit_ln<span class="sc">$</span>par[<span class="dv">1</span>], <span class="at">sdlog =</span> fit_ln<span class="sc">$</span>par[<span class="dv">2</span>], <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(km, </span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">conf.int =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"black"</span>, </span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>), </span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Ajuste Log-Normal vs KM"</span>, </span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Tempo"</span>, </span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"S(t)"</span>)</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(t_grid, s_teorico_ln, <span class="at">col =</span> <span class="st">"darkgreen"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="fucoes_optim_IC_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="fucoes_optim_IC_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -812,28 +809,25 @@ n= 20 </code></pre>
 <section id="log-logística-criada" class="level3" data-number="5.5.1">
 <h3 data-number="5.5.1" class="anchored" data-anchor-id="log-logística-criada"><span class="header-section-number">5.5.1</span> Log-Logística (Criada)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>S_loglogistica <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, delta) {</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">1</span>])</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  gamma <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">2</span>])</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  log_f <span class="ot">&lt;-</span> <span class="fu">log</span>(gamma) <span class="sc">-</span> (gamma <span class="sc">*</span> <span class="fu">log</span>(alpha)) <span class="sc">+</span> (gamma <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="fu">log</span>(t) <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">+</span> (t<span class="sc">/</span>alpha)<span class="sc">^</span>gamma)</span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  log_S <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span> <span class="sc">+</span> (t<span class="sc">/</span>alpha)<span class="sc">^</span>gamma)</span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  LOG_L <span class="ot">&lt;-</span> <span class="fu">sum</span>(delta <span class="sc">*</span> log_f <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> delta) <span class="sc">*</span> log_S)</span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>LOG_L)</span>
-<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Chute inicial (log da média dos tempos e log de 1)</span></span>
-<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>inicio <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">log</span>(<span class="fu">mean</span>(tempos)), <span class="dv">0</span>)</span>
-<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>fit_ll <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> inicio, <span class="at">fn =</span> S_loglogistica, <span class="at">t =</span> tempos, <span class="at">delta =</span> censura, <span class="at">method =</span> <span class="st">"BFGS"</span>)</span>
-<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>fit_ll</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>S_loglogistica <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, delta) {</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">1</span>])</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  gamma <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">2</span>])</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  log_f <span class="ot">&lt;-</span> <span class="fu">log</span>(gamma) <span class="sc">-</span> (gamma <span class="sc">*</span> <span class="fu">log</span>(alpha)) <span class="sc">+</span> (gamma <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="fu">log</span>(t) <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">+</span> (t<span class="sc">/</span>alpha)<span class="sc">^</span>gamma)</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  log_S <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fu">log</span>(<span class="dv">1</span> <span class="sc">+</span> (t<span class="sc">/</span>alpha)<span class="sc">^</span>gamma)</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  LOG_L <span class="ot">&lt;-</span> <span class="fu">sum</span>(delta <span class="sc">*</span> log_f <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> delta) <span class="sc">*</span> log_S)</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>LOG_L)</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Chute inicial (log da média dos tempos e log de 1)</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>inicio <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">log</span>(<span class="fu">mean</span>(tempos)), <span class="dv">0</span>)</span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>fit_ll <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> inicio, <span class="at">fn =</span> S_loglogistica, <span class="at">t =</span> tempos, <span class="at">delta =</span> censura, <span class="at">method =</span> <span class="st">"BFGS"</span>)</span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>fit_ll</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$par
 [1] 2.7373688 0.7993457
@@ -856,11 +850,8 @@ NULL</code></pre>
 <section id="log-logística-survival" class="level3" data-number="5.5.2">
 <h3 data-number="5.5.2" class="anchored" data-anchor-id="log-logística-survival"><span class="header-section-number">5.5.2</span> Log-Logística (Survival)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>modelo_LL <span class="ot">&lt;-</span> <span class="fu">survreg</span>(<span class="fu">Surv</span>(tempos, censura) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">dist =</span> <span class="st">"loglogistic"</span>)</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>modelo_LL</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>modelo_LL <span class="ot">&lt;-</span> <span class="fu">survreg</span>(<span class="fu">Surv</span>(tempos, censura) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">dist =</span> <span class="st">"loglogistic"</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>modelo_LL</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Call:
 survreg(formula = Surv(tempos, censura) ~ 1, dist = "loglogistic")
@@ -879,68 +870,56 @@ n= 20 </code></pre>
 <section id="log-logística-intervalo-de-confiança" class="level3" data-number="5.5.3">
 <h3 data-number="5.5.3" class="anchored" data-anchor-id="log-logística-intervalo-de-confiança"><span class="header-section-number">5.5.3</span> Log-Logística (Intervalo de Confiança)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rodando com Hessiana</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>fit_ll <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> inicio, <span class="at">fn =</span> S_loglogistica, <span class="at">t =</span> tempos, </span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">delta =</span> censura, <span class="at">method =</span> <span class="st">"BFGS"</span>, <span class="at">hessian =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Variância-Covariância e Erro Padrão (na escala log)</span></span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>var_covar_ll <span class="ot">&lt;-</span> <span class="fu">solve</span>(fit_ll<span class="sc">$</span>hessian)</span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>se_ll <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(var_covar_ll))</span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="co"># IC 95% para os parâmetros (escala original usando exp)</span></span>
-<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)</span>
-<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>ic_alpha_ll <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_ll<span class="sc">$</span>par[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> se_ll[<span class="dv">1</span>])</span>
-<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>ic_gamma_ll <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_ll<span class="sc">$</span>par[<span class="dv">2</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> se_ll[<span class="dv">2</span>])</span>
-<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"IC Alpha:"</span>, ic_alpha_ll, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rodando com Hessiana</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>fit_ll <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> inicio, <span class="at">fn =</span> S_loglogistica, <span class="at">t =</span> tempos, </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">delta =</span> censura, <span class="at">method =</span> <span class="st">"BFGS"</span>, <span class="at">hessian =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Variância-Covariância e Erro Padrão (na escala log)</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>var_covar_ll <span class="ot">&lt;-</span> <span class="fu">solve</span>(fit_ll<span class="sc">$</span>hessian)</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>se_ll <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(var_covar_ll))</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="co"># IC 95% para os parâmetros (escala original usando exp)</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>ic_alpha_ll <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_ll<span class="sc">$</span>par[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> se_ll[<span class="dv">1</span>])</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>ic_gamma_ll <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_ll<span class="sc">$</span>par[<span class="dv">2</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> se_ll[<span class="dv">2</span>])</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"IC Alpha:"</span>, ic_alpha_ll, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>IC Alpha: 10.85383 21.98191 </code></pre>
 </div>
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"IC Gamma:"</span>, ic_gamma_ll)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"IC Gamma:"</span>, ic_gamma_ll)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>IC Gamma: 1.509642 3.27664</code></pre>
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(tempos)</span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>logL_ll <span class="ot">&lt;-</span> <span class="sc">-</span>fit_ll<span class="sc">$</span>value</span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>aic_ll <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_ll</span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>bic_ll <span class="ot">&lt;-</span> k<span class="sc">*</span><span class="fu">log</span>(n) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_ll</span>
-<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>hq_ll  <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k<span class="sc">*</span><span class="fu">log</span>(<span class="fu">log</span>(n)) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_ll</span>
-<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"AIC:"</span>, aic_ll, <span class="st">"| BIC:"</span>, bic_ll, <span class="st">"| HQ:"</span>, hq_ll)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(tempos)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>logL_ll <span class="ot">&lt;-</span> <span class="sc">-</span>fit_ll<span class="sc">$</span>value</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>aic_ll <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_ll</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>bic_ll <span class="ot">&lt;-</span> k<span class="sc">*</span><span class="fu">log</span>(n) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_ll</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>hq_ll  <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k<span class="sc">*</span><span class="fu">log</span>(<span class="fu">log</span>(n)) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_ll</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"AIC:"</span>, aic_ll, <span class="st">"| BIC:"</span>, bic_ll, <span class="st">"| HQ:"</span>, hq_ll)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>AIC: 136.0611 | BIC: 138.0525 | HQ: 136.4498</code></pre>
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>alpha_ll <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_ll<span class="sc">$</span>par[<span class="dv">1</span>])</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>gamma_ll <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_ll<span class="sc">$</span>par[<span class="dv">2</span>])</span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Sobrevivência Teórica: S(t) = 1 / (1 + (t/alpha)^gamma)</span></span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>st_loglogistica <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> (t_grid <span class="sc">/</span> alpha_ll)<span class="sc">^</span>gamma_ll)</span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(km, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>),</span>
-<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Ajuste Log-Logístico vs KM"</span>, <span class="at">xlab =</span> <span class="st">"Tempo"</span>, <span class="at">ylab =</span> <span class="st">"S(t)"</span>)</span>
-<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(t_grid, st_loglogistica, <span class="at">col =</span> <span class="st">"purple"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>alpha_ll <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_ll<span class="sc">$</span>par[<span class="dv">1</span>])</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>gamma_ll <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_ll<span class="sc">$</span>par[<span class="dv">2</span>])</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Sobrevivência Teórica: S(t) = 1 / (1 + (t/alpha)^gamma)</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>st_loglogistica <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> (t_grid <span class="sc">/</span> alpha_ll)<span class="sc">^</span>gamma_ll)</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(km, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Ajuste Log-Logístico vs KM"</span>, <span class="at">xlab =</span> <span class="st">"Tempo"</span>, <span class="at">ylab =</span> <span class="st">"S(t)"</span>)</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(t_grid, st_loglogistica, <span class="at">col =</span> <span class="st">"purple"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="fucoes_optim_IC_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="fucoes_optim_IC_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -952,27 +931,24 @@ n= 20 </code></pre>
 <section id="gama-criada" class="level3" data-number="5.6.1">
 <h3 data-number="5.6.1" class="anchored" data-anchor-id="gama-criada"><span class="header-section-number">5.6.1</span> Gama (Criada)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>S_gama <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, delta) {</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  shape <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">1</span>])</span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  scale <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">2</span>])</span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  log_f <span class="ot">&lt;-</span> <span class="fu">dgamma</span>(t, <span class="at">shape =</span> shape, <span class="at">scale =</span> scale, <span class="at">log =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>  log_S <span class="ot">&lt;-</span> <span class="fu">pgamma</span>(t, <span class="at">shape =</span> shape, <span class="at">scale =</span> scale, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>, <span class="at">log.p =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>  logl <span class="ot">&lt;-</span> <span class="fu">sum</span>(delta <span class="sc">*</span> log_f <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> delta) <span class="sc">*</span> log_S)</span>
-<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>logl)</span>
-<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="fu">mean</span>(tempos))</span>
-<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>fit_g <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="fu">c</span>(<span class="dv">0</span>, p), <span class="at">fn =</span> S_gama, <span class="at">t =</span> tempos, <span class="at">delta =</span> censura, <span class="at">method =</span> <span class="st">"BFGS"</span>)</span>
-<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a>fit_g</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>S_gama <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, delta) {</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  shape <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">1</span>])</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  scale <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">2</span>])</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  log_f <span class="ot">&lt;-</span> <span class="fu">dgamma</span>(t, <span class="at">shape =</span> shape, <span class="at">scale =</span> scale, <span class="at">log =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>  log_S <span class="ot">&lt;-</span> <span class="fu">pgamma</span>(t, <span class="at">shape =</span> shape, <span class="at">scale =</span> scale, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>, <span class="at">log.p =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>  logl <span class="ot">&lt;-</span> <span class="fu">sum</span>(delta <span class="sc">*</span> log_f <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> delta) <span class="sc">*</span> log_S)</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>logl)</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="fu">mean</span>(tempos))</span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>fit_g <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="fu">c</span>(<span class="dv">0</span>, p), <span class="at">fn =</span> S_gama, <span class="at">t =</span> tempos, <span class="at">delta =</span> censura, <span class="at">method =</span> <span class="st">"BFGS"</span>)</span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>fit_g</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$par
 [1] 0.7626296 2.1937980
@@ -995,11 +971,8 @@ NULL</code></pre>
 <section id="gama-flexsurvreg" class="level3" data-number="5.6.2">
 <h3 data-number="5.6.2" class="anchored" data-anchor-id="gama-flexsurvreg"><span class="header-section-number">5.6.2</span> Gama (Flexsurvreg)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>modelo_gama <span class="ot">&lt;-</span> <span class="fu">flexsurvreg</span>(<span class="fu">Surv</span>(tempos, censura) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">dist =</span> <span class="st">"gamma"</span>)</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>modelo_gama</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>modelo_gama <span class="ot">&lt;-</span> <span class="fu">flexsurvreg</span>(<span class="fu">Surv</span>(tempos, censura) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">dist =</span> <span class="st">"gamma"</span>)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>modelo_gama</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Call:
 flexsurvreg(formula = Surv(tempos, censura) ~ 1, dist = "gamma")
@@ -1019,67 +992,55 @@ AIC = 135.6951</code></pre>
 <section id="gama-intervalo-de-confiança" class="level3" data-number="5.6.3">
 <h3 data-number="5.6.3" class="anchored" data-anchor-id="gama-intervalo-de-confiança"><span class="header-section-number">5.6.3</span> Gama (Intervalo de Confiança)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>fit_g <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="fu">c</span>(<span class="dv">0</span>, p), <span class="at">fn =</span> S_gama, <span class="at">t =</span> tempos, </span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">delta =</span> censura, <span class="at">method =</span> <span class="st">"BFGS"</span>, <span class="at">hessian =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Inversa da Hessiana (Matriz de Variância-Covariância no espaço log)</span></span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>var_covar_g <span class="ot">&lt;-</span> <span class="fu">solve</span>(fit_g<span class="sc">$</span>hessian)</span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>se_g <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(var_covar_g))</span>
-<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Intervalos de Confiança (Transformando de volta para a escala original)</span></span>
-<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)</span>
-<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>ic_shape_g <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_g<span class="sc">$</span>par[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> se_g[<span class="dv">1</span>])</span>
-<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>ic_scale_g <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_g<span class="sc">$</span>par[<span class="dv">2</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> se_g[<span class="dv">2</span>])</span>
-<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"IC Shape:"</span>, ic_shape_g, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>fit_g <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> <span class="fu">c</span>(<span class="dv">0</span>, p), <span class="at">fn =</span> S_gama, <span class="at">t =</span> tempos, </span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">delta =</span> censura, <span class="at">method =</span> <span class="st">"BFGS"</span>, <span class="at">hessian =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Inversa da Hessiana (Matriz de Variância-Covariância no espaço log)</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>var_covar_g <span class="ot">&lt;-</span> <span class="fu">solve</span>(fit_g<span class="sc">$</span>hessian)</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>se_g <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(var_covar_g))</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Intervalos de Confiança (Transformando de volta para a escala original)</span></span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>ic_shape_g <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_g<span class="sc">$</span>par[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> se_g[<span class="dv">1</span>])</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>ic_scale_g <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_g<span class="sc">$</span>par[<span class="dv">2</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> se_g[<span class="dv">2</span>])</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"IC Shape:"</span>, ic_shape_g, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>IC Shape: 1.158 3.9692 </code></pre>
 </div>
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"IC Scale:"</span>, ic_scale_g)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"IC Scale:"</span>, ic_scale_g)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>IC Scale: 4.341715 18.5288</code></pre>
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(tempos)</span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>logL_g <span class="ot">&lt;-</span> <span class="sc">-</span>fit_g<span class="sc">$</span>value</span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>aic_g <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_g</span>
-<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>bic_g <span class="ot">&lt;-</span> k<span class="sc">*</span><span class="fu">log</span>(n) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_g</span>
-<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>hq_g  <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k<span class="sc">*</span><span class="fu">log</span>(<span class="fu">log</span>(n)) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_g</span>
-<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"AIC:"</span>, aic_g, <span class="st">"| BIC:"</span>, bic_g, <span class="st">"| HQ:"</span>, hq_g)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(tempos)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>logL_g <span class="ot">&lt;-</span> <span class="sc">-</span>fit_g<span class="sc">$</span>value</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>aic_g <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_g</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>bic_g <span class="ot">&lt;-</span> k<span class="sc">*</span><span class="fu">log</span>(n) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_g</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>hq_g  <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k<span class="sc">*</span><span class="fu">log</span>(<span class="fu">log</span>(n)) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_g</span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"AIC:"</span>, aic_g, <span class="st">"| BIC:"</span>, bic_g, <span class="st">"| HQ:"</span>, hq_g)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>AIC: 135.6951 | BIC: 137.6865 | HQ: 136.0838</code></pre>
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>shape_hat <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_g<span class="sc">$</span>par[<span class="dv">1</span>])</span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>scale_hat <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_g<span class="sc">$</span>par[<span class="dv">2</span>])</span>
-<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Sobrevivência Teórica da Gama</span></span>
-<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>st_gama <span class="ot">&lt;-</span> <span class="fu">pgamma</span>(t_grid, <span class="at">shape =</span> shape_hat, <span class="at">scale =</span> scale_hat, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(km, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>),</span>
-<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Ajuste Gama vs KM"</span>, <span class="at">xlab =</span> <span class="st">"Tempo"</span>, <span class="at">ylab =</span> <span class="st">"S(t)"</span>)</span>
-<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(t_grid, st_gama, <span class="at">col =</span> <span class="st">"orange"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>shape_hat <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_g<span class="sc">$</span>par[<span class="dv">1</span>])</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>scale_hat <span class="ot">&lt;-</span> <span class="fu">exp</span>(fit_g<span class="sc">$</span>par[<span class="dv">2</span>])</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Sobrevivência Teórica da Gama</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>st_gama <span class="ot">&lt;-</span> <span class="fu">pgamma</span>(t_grid, <span class="at">shape =</span> shape_hat, <span class="at">scale =</span> scale_hat, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(km, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Ajuste Gama vs KM"</span>, <span class="at">xlab =</span> <span class="st">"Tempo"</span>, <span class="at">ylab =</span> <span class="st">"S(t)"</span>)</span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(t_grid, st_gama, <span class="at">col =</span> <span class="st">"orange"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="fucoes_optim_IC_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="fucoes_optim_IC_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1091,30 +1052,27 @@ AIC = 135.6951</code></pre>
 <section id="gama-generalizada-criada" class="level3" data-number="5.7.1">
 <h3 data-number="5.7.1" class="anchored" data-anchor-id="gama-generalizada-criada"><span class="header-section-number">5.7.1</span> Gama Generalizada (Criada)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>S_gamaG <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, delta) {</span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">1</span>])</span>
-<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>  gamma <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">2</span>])</span>
-<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>  s     <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">3</span>])</span>
-<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>  log_f <span class="ot">&lt;-</span> <span class="fu">log</span>(gamma)<span class="sc">-</span><span class="fu">lgamma</span>(s)<span class="sc">-</span>(gamma<span class="sc">*</span>s<span class="sc">*</span><span class="fu">log</span>(alpha))<span class="sc">+</span>(gamma <span class="sc">*</span> s <span class="sc">-</span> <span class="dv">1</span>)<span class="sc">*</span><span class="fu">log</span>(t)<span class="sc">-</span>(t <span class="sc">/</span> alpha)<span class="sc">^</span>gamma</span>
-<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>  log_S <span class="ot">&lt;-</span> <span class="fu">pgamma</span>((t <span class="sc">/</span> alpha)<span class="sc">^</span>gamma, <span class="at">shape =</span> s, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>, <span class="at">log.p =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>  logl <span class="ot">&lt;-</span> <span class="fu">sum</span>(delta <span class="sc">*</span> log_f <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> delta) <span class="sc">*</span> log_S)</span>
-<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.finite</span>(logl)) <span class="fu">return</span>(<span class="fl">1e10</span>)</span>
-<span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb58-15"><a href="#cb58-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>logl)</span>
-<span id="cb58-16"><a href="#cb58-16" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb58-17"><a href="#cb58-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-18"><a href="#cb58-18" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">log</span>(<span class="fu">mean</span>(tempos)), <span class="dv">0</span>, <span class="dv">0</span>) </span>
-<span id="cb58-19"><a href="#cb58-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-20"><a href="#cb58-20" aria-hidden="true" tabindex="-1"></a>resultado_gg <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> i, <span class="at">fn =</span> S_gamaG, <span class="at">t =</span> tempos, <span class="at">delta =</span> censura, <span class="at">method =</span> <span class="st">"BFGS"</span>)</span>
-<span id="cb58-21"><a href="#cb58-21" aria-hidden="true" tabindex="-1"></a>resultado_gg</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>S_gamaG <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, t, delta) {</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">1</span>])</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>  gamma <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">2</span>])</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>  s     <span class="ot">&lt;-</span> <span class="fu">exp</span>(theta[<span class="dv">3</span>])</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>  log_f <span class="ot">&lt;-</span> <span class="fu">log</span>(gamma)<span class="sc">-</span><span class="fu">lgamma</span>(s)<span class="sc">-</span>(gamma<span class="sc">*</span>s<span class="sc">*</span><span class="fu">log</span>(alpha))<span class="sc">+</span>(gamma <span class="sc">*</span> s <span class="sc">-</span> <span class="dv">1</span>)<span class="sc">*</span><span class="fu">log</span>(t)<span class="sc">-</span>(t <span class="sc">/</span> alpha)<span class="sc">^</span>gamma</span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>  log_S <span class="ot">&lt;-</span> <span class="fu">pgamma</span>((t <span class="sc">/</span> alpha)<span class="sc">^</span>gamma, <span class="at">shape =</span> s, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>, <span class="at">log.p =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>  logl <span class="ot">&lt;-</span> <span class="fu">sum</span>(delta <span class="sc">*</span> log_f <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> delta) <span class="sc">*</span> log_S)</span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.finite</span>(logl)) <span class="fu">return</span>(<span class="fl">1e10</span>)</span>
+<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb57-15"><a href="#cb57-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span>logl)</span>
+<span id="cb57-16"><a href="#cb57-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb57-17"><a href="#cb57-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-18"><a href="#cb57-18" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">log</span>(<span class="fu">mean</span>(tempos)), <span class="dv">0</span>, <span class="dv">0</span>) </span>
+<span id="cb57-19"><a href="#cb57-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-20"><a href="#cb57-20" aria-hidden="true" tabindex="-1"></a>resultado_gg <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> i, <span class="at">fn =</span> S_gamaG, <span class="at">t =</span> tempos, <span class="at">delta =</span> censura, <span class="at">method =</span> <span class="st">"BFGS"</span>)</span>
+<span id="cb57-21"><a href="#cb57-21" aria-hidden="true" tabindex="-1"></a>resultado_gg</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$par
 [1] -2.8700735 -0.8786525  2.3651648
@@ -1137,11 +1095,8 @@ NULL</code></pre>
 <section id="gama-generalizada-flexsurvreg" class="level3" data-number="5.7.2">
 <h3 data-number="5.7.2" class="anchored" data-anchor-id="gama-generalizada-flexsurvreg"><span class="header-section-number">5.7.2</span> Gama Generalizada (Flexsurvreg)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>modelo_GG <span class="ot">&lt;-</span> <span class="fu">flexsurvreg</span>(<span class="fu">Surv</span>(tempos, censura) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">dist =</span> <span class="st">"gengamma"</span>)</span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>modelo_GG</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>modelo_GG <span class="ot">&lt;-</span> <span class="fu">flexsurvreg</span>(<span class="fu">Surv</span>(tempos, censura) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">dist =</span> <span class="st">"gengamma"</span>)</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>modelo_GG</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Call:
 flexsurvreg(formula = Surv(tempos, censura) ~ 1, dist = "gengamma")
@@ -1162,57 +1117,48 @@ AIC = 137.3815</code></pre>
 <section id="gama-generalizada-intervalo-de-confiança" class="level3" data-number="5.7.3">
 <h3 data-number="5.7.3" class="anchored" data-anchor-id="gama-generalizada-intervalo-de-confiança"><span class="header-section-number">5.7.3</span> Gama Generalizada (Intervalo de COnfiança)</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>resultado_gg <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> i, <span class="at">fn =</span> S_gamaG, <span class="at">t =</span> tempos, </span>
-<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">delta =</span> censura, <span class="at">method =</span> <span class="st">"BFGS"</span>, <span class="at">hessian =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Variância-Covariância (espaço log)</span></span>
-<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>var_covar_gg <span class="ot">&lt;-</span> <span class="fu">solve</span>(resultado_gg<span class="sc">$</span>hessian)</span>
-<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>se_gg <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(var_covar_gg))</span>
-<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a><span class="co"># IC 95% agora para os três parâmetros</span></span>
-<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)</span>
-<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>ic_alpha_gg <span class="ot">&lt;-</span> <span class="fu">exp</span>(resultado_gg<span class="sc">$</span>par[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> se_gg[<span class="dv">1</span>])</span>
-<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a>ic_gamma_gg <span class="ot">&lt;-</span> <span class="fu">exp</span>(resultado_gg<span class="sc">$</span>par[<span class="dv">2</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> se_gg[<span class="dv">2</span>])</span>
-<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a>ic_s_gg     <span class="ot">&lt;-</span> <span class="fu">exp</span>(resultado_gg<span class="sc">$</span>par[<span class="dv">3</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> se_gg[<span class="dv">3</span>])</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>resultado_gg <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="at">par =</span> i, <span class="at">fn =</span> S_gamaG, <span class="at">t =</span> tempos, </span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">delta =</span> censura, <span class="at">method =</span> <span class="st">"BFGS"</span>, <span class="at">hessian =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Variância-Covariância (espaço log)</span></span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>var_covar_gg <span class="ot">&lt;-</span> <span class="fu">solve</span>(resultado_gg<span class="sc">$</span>hessian)</span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>se_gg <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(var_covar_gg))</span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a><span class="co"># IC 95% agora para os três parâmetros</span></span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)</span>
+<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a>ic_alpha_gg <span class="ot">&lt;-</span> <span class="fu">exp</span>(resultado_gg<span class="sc">$</span>par[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> se_gg[<span class="dv">1</span>])</span>
+<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a>ic_gamma_gg <span class="ot">&lt;-</span> <span class="fu">exp</span>(resultado_gg<span class="sc">$</span>par[<span class="dv">2</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> se_gg[<span class="dv">2</span>])</span>
+<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a>ic_s_gg     <span class="ot">&lt;-</span> <span class="fu">exp</span>(resultado_gg<span class="sc">$</span>par[<span class="dv">3</span>] <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> z <span class="sc">*</span> se_gg[<span class="dv">3</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(tempos)</span>
-<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>logL_gg <span class="ot">&lt;-</span> <span class="sc">-</span>resultado_gg<span class="sc">$</span>value</span>
-<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>aic_gg <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_gg</span>
-<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>bic_gg <span class="ot">&lt;-</span> k<span class="sc">*</span><span class="fu">log</span>(n) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_gg</span>
-<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>hq_gg  <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k<span class="sc">*</span><span class="fu">log</span>(<span class="fu">log</span>(n)) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_gg</span>
-<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"AIC GG:"</span>, aic_gg, <span class="st">"| BIC GG:"</span>, bic_gg, <span class="st">"| HQ GG:"</span>, hq_gg)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(tempos)</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>logL_gg <span class="ot">&lt;-</span> <span class="sc">-</span>resultado_gg<span class="sc">$</span>value</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>aic_gg <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_gg</span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>bic_gg <span class="ot">&lt;-</span> k<span class="sc">*</span><span class="fu">log</span>(n) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_gg</span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>hq_gg  <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>k<span class="sc">*</span><span class="fu">log</span>(<span class="fu">log</span>(n)) <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>logL_gg</span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"AIC GG:"</span>, aic_gg, <span class="st">"| BIC GG:"</span>, bic_gg, <span class="st">"| HQ GG:"</span>, hq_gg)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>AIC GG: 137.3872 | BIC GG: 140.3744 | HQ GG: 137.9703</code></pre>
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Parâmetros convertidos</span></span>
-<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>a_gg <span class="ot">&lt;-</span> <span class="fu">exp</span>(resultado_gg<span class="sc">$</span>par[<span class="dv">1</span>])</span>
-<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>g_gg <span class="ot">&lt;-</span> <span class="fu">exp</span>(resultado_gg<span class="sc">$</span>par[<span class="dv">2</span>])</span>
-<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>s_gg <span class="ot">&lt;-</span> <span class="fu">exp</span>(resultado_gg<span class="sc">$</span>par[<span class="dv">3</span>])</span>
-<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Sobrevivência Teórica GG</span></span>
-<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>st_gg <span class="ot">&lt;-</span> <span class="fu">pgamma</span>((t_grid <span class="sc">/</span> a_gg)<span class="sc">^</span>g_gg, <span class="at">shape =</span> s_gg, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(km, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">main =</span> <span class="st">"Ajuste Gama Generalizada vs KM"</span>)</span>
-<span id="cb65-10"><a href="#cb65-10" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(t_grid, st_gg, <span class="at">col =</span> <span class="st">"cyan"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Parâmetros convertidos</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>a_gg <span class="ot">&lt;-</span> <span class="fu">exp</span>(resultado_gg<span class="sc">$</span>par[<span class="dv">1</span>])</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>g_gg <span class="ot">&lt;-</span> <span class="fu">exp</span>(resultado_gg<span class="sc">$</span>par[<span class="dv">2</span>])</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>s_gg <span class="ot">&lt;-</span> <span class="fu">exp</span>(resultado_gg<span class="sc">$</span>par[<span class="dv">3</span>])</span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Sobrevivência Teórica GG</span></span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>st_gg <span class="ot">&lt;-</span> <span class="fu">pgamma</span>((t_grid <span class="sc">/</span> a_gg)<span class="sc">^</span>g_gg, <span class="at">shape =</span> s_gg, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(km, <span class="at">conf.int =</span> <span class="cn">TRUE</span>, <span class="at">main =</span> <span class="st">"Ajuste Gama Generalizada vs KM"</span>)</span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(t_grid, st_gg, <span class="at">col =</span> <span class="st">"cyan"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="fucoes_optim_IC_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="fucoes_optim_IC_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1261,12 +1207,12 @@ AIC = 137.3815</code></pre>
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copiada");
+      button.setAttribute("title", "Copied!");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copiada");
+        button.setAttribute("data-bs-title", "Copied!");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -1636,13 +1582,16 @@ AIC = 137.3815</code></pre>
     }
   });
   </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./dist_log_logis.html" class="pagination-link" aria-label="Distribuição Log-logística">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Distribuição Log-logística</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./modelos_de_regressao_parametrico.html" class="pagination-link" aria-label="Modelos de Regressão Paramétrico">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelos de Regressão Paramétrico</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

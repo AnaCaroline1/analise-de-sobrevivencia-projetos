@@ -1,0 +1,31 @@
+## Modelo tempo de vida acelerado exponencial
+
+O modelo de distribuição exponencia para variável $T$ produz o modelo de regressão mais simples e bastante utilizado na literatura.
+Para $\sigma = 1$ e a distribuição para erro $\epsilon$ é a exponencial com média unitária, em que $f(\epsilon) = exp(-\epsilon)$.
+O modelo de regressão é dado por
+
+$$T = exp(\beta_0 + \beta'x)\epsilon$$
+
+ou, equivalente,
+
+$$Y = log(T) = \beta_0 + \beta'x + \nu$$
+
+$\nu = log(\epsilon) \rightarrow$ segue distribuição valor extremo padrão, sendo a função densidade dada por $f(\nu) = exp[\nu - exp(\nu)]$.
+
+Para o modelo, a função de sobrevivência para $T$ é dado por
+
+$$S(t | x) = exp \left[- \frac{t}{exp(\beta_0 + \beta'x)} \right]$$ e, para $Y$, por $S(y | x) = exp[-exp[y-(\beta_0 + \beta'x)]]$
+
+A função taxa de falha para o modelo tempo de vida acelerado, expresso por
+
+$$\lambda(t | x ) = exp(-\beta'x)\lambda_0[t/exp(\beta'x)]$$ onde $\lambda_0(t) = 1/\alpha$, como $\alpha = exp(\beta_0)$.
+
+$$\lambda_{0} = 1/exp(\beta_0) = exp(-\beta_{0})$$ Como a função de risco base não depende do $t$, temos que a taxa de risco base é constante ao longo do tempo, logo:
+
+$$\lambda_{0} \cdot\left[ t/exp(\beta'x) \right] = exp(-\beta_{0})$$ Sendo a taxa de falha para o modelo atf exponencial, dado por:
+
+$$\lambda(t | x ) = exp(-\beta'x) \cdot exp(-\beta_{0}) = exp(-(\beta'x+\beta_{0}))$$
+
+## Log-verossimilhança
+
+$$\log L = \sum_{i=1}^{n} \left[ \delta_{i} [-(\beta_{0}+\beta'x)] - \frac{t_{i}}{\exp(\beta_{0}+\beta' x_{i})} \right]$$

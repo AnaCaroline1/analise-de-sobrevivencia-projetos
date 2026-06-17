@@ -1,7 +1,4 @@
-library(survival)
 library(ggplot2)
-library(ggfortify)
-library(ggsurvfit)
 library(tidyverse)
 library(janitor)
 library(knitr)
@@ -10,19 +7,21 @@ library(knitr)
 library(arrow)
 library(readxl)
 library(MASS)
-# Salva o arquivo tratado
+# Carregar pacotes
+library(survival)
+library(survminer) # Para gráficos (opcional)
 
 tempos<-c(3,5,6,7,8,9,10,10,12,15,15,18,19,20,22,25,28,30,40,45)
 cens<-c(1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0)
 
 df_cc_bx <- data.frame(tempos, cens)
 
+set.seed(42)
+
+df_cc_bx$grupos <- sample(c("A","B"),size = nrow(df_cc_bx),replace = T)
+df_cc_bx$idade <- round(runif(nrow(df_cc_bx),min = 20, max = 60))
+
+df_cc_bx
 #write_parquet(df_final, "df_srag_sg.parquet")
-df_cc_pl <- read.table("cancer_de_pele.txt", header = T)
 
-i<-order(df_cc_pl$survtime)
-
-df_cc_pl<-df_cc_pl[i,]
-attach(df_cc_pl)
-
-source(".../distribuicoes.R")
+dengue <- read_parquet("df_dengue_2025.parquet")

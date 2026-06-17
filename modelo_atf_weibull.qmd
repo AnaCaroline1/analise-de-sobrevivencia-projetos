@@ -1,0 +1,59 @@
+# Modelo tempo de vida acelerado acelerado Weibull
+
+Assumir a distribuição de Weibull para a variável $T$, implica que $\sigma > 0$ é desconhecido e que a distribuição para o erro $\epsilon$ é a exponencial com média unitária. O modelo de regressão é dado por
+
+$$T = exp(\beta + \beta'x) \epsilon^{\sigma}$$
+
+ou, equivalente,
+
+$$Y = log(T) = \beta_0 + \beta'x + \nu$$
+
+
+## Função densidade Weibull
+
+$$f(t) = \frac{\gamma}{\alpha^\gamma} \cdot t^{(\gamma - 1)} \cdot \exp \left[ - \left( \frac{t}{\alpha} \right)^\gamma \right]$$
+$$\text{onde } \alpha = \exp(\beta_0)$$
+
+## Função de sobrevivência
+
+$$S(t|x) = \exp \left[ - \left( \frac{t}{\exp(\mu(x))} \right)^\gamma \right]$$
+
+$$\mu(x) = \beta_0 + \beta'x \text{ e } \gamma = 1/\sigma$$
+
+$$\theta = (\beta_0, \beta, \sigma)$$
+
+## Função Taxa de Falha
+
+$$\lambda(t | x ) = exp(-\beta'x)\lambda_0[t/exp(\beta'x)]$$
+onde 
+$\lambda_0(t) = \frac{\gamma}{\alpha^{\gamma}} \cdot t^{\gamma - 1}$, como $\alpha = exp(\beta_0)$. Aplicando $t/exp(\beta'x)$ em $t$ da taxa de falha base, temos que a função taxa de falha seja:
+
+$$
+\lambda(t | x ) = exp(-\beta'x) \frac{\gamma}{exp(\gamma \beta_0)} \cdot [t/exp(\beta'x)]^{\gamma - 1}
+$$
+
+$$
+\lambda(t | x ) = exp(-\beta'x)   \cdot \gamma \; [t   \cdot exp(-\beta'x)]^{\gamma - 1}   \cdot exp(-\gamma \beta_0)
+$$
+$$
+\lambda(t | x ) = exp(-\beta'x)   \cdot \gamma \; t^{\gamma - 1}   \cdot exp(-\beta'x (\gamma - 1))   \cdot exp(-\gamma \beta_0)
+$$
+
+$$
+\lambda(t | x ) = exp(-\beta'x)   \cdot \gamma \; t^{\gamma - 1}   \cdot exp(-\gamma\beta'x + \beta'x)   \cdot exp(-\gamma \beta_0)
+$$
+
+$$
+\lambda(t | x ) = \gamma \; t^{\gamma - 1}   \cdot exp(-\beta'x -\gamma\beta'x + \beta'x -\gamma \beta_0)
+$$
+
+$$
+\lambda(t | x ) = \gamma \; t^{\gamma - 1} \cdot exp(-\gamma\mu(x))
+$$
+
+## Log-verossimilhança 
+
+
+$$
+\log L = \sum_{i=1}^{n} \left[ \delta_i \Big( \log(\gamma) + (\gamma - 1)\log(t_i) - \gamma(\beta_0 + \boldsymbol{\beta}'\mathbf{x}_i) \Big) - \left( \frac{t_i}{\exp(\beta_0 + \boldsymbol{\beta}'\mathbf{x}_i)} \right)^\gamma \right]
+$$

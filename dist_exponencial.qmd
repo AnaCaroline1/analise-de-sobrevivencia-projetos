@@ -1,7 +1,6 @@
----
-eval: False
----
-
+```{r}
+source("_common.R")
+```
 # Distribuição Exponencial
 
 A função densidade de probabilidade associada a variável aleatória tempo até o evento $t$ com distribuição exponencial e função de sobrevivência é dada por:
@@ -15,39 +14,55 @@ Como o parâmetro $\alpha > 0$ correspondendo ao tempo médio de vida.
 ## Função de verossimilhança
 
 $$
-L(\theta | t) = \prod_{i=1}^{n} \left[\left(\frac{1}{\alpha} \cdot exp\left[-\frac{t}{\alpha}\right] \right)^{\delta_{i}} \cdot \left(exp\left[-\frac{t}{\alpha}\right]\right)^{1-\delta_{i}}\right]
+L(\theta | t_{i}) = \prod_{i = 1}^{n} \left[\frac{1}{\alpha} \cdot exp\left[-\frac{t_{i}}{\alpha}\right]\right]^{\delta_{i}} 
 $$
 
 $$
-= \prod_{i=1}^{n} \left[ \left( \frac{1}{\alpha} \right)^{\delta_{i}} \cdot \exp \left[ -\left( \frac{t_{i}}{\alpha} \right) \right]\right]
+= \left[\frac{1}{\alpha} \cdot exp\left[-\frac{t_{i}}{\alpha}\right]\right]^{\delta_{i}} \cdot \left[exp\left[-\frac{t_{i}}{\alpha}\right]\right]^{1-\delta_{i}}
+$$
+
+$$
+= \left[\frac{1}{\alpha^{n}}\right]^{\delta_{i}} \cdot exp\left(-\frac{\sum_{i=1}^{n}ti}{\alpha}\right)
+$$
+
+Podendo ser reescrita:
+
+$$
+= 1^{\delta_{i}} \cdot \alpha^{-n\cdot\delta_{i}} \cdot exp\left(-\frac{\sum_{i=1}^{n}ti}{\alpha}\right)
+$$
+
+Sabendo que $\delta_{i}=\{0,1\}$, aplicando em $1^{\delta_{i}}$ se tem 1 multiplicando $\alpha$, logo, a função de verossimilhança será:
+
+$$
+= \alpha^{-n\cdot\delta_{i}} \cdot exp\left(-\frac{\sum_{i=1}^{n}ti}{\alpha}\right)
 $$
 
 ## A Log-verossimilhança da exponencial
 
 $$
-\ell[L(\theta | t)] = \sum_{i=1}^n \left[ - \delta_i \log(\alpha) - \left( \frac{t_i}{\alpha} \right) \right]
+l[L(\hat{\theta}|t_{i})] = \log\left[\alpha^{-n\cdot\delta_{i}} \cdot exp\left(-\frac{\sum_{i=1}^{n}ti}{\alpha}\right) \right] = -n\cdot \delta_{i}\cdot \log(\alpha) -\frac{\sum_{i=1}^{n}t_{i}}{\alpha}
 $$
 
 Derivando em relação a $\alpha$ teremos que:
 
 $$
-\frac{\partial l[L(\hat{\theta}|t_{i})]}{\partial\alpha} = \frac{-\sum_{i=1}^{n}\cdot\delta_{i}}{\alpha} + \frac{\sum_{i=1}^{n}t_{i}}{\alpha^{2}} = 0
+\frac{\partial l[L(\hat{\theta}|t_{i})]}{\partial\alpha} = \frac{-n\cdot\delta_{i}}{\alpha} + \frac{\sum_{i=1}^{n}t_{i}}{\alpha^{2}} = 0
 $$
 
 $$
-\frac{-\sum_{i=1}^{n}\cdot\delta_{i}}{\alpha} + \frac{\sum_{i=1}^{n}t_{i}}{\alpha^{2}} = 0 \ \cdot (\alpha^{2}) 
+\frac{-n\cdot\delta_{i}}{\alpha} + \frac{\sum_{i=1}^{n}t_{i}}{\alpha^{2}} = 0 \ \cdot (\alpha^{2}) 
 $$
 
 $$
-= -\sum_{i=1}^{n}\cdot\delta_{i}\cdot \alpha + \sum_{i=1}^{n}t_{i} = 0 
+= -n\cdot\delta_{i}\cdot \alpha + \sum_{i=1}^{n}t_{i} = 0 
 $$
 
 $$
-\sum_{i=1}^{n} t_{i} = \sum_{i=1}^{n} \cdot \delta_{i} \cdot \alpha 
+\sum_{i=1}^{n} t_{i} = n \cdot \delta_{i} \cdot \alpha 
 $$
 
 $$
-\hat{\alpha} = \frac{\sum_{i=1}^{n}t_{i}}{\sum_{i=1}^{n}\cdot\delta_{i}}
+\hat{\alpha} = \frac{\sum_{i=1}^{n}t_{i}}{n\cdot\delta_{i}}
 $$
 
 Na ausência de censura, aplicando $\delta_{i}={1}$, teremos:
@@ -58,118 +73,88 @@ $$
 
 Que é exatamente a média amostral de $t_{i}$.
 
-## Sobre o modelo
 
-O modelo mais simples, caracterizado pela ausência de memória.
-Sendo aplicado em situações onde a falha ocorre de forma aleatória e estável, limitado para casos em que se quer obter o envelhecimento ou desgaste.
+```{r include=FALSE}
 
-## Linearização da função de sobrevivência
+# Verificanco com o banco de Síndrome Gripal
 
-> "Para comparar o comportamento do modelo com os dados utilizados, se pode aplicar a linearização da função de sobrevivência de cada modelo, construindo gráficos que sejam aproximadamente lineares, caso o modelo seja apropiado. Violação de lienaridade pode ser verificada visualmente de forma rápida."
+tempo_sg <- day(ymd(df_srag_sg$dt_sin_pri))
+status_sg1 <- df_srag_sg$status_1
 
-### Linearização da função de sobrevivência exponencial
+ajust1_sg <- survreg(Surv(tempo_sg,status_sg1)~1,dist = "exponential")
 
-Para o modelo exponencial, a função de sobre vivência é dada por
+ekm_sg1 <- survfit(Surv(tempo_sg,status_sg1)~1)
+time_sg1 <- ekm_sg1$time
+st_sg1 <- ekm_sg1$surv
 
-$$
-S(t)= exp\left[-\frac{t}{\alpha}\right]
-$$
+alpha_sg1 <-round(exp(ajust1_sg$coefficients[1]),2)
 
-Logo,
+ste_sg1<-exp(-time_sg1/alpha)
 
-$$-\log[S(t)] = \frac{t}{\alpha} = \left(\frac{1}{\alpha}\right)t$$
+ plot(st_sg1, ste_sg1, pch=16, ylim=c(0,1), xlim=c(0,1), 
+      xlab = "S(t): Kaplan-Meier", ylab="S(t): exponencial",
+      cex.lab=1.5,cex.axis=1.3)
+ abline(a=0,b=1)
 
-corresponde à equação da reta $y = a+bx$, $y=-log[S(t)]$, $a=0$, $b=1/\alpha$ e $x= t$.
-Sendo o modelo apropriado no caso $y$ versus t deve aproximadamente linear passando pela origem, com $\hat{S}(t)$ correspodendo ao estimador de Kaplan-Meier.
+# Verificando como os dados do livro: câncer de bexiga
 
-## Aplicação: pacientes com câncer de bexiga
+# Ajuste conforme a distribuição
 
-1º Função log-verossimilhança encontrado
+ajust1_cc_bx <- survreg(Surv(tempos,cens)~1,dist = "exponential")
+ajust2_cc_bx <- survreg(Surv(tempos,cens)~1,dist = "weibull")
+ajust3_cc_bx <- survreg(Surv(tempos,cens)~1,dist = "lognorm")
+# Ekm  dos dados
 
-```{r}
-#| eval: false
+ekm_cc_bx <- survfit(Surv(tempos,cens)~1)
+time <- ekm_cc_bx$time
+st <- ekm_cc_bx$surv
 
-log_vero_surv_exponencial <- function(theta, t, status) {
-  alpha <- theta[1]
-  
-  if(alpha <= 0) return(Inf)
-  
-  logv <- sum(-status * log(alpha) -(t/alpha))
-  
-  # Log-verossimilhança total (negativa para o optim)
-  return(-logv)
-}
+# Cálculo dos parâmetros estimados das distribuições
 
-```
+alpha<- round(exp(ajust1_cc_bx$coefficients[1]),2 )
+alpha2<-  round(exp(ajust2_cc_bx$coefficients[1]),2 )
+gama2<-1/ajust2_cc_bx$scale
 
-2º Estimador de Kaplan-Meier
+mi <-  round(ajust3_cc_bx$coefficients[1],2)
+alpha3 <- round(ajust3_cc_bx$scale,2)
 
-Dado por:
+ste_cc_bx<-exp(-time/alpha)
 
-$$
-\hat{S}(t)= \prod_{t_{j}\leq t} \left(1 - \frac{d_{j}}{n_{j}}\right)
-$$
+stw_cc_bx<- exp(-(time/alpha2)^gama2)
 
-```{r}
-#| eval: false
-ekm <- function(tempos,status){
-  ordem <- order(tempos)
-  t <- tempos[ordem]
-  s <- status[ordem]
-  
-  n <- length(t)
-  surv <- numeric(n)
-  p_surv <- 1
-  
-  for(i in 1:n) {
-    n_risco <- n - i + 1
-    if(s[i] == 1) {
-      p_surv <- p_surv * ((n_risco - 1) / n_risco)
-    }
-    surv[i] <- p_surv
-  }
-  
-  return(list(tempo = t, sobrevivencia = surv))
-}
-```
+stln_cc_bx<- pnorm((-log(time)+ mi)/alpha3)
 
-3º Aplicando o pacote $optim$ para estimar $\hat{\alpha}$
+par(mfrow=c(1,3))
+ plot(st, ste_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1), 
+      xlab = "S(t): Kaplan-Meier", ylab="S(t): exponencial",
+      cex.lab=1.5,cex.axis=1.3)
+ abline(a=0,b=1)
 
-```{r}
-#| eval: false
-ajus11 <- optim(par = 1,
-                fn=log_vero_surv_exponencial, 
-                t = tempos,
-                status = cens, 
-                method="Brent",#para um parâmetro
-                lower = 0.001,
-                upper = 1000)
-```
+ plot(st, stw_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1), 
+      xlab = "S(t): Kaplan-Meier", ylab="S(t): weibull",
+      cex.lab=1.5,cex.axis=1.3)
+ abline(a=0,b=1)
 
-O valor $\hat{\alpha}$ é de 20.41177 sendo o valor da estatistica da log-verrossimilhança para o modelo de 68.27389.
+ plot(st, stln_cc_bx, pch=16, ylim=c(0,1), xlim=c(0,1), 
+      xlab = "S(t): Kaplan-Meier", ylab="S(t): log-normal",
+      cex.lab=1.5,cex.axis=1.3)
+ abline(a=0,b=1)
 
-4º Obtendo o valor de $\hat{\alpha}$, se pode verificar graficamente a curva de sobrevivência teórica à curva de Kaplan-Meier.
+par(mfrow=c(1,3),mar=c(5,5,2,2)); 
+invst<-qnorm(st) 
+plot(time,-log(st),pch=16,xlab="Tempo",ylab="-log(S(t))") 
+plot(log(time),log(-log(st)),pch=16,xlab="log(Tempo)",ylab="log(-log(S(t)))") 
+plot(log(time),invst,pch=16,xlab="log(Tempo)",ylab=expression(Phi^-1*(S(t))))
 
-```{r}
-#| eval: false
+par(mfrow=c(1,2)) 
+plot(ekm_cc_bx,conf.int=F,xlab="Tempo",ylab="S(t)"); lines(c(0,time),c(1,stw_cc_bx),lty=2) 
+legend(25,0.8,lty=c(1,2),c("Kaplan-Meier","Weibull"),bty="n",cex=0.9) 
+plot(ekm_cc_bx,conf.int=F,xlab="Tempo",ylab="S(t)"); lines(c(0,time),c(1,stln_cc_bx),lty=2) 
+legend(25,0.8,lty=c(1,2),c("Kaplan-Meier","Log-normal"),bty="n",cex=0.9)
 
-t_teorico <- seq(0, max(tempos),length.out=50)
-s_teorico <- exp(-t_teorico/ajus11$par)
+
+?survfit.formula 
+?Surv
 
 ```
 
-![](imagens_ajustes_ver_1/modelo_vs_dados.jpeg){fig-align="center" width="90%"}
-
-5º E pela linearidade, se pode observar o comportamento dos dados ao modelo.
-
-```{r}
-#| eval: false
-risco_acumulado_km <- -log(km_c_bx$sobrevivencia)
-```
-
-![](imagens_ajustes_ver_1/verificacao_linearidade.jpeg){fig-align="center" width="90%"}
-
-No gráfico de verificação de risco ou linearidade, se observa o risco acumulado versus o tempo.
-Se o risco fosse constante para o modelo Exponencial, os pontos deveriam formar uma linha reta partindo da origem.
-No caso, entretanto, os pontos formam uma curva para cima, indicando que o risco de o evento ocorrer aumenta com o tempo (risco de reincidência do tumor).
-No início, o risco é vagaroso (tempo 0 a 15 meses), após o tempo 20, a inclinação aumenta bruscamente.
