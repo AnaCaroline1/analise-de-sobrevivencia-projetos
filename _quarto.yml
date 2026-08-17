@@ -33,6 +33,7 @@ format:
 execute: 
  warning: false
  collapse: true
+ fig-align: "center"
 
 
 editor: visual

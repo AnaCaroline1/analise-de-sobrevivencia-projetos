@@ -1,0 +1,419 @@
+---
+title: "Estudo envolvendo câncer de mama"
+format: 
+  html:
+    embed-resources: true
+---
+
+# Sobre o estudo
+
+O exmplo se baseia em estudo clínico retrospectivo que acompanhou 94 mulheres tratadas de câncer de mama. O objetivo do estudo era compara o impacto de dois esquemas terapeêuticos na estética das pacientes após o tratamento.
+
+As pacientes foram divididas em dois grupos:
+
+Grupo 1 (Radioterapia): 46 mulheres que receberam apenas radioterapia.
+
+Grupo 2 (Radioterapia + Quimioterapia): 48 mulheres que receberam o tratamento combinado.
+
+**Evento de interesse:** A primeira ocorrência (seja moderada ou severa) de retração da mama. Se trata de um efeito colateral que altera a parência física de mama afetada. Logo, neste estudo, a função de sobrevivência *S(t)* mede a probabilidade de a paciente continuar livre desse efeito colateral ao longo do tempo.
+
+
+# Censura intervalar
+
+A forma de coleta dos dados impede que se saiba o momento exato do aparecimento do efeito colateral:
+
+As pacientes não ficavam sob observação contínua. Retornavam à clínica para consultas de acompanhamento em intervalos periódicos (inicialmente a cada 4 ou 6 meses). 
+
+Caso a paciente tivesse boa evolução, o tempo entre consultas aumentava (passando a visitas a cada 8, 10 ou 12 meses).
+
+O médico não conhece o tempo exato em que a retração começou, sabe apenas que o evento ocorreu dentro do intervalo entre as duas consultas.
+
+Em caso de a paciente concluir o estudo sem manifestar nenhuma retração, o dado é classificado como censura à direita convencional.
+
+## Estimador de Turnbull
+
+## Análise por pacotes
+```{r pacotes}
+library(ggplot2)
+library(dplyr)
+library(survival) # Implementa a estimação não paramétrica para dados intervalares.
+library(icenReg) # Implementa a regressão e estimação não paramétrica de dados com censura intervalar.
+library(gt)
+library(dplyr)
+library(knitr)
+library(broom)
+library(survminer)#visualização gráfica 
+```
+
+```{r conjunto}
+c_mama <- read.table("https://docs.ufpr.br/~giolo/asa/dados/breast.txt",header = T) 
+
+head(c_mama)
+
+```
+
+```{r est-turn}
+fit_turnbull <- survfit(
+    Surv(left,right,cens, type = "interval") ~ ther,
+    data = c_mama
+  )
+# Ther (0,1): 1 = Terapia por Radioterapia
+# 0 = Terapia por Radioterapia & Quimioterapia
+# Evento de interesse: a primeira retração da mama(moderada/severa), a S(t) quer a probabilidade de a paciene continuar livre desse efeito colateral ao longo do tempo. 
+
+```
+
+Tempo de acompanhamento (em meses): Para o grupo 1 (Ther=1)- Radioterapia, foram 44 meses de acompanhamento, já o grupo 2 (Ther=0) - Radioterapia + Quimioterapia, foram 36 meses.
+
+<!-- Número estimado de paciente sob risco no tempo *t* de pacientes entre os intervalos em que a falha pode ter ocorrido. -->
+
+<!-- Número estimado de eventos (ocorrência de retração mamária moderada ou severa), atribuído àquele instante. -->
+
+Estimativa da função de sobrevivência $S(t)$, que indica a probabilidade de a paciente continuar sem retração mamária no mês *t*. 
+
+Para o grupo 1 (Ther=1) - Radioterapia, a probabilidade de permanecer livre da retração aos 17 meses é de 71% e se mantém em 51,6% aos 36 meses, convertendo em anos, após um ano e seis meses, uma paciente continua sem qualquer retração mamária e mesmo após três anos de acompanhamento, a probabilidade de continuar sem retração mamária é alta.
+
+Para o grupo 2 (Ther=2) - Radio+Quimio, a probabilidade de permanecer livre da retração mamária em 12 meses é de 72,75% e após 35 meses, passa para 16,27% para 7,78%, em termos de anos, em apenas um ano de acompanhamento para este grupo, se observa o evento de retração mamária, e após quase 4 anos de acompanhamento a probabilidade de uma paciente continuar livre de retração mamária é baixíssima, indicando que a quimioterapia acelera a ocorrencia desse evento.
+
+<!-- Erro padrão da estimativa da probabilidade de sobrevivência $\hat{S}(t)$. -->
+
+Pela visualização gráfica se pode visualizar tal comportamento entre os grupos:
+
+```{r graf-temp-terap}
+#| echo: false
+#| message: false
+#| fig-height: 6
+#| fig-width: 10
+#| paged-print: false
+
+# ----
+graf_turn <- ggsurvplot(fit_turnbull,
+           c_mama,
+           fun = "pct", #Exibe a porcentagem
+           palette = c("#b1476d","#f8df82"),
+           conf.int = T,
+           cumcensor = T,
+           tables.height = 0.25,
+           legend.title = "Terapias:",
+           legend.labs = c("Rad. + Quimioterapia", "Radioterapia" ),
+           xlab = "Tempo (em meses)",
+           ylab = "Sobrevivência Livre do Evento"
+           )
+graf_turn
+# ??ggsurvplot - várias configurações de visual.
+```
+
+Com base na figura, se nota que as curva $S(t)$ não apresentam diferenças marcantes no período de 0 e apróximo de 12 meses. A partir de doze meses, ocorre um decréscimo mais acentuado da curva $S(t)$ associada às pacientes que receberam radioterapia combinada com a quimioterapia. 
+
+```{r}
+#| warning: false
+#| fig-height: 2
+#| fig-width: 10
+
+#----
+fit_s <- summary(fit_turnbull)
+
+tab_est <- data.frame(
+  Grupo = fit_s$strata,
+  Tempo = fit_s$time,
+  N_riscos = round(fit_s$n.risk,2),
+  N_eventos = round(fit_s$n.event,2),
+  Sobrevivencia = round(fit_s$surv,4),
+  Erro_padrao = round(fit_s$std.err,4),
+  IC_inferior = round(fit_s$lower,4),
+  IC_superior = round(fit_s$upper,4)
+) |>
+  mutate(Grupo = ifelse(rep(Grupo, length.out = 
+                              length(Tempo)) == "ther=0", 
+                 "Rad + Quimio", "Radioterapia"))
+
+visu_tab <- kable(tab_est, 
+      col.names = c("Grupo", "Tempo", "N_riscos", "N_eventos","Sobrevivencia","Erro_padrao","IC_inferior","IC_superior"),
+      caption = "Comparação das Sobrevivências Estimadas S(t) ao Longo do Tempo")
+visu_tab
+```
+
+Seguindo a metodologia utilizada no livro #ref, a título de comparação, sobre tratar os dados de censura intervalar considerando o ponto médio dos intervalos como sendo o tempo exato de falha, podendo ser utilizado os métodos clássicos de análise de sobrevivência. 
+
+Através do estimador de Kaplan-Meier, se observa o seguinte comportamento entre as curvas de sobrevivência:
+
+```{r}
+#| fig-height: 5
+#| fig-width: 10
+
+# ----
+c_mama$p <- c_mama$left + ((c_mama$right - c_mama$left) / 2)
+c_mama$pm <- ifelse(is.finite(c_mama$p), c_mama$p, c_mama$left)
+c_mama$cens <- ifelse(is.finite(c_mama$p), 1, 0)
+
+# Ajuste Kaplan-Meier (Ponto Médio)
+fit_km <- survfit(Surv(pm, cens) ~ ther, data = c_mama)
+
+# Extração dos Dados das Curvas
+df_km <- tidy(fit_km) %>%
+  mutate(
+    Metodo = "Ponto médio dos intervalos",
+    Grupo = ifelse(grepl("1", strata), "Radioterapia", "Radioterapia e quimioterapia")
+  )
+
+df_tb <- tidy(fit_turnbull) %>%
+  mutate(
+    Metodo = "Turnbull",
+    Grupo = ifelse(grepl("1", strata), "Radioterapia", "Radioterapia e quimioterapia")
+  )
+
+df_plot <- bind_rows(df_km, df_tb)
+
+ggplot(df_plot, aes(x = time, y = estimate, color = Grupo, linetype = Metodo)) +
+  geom_step(linewidth = 0.8) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.2)) +
+  scale_x_continuous(limits = c(0, 50), breaks = seq(0, 50, 10)) +
+  scale_linetype_manual(values = c("Turnbull" = "solid", "Ponto médio dos intervalos" = "dashed")) +
+  scale_color_manual(values = c("Radioterapia" = "#2B8CBE", "Radioterapia e quimioterapia" = "#b1476d")) +
+  labs(
+    x = "Tempo (em meses)",
+    y = expression(S(t)),
+    color = "Tratamento",
+    linetype = "Estimador"
+  ) +
+  theme_classic() +
+  theme(
+    legend.position = "right",
+    legend.title = element_text(face = "bold"),
+    axis.title = element_text(size = 11)
+  )
+```
+
+As curvas apresentam comportamento similar em vários tempos, mas outros tendem a ser diferente,onde se espera que conforme haja maior amplitude dos intervalos essas diferenças se tornem maiores. Os autores destacam que quando se tem censura intervalar, o mais indica é analisar com base nos próprios intervalos registrados.
+
+## Modelos paramétricos
+
+
+
+
+
+# Aplicação manual do estimador de Turnbull
+
+```{r}
+turnbull_produto_limite <- function(L, R, tol = 1e-6, max_iter = 500) {
+  # Trata censuras à direita substituindo NAs por Infinito
+  R[is.na(R) | is.infinite(R)] <- Inf
+  
+  # 1. Definir a grade de tempos e os intervalos de equivalência (tau_j)
+  grid <- sort(unique(c(0, L[L > 0], R[is.finite(R)])))
+  m <- length(grid) - 1
+  tau_L <- grid[1:m]
+  tau_R <- grid[2:(m+1)]
+  n <- length(L)
+  
+  # Matriz indicadora alpha_ij (1 se o intervalo j esta contido em [L_i, R_i])
+  alpha <- matrix(0, nrow = n, ncol = m)
+  for (i in 1:n) {
+    for (j in 1:m) {
+      if (tau_L[j] >= L[i] && tau_R[j] <= R[i]) alpha[i, j] <- 1
+    }
+  }
+  
+  # Chute inicial para S(tau_j)
+  S <- seq(1, 0, length.out = m + 1)
+  
+  for (iter in 1:max_iter) {
+    S_old <- S
+    
+    # Passo 1: Calcular pj = S(tau_{j-1}) - S(tau_j)
+    p <- S_old[1:m] - S_old[2:(m+1)]
+    p[p < 1e-10] <- 1e-10 # Previne divisao por zero
+    
+    # Passo 2: Estimar o numero de eventos dj
+    denom <- as.vector(alpha %*% p)
+    denom[denom == 0] <- 1e-10
+    d <- colSums(alpha * (matrix(p, nrow = n, ncol = m, byrow = TRUE) / denom))
+    
+    # Passo 3: Obter o numero de individuos sob risco nj = sum_{k=j}^m d_k
+    n_risk <- rev(cumsum(rev(d)))
+    
+    # Passo 4: Atualizar o estimador produto-limite S(t) = prod(1 - dj/nj)
+    q_j <- ifelse(n_risk > 0, d / n_risk, 0)
+    q_j <- pmin(q_j, 1) # Restringe probabilidades ao intervalo [0, 1]
+    S_new <- c(1, cumprod(1 - q_j))
+    
+    # Criterio de convergencia
+    if (max(abs(S_new - S_old)) < tol) break
+    S <- S_new
+  }
+  
+  return(data.frame(
+    tau_inicio = tau_L,
+    tau_fim = tau_R,
+    d_j = round(d,4),
+    n_j = round(n_risk,4),
+    S_t = round(S[2:(m+1)],4)
+  ))
+}
+
+# Executando a função manual para um grupo
+
+grupo_1 <- c_mama |>
+  filter(ther == 1)
+grupo_2 <- c_mama |>
+  filter(ther == 0)
+resultado_manual1 <- turnbull_produto_limite(L = grupo_1$left, R = grupo_1$right)
+print(resultado_manual1)
+resultado_manual2 <- turnbull_produto_limite(L = grupo_2$left, R = grupo_2$right)
+print(resultado_manual2)
+
+fit_manual <- turnbull_produto_limite(c_mama$left,c_mama$right)
+# Plotagem manual com ggplot2
+ggplot(resultado_manual1, aes(x = tau_fim, y = S_t)) +
+  geom_step(direction = "hv", color = "darkblue", linewidth = 1) +
+  geom_point(color = "red", size = 2) +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(
+    title = "Estimador de Turnbull (Desenvolvimento Manual)",
+    x = "Tempo (meses)",
+    y = "S(t) Estimada"
+  ) +
+  theme_bw()
+ggplot(resultado_manual2, aes(x = tau_fim, y = S_t)) +
+  geom_step(direction = "hv", color = "darkblue", linewidth = 1) +
+  geom_point(color = "red", size = 2) +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(
+    title = "Estimador de Turnbull (Desenvolvimento Manual)",
+    x = "Tempo (meses)",
+    y = "S(t) Estimada"
+  ) +
+  theme_bw()
+```
+```{r}
+#| warning: false
+#| fig-height: 5
+#| fig-width: 10
+
+#----
+turnbull_manual_grupos <- function(L, R, grupo = NULL, tol = 1e-6, max_iter = 1000) {
+  
+  if (is.null(grupo)) {
+    grupo <- rep("Todos", length(L))
+  }
+  
+  estimar_turnbull_por_grupo <- function(L_sub, R_sub, nome_grupo) {
+    
+    R_sub[is.na(R_sub)] <- Inf
+    
+    tem_censura_direita <- any(is.infinite(R_sub))
+    
+    grid <- sort(unique(c(L_sub[L_sub > 0], R_sub[is.finite(R_sub)])))
+    if (tem_censura_direita) {
+      grid <- c(0, grid, Inf)
+    } else {
+      grid <- c(0, grid)
+    }
+    
+    m <- length(grid) - 1
+    tau_inicio <- grid[1:m]
+    tau_fim    <- grid[2:(m+1)]
+    n_obs      <- length(L_sub)
+    
+    alpha <- matrix(0, nrow = n_obs, ncol = m)
+    for (i in 1:n_obs) {
+      for (j in 1:m) {
+        if (tau_inicio[j] >= L_sub[i] && tau_fim[j] <= R_sub[i]) {
+          alpha[i, j] <- 1
+        }
+      }
+    }
+    
+    p <- rep(1 / m, m)
+    S <- 1 - cumsum(p)
+    
+    for (iter in 1:max_iter) {
+      S_old <- S
+      denom <- as.vector(alpha %*% p)
+      denom[denom == 0] <- 1e-10
+      pesos <- sweep(alpha, 1, denom, "/")
+      d <- colSums(sweep(pesos, 2, p, "*"))
+      n_j <- rev(cumsum(rev(d)))
+      taxa_falha <- ifelse(n_j > 0, d / n_j, 0)
+      taxa_falha[taxa_falha > 1] <- 1
+      S <- cumprod(1-taxa_falha)
+      S_anterior <- c(1, S[1:(m - 1)])
+      p <- S_anterior - S
+      p[p < 0] <- 0
+      if (max(abs(S - S_old)) < tol) break
+    }
+    
+    resultado <- data.frame(
+      Grupo      = nome_grupo,
+      tau_inicio = tau_inicio,
+      tau_fim    = tau_fim,
+      d_j        = round(d,4),
+      n_j        = round(n_j,4),
+      p_j        = round(p,4),
+      S_t        = round(S,4)
+    )
+    
+    # if (tem_censura_direita) {
+    #   resultado$S_t[m] <- NA
+    # }
+    
+    return(resultado)
+  }
+  
+  dados_split <- split(data.frame(L = L, R = R), grupo)
+  resultados <- do.call(rbind, lapply(names(dados_split), function(g) {
+    estimar_turnbull_por_grupo(dados_split[[g]]$L, dados_split[[g]]$R, g)
+  }))
+  
+  rownames(resultados) <- NULL
+  return(resultados)
+}
+
+res_turnbull <- turnbull_manual_grupos(
+  c_mama$left, c_mama$right,c_mama$ther
+)
+
+df_tb2 <- res_turnbull %>%
+  mutate(
+    Metodo = "Turnbull Produto Limite",
+    Grupo = ifelse(grepl("1", Grupo), "Radioterapia", "Radioterapia e quimioterapia")
+  )
+
+ggplot(df_tb2, aes(x = tau_fim, y = S_t, color = Grupo, linetype = Metodo)) +
+  geom_step(linewidth = 1) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.2)) +
+  scale_x_continuous(limits = c(0, 50), breaks = seq(0, 50, 10)) +
+  scale_linetype_manual(values = c("Turnbull Produto Limite" = "solid")) +
+  scale_color_manual(values = c("Radioterapia" = "#2B8CBE", "Radioterapia e quimioterapia" = "#b1476d")) +
+  labs(
+    x = "Tempo (em meses)",
+    y = expression(S(t)),
+    color = "Tratamento",
+    linetype = "Estimador"
+  ) +
+  theme_classic() +
+  theme(
+    legend.position = "right",
+    legend.title = element_text(face = "bold"),
+    axis.title = element_text(size = 11)
+  )
+
+```
+
+
+##Verossimilhança com Covariáveis e Censura Intervalar
+
+Quando se introduz covariáveis $x$ sob o modelo de Riscos Proporcionais (onde a sobrevivência individual é $S(t \mid x) = [S_0(t)]^{\exp(x'\beta)}$), a função de verossimilhança para dados com censura intervalar e à direita assume a seguinte estrutura:
+
+$$L(\beta, \theta) = \prod_{i=1}^{n} \left[ S(L_i \mid x_i) - S(R_i \mid x_i) \right]^{\delta_i} \cdot \left[ S(L_i \mid x_i) \right]^{1-\delta_i}$$
+
+Onde:$\delta_i = 1$: O indivíduo sofreu o evento no intervalo $(L_i, R_i]$. A contribuição na verossimilhança é a probabilidade de falhar nesse intervalo: $P(L_i < T_i \le R_i) = S(L_i \mid x_i) - S(R_i \mid x_i)$.
+
+$\delta_i = 0$: O indivíduo foi censurado à direita em $L_i$. 
+
+A contribuição é a probabilidade de ter sobrevivido além de $L_i$: $P(T_i > L_i) = S(L_i \mid x_i)$.
+
+Substituindo a relação $S(t \mid x) = [S_0(t)]^{\exp(x'\beta)}$:
+
+$$L(\beta, \theta) = \prod_{i=1}^{n} \left[ \left(S_0(L_i)\right)^{\exp(x_i'\beta)} - \left(S_0(R_i)\right)^{\exp(x_i'\beta)} \right]^{\delta_i} \cdot \left[ \left(S_0(L_i)\right)^{\exp(x_i'\beta)} \right]^{1-\delta_i}$$
+Ao aplicar o logaritmo ($\log L$), a estimação dos parâmetros $\beta$ e dos parâmetros da sobrevivência base $S_0(t)$ é realizada numeticamente por algoritmos de otimização (como Newton-Raphson via optim em R).

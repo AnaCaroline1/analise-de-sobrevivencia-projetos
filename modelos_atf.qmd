@@ -76,6 +76,10 @@ comparando_estimativas
 ```
 
 ```{r}
+#| fig-width: 4
+#| fig-height: 3
+
+
 # Intervalo de confiança
 
 IC_inf_exp <- beta_hat - 1.96*se_hat

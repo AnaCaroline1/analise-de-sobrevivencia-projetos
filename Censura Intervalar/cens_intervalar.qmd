@@ -1,0 +1,52 @@
+---
+title: "cens_intervalar"
+format: html
+---
+
+```{r}
+
+library(survival)
+library(tidyverse)
+library(icenReg)
+source("https://docs.ufpr.br/~giolo/asa/arquivos/Turnbull.R")  
+dat <- read.table("https://docs.ufpr.br/~giolo/asa/dados/breast.txt",h=T) 
+dat1 <- dat[dat$ther==1,]
+dat1$right[is.na(dat1$right)] <- Inf
+
+# Utilizando o pacote icenReg
+
+fit_np <- ic_np(cbind(left,right) ~ 0, data = dat1)
+summary(fit_np)
+plot(fit_np, xlab = "Tempo (em meses)", ylab = "S(t) estimado")
+
+# Utilizando o survival
+
+fit_surv <- Surv(time = dat1$left, time2 = dat1$right, event=dat1$cens, type = "interval")
+
+plot(fit_surv)
+
+# Utilizando o pacote survival e os códigos do livro dos professores Colossimo e Giolo
+
+ tau <- cria.tau(dat1)
+ p <- S.ini(tau=tau)
+ A <- cria.A(data=dat1,tau=tau)
+ tb1 <- Turnbull(p,A,dat1)
+ tb1
+ dat1 <- dat[dat$ther==0,]
+ dat1$right[is.na(dat1$right)] <- Inf
+ tau <- cria.tau(dat1)
+ p <- S.ini(tau=tau)
+ A <- cria.A(data=dat1,tau=tau)
+ tb2 <- Turnbull(p,A,dat1)
+ tb2
+
+ ### Figura 8.1 ###  
+ par(mfrow=c(1,1))
+ plot(tb1$time, tb1$surv, lty=1, type = "s", ylim=c(0,1), xlim=c(0,50), 
+      xlab="Tempo (em meses)", ylab="S(t)")
+ lines(tb2$time, tb2$surv, lty=4, type="s")
+ legend(1,0.3,lty=c(1,4),c("Radioterapia","Radioterapia e quimioterapia"), 
+        bty="n",cex=0.9)
+
+```
+

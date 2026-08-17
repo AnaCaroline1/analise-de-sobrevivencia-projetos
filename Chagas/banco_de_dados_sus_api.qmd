@@ -1,0 +1,193 @@
+---
+title: "banco_de_dados_sus_api"
+format: html
+---
+
+```{r}
+library(microdatasus)
+library(dplyr)
+library(tidyverse)
+library(survival)
+library(lubridate)
+library(naniar)
+```
+
+```{r}
+dados_brutos <- fetch_datasus(
+  year_start = 2024,
+  year_end = 2025,
+  information_system = "SINAN-CHAGAS"
+)
+
+dados_processados <- process_sinan_chagas(dados_brutos)
+
+# Salvando um banco de dados de uma api
+#saveRDS(dados_processados, "dados_chagas_sus.rds")
+
+chagas_sus <- read_rds("dados_chagas_sus.rds")
+
+colSums(is.na(chagas_sus))
+
+table(chagas_sus$CLASSI_FIN,chagas_sus$EVOLUCAO)
+
+datas_cols <- chagas_sus |>
+select(starts_with("DT_"))
+
+cat("Variáveis 'datas' que podem ser úteis ou não:\n\n")
+colnames(datas_cols)
+
+cat("\n\nVariáveis que podem ser úteis ou não:\n\n")
+colnames(chagas_sus)
+
+```
+
+
+```{r}
+head(chagas_sus)
+
+chagas_pa <- chagas_sus |> 
+  filter(
+    SG_UF == "Pará",
+    SG_UF_NOT == "Pará",
+    CLASSI_FIN %in% c("Confirmado", "Descartado"),
+    EVOLUCAO %in% c("Óbito pelo agravo notificado", "Vivo")
+  )
+  select(
+    # Datas de Coletas Sorológicas: confirmação laboratorial
+    DT_COL_S1,DT_COL_S2,
+    # Datas para evolução dos casos:
+    DT_SIN_PRI,DT_NOTIFIC, DT_OBITO, DT_ENCERRA,
+    # Evento:
+    EVOLUCAO,
+    # Covariáveis Demográficas:
+    IDADEanos, CS_SEXO, CS_RACA, CS_ESCOL_N,CS_GESTANT,
+    # Covariáveis clínicas (sinais/sintomas):
+    FEBRE, EDEMA, HEPATOME, ESPLENOM, SINAIS_ICC,
+    ARRITMIAS, CHAGOMA, MAECHAGA, MENINGOE, POLIADENO,
+    ASTENIA, MICRO_HEMA, OUTRO_SIN,
+    # Covariáveis Epidemiológicas/exposição:
+    HISTORIA, CON_TRIAT,CON_PROVAV, COUFINF, COPAISINF,
+    PARASITO, CRITERIO,
+    # Geográfica:
+    ID_MN_RESI
+  )
+
+datas_cols <- chagas_pa |>
+select(starts_with("DT_"))
+```
+
+
+```{r}
+
+# Limpeza do banco
+
+teste <- chagas_sus |>
+  filter(
+    SG_UF == "Pará",
+    SG_UF_NOT == "Pará",
+    CLASSI_FIN == "Confirmado"
+  )
+
+nrow(teste)
+
+table(teste$SG_UF)
+table(teste$SG_UF_NOT)
+table(teste$CLASSI_FIN)
+
+miss_var_summary(chagas_pa)
+
+table(chagas_pa$EVOLUCAO, useNA = "always")
+
+gg_miss_upset(chagas_pa)
+
+chagas_pa <- chagas_pa |>
+  mutate(
+    CS_ESCOL_N = fct_explicit_na(
+      factor(CS_ESCOL_N),
+      na_level = "Ignorado"
+    ),
+    SINTOMATIC = fct_explicit_na(
+      factor(SINTOMATIC),
+      na_level = "Ignorado"
+    )
+  )|>
+  filter(
+    !is.na(evento)
+  )
+chagas_pa <- chagas_pa |>
+  select(
+    -DT_OBITO,
+    -DT_ENCERRA,
+    -DT_SIN_PRI
+  )
+table(chagas_pa$EVOLUCAO, useNA = "always")
+sum(complete.cases(chagas_pa))
+nrow(chagas_pa)
+
+sapply(chagas_pa, function(x) sum(is.na(x)))
+sum(complete.cases(chagas_pa))
+table(chagas_pa$evento)
+
+gg_miss_upset(chagas_pa)
+```
+
+
+```{r}
+validacao_sinan <- dados_processados |>
+  summarise(
+    notificacoes = n(),
+    sem_classificacao_final = sum(
+      is.na(CLASSI_FIN) | CLASSI_FIN == "",
+      na.rm = TRUE
+    ),
+    sem_municipio_residencia = sum(
+      is.na(ID_MN_RESI) | ID_MN_RESI == "",
+      na.rm = TRUE
+    ),
+    sem_data_notificacao = sum(is.na(DT_NOTIFIC)),
+    sem_data_sintomas = sum(is.na(DT_SIN_PRI)),
+    encerramento_pendente = sum(is.na(DT_ENCERRA), na.rm = TRUE)
+  )
+
+validacao_sinaN
+
+```
+
+```{r}
+
+chagas_vivos_sexo <- survfit(Surv(tempo, evento) ~ CS_SEXO, chagas_pa)
+summary(chagas_vivos)
+
+autoplot(chagas_vivos_sexo)+
+  labs(y = "Probabilidade de Sobrevivência", x = "Tempo (dias)",color = NULL,fill=NULL)+
+  theme_bw()
+```
+```{r}
+chagas_vivos_raca <- survfit(Surv(tempo, evento) ~ SINAIS_ICC, chagas_pa)
+
+autoplot(chagas_vivos_raca)+
+  labs(y = "Probabilidade de Sobrevivência", x = "Tempo (dias)",color = NULL,fill=NULL)+
+  theme_bw()
+```
+
+
+
+Os dados do SINAN-CHAGAS possuem as seguintes variáveis de interesse para estudo em análise de sobrevivência:
+
+Evolução do caso | EVOLUCAO
+
+Data do Óbito | DT_OBITO
+
+Data de Sintoma Primário | DT_SIN_PRI
+
+Classificação Final | CLASSI_FIN
+
+
+
+# Referências
+
+E-book sobre os dados armazenados: 
+
+https://rfsaldanha.github.io/sis/sinan.html
+
+SALDANHA, Raphael de Freitas; BASTOS, Ronaldo Rocha; BARCELLOS, Christovam. Microdatasus: pacote para download e pré-processamento de microdados do Departamento de Informática do SUS (DATASUS). Cad. Saúde Pública, Rio de Janeiro , v. 35, n. 9, e00032419, 2019. Available from https://doi.org/10.1590/0102-311x00032419.

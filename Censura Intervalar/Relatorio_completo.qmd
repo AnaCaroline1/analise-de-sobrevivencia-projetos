@@ -1,0 +1,124 @@
+---
+title: "Análise de Sobrevivência em Dados com Censura Intervalar: Métodos e Aplicações"
+subtitle: "Estimação Bayesiana no modelo de chances proporcionais para dados com censura intervalar"
+author: "Ana Caroline Alexandre Pantoja"
+lang: pt-BR
+bibliography: refe.bib
+# csl: abnt.csl
+
+# Configuração de Numeração e Referências Automáticas (Crossref)
+# crossref:
+#   fig-title: "Figura"
+#   fig-prefix: "Figura"
+#   tbl-title: "Tabela"
+#   tbl-prefix: "Tabela"
+
+format:
+  pdf:
+    pdf-engine: xelatex
+    documentclass: article
+    classoption: [12pt, a4paper]
+    fig-pos: "H"            # Força o travamento de Figuras/Gráficos
+
+    # Margens ABNT
+    geometry:
+      - top=3cm
+      - bottom=2cm
+      - left=3cm
+      - right=2cm
+
+    # Estrutura do Sumário
+    toc: true
+    toc-title: "Sumário"
+    toc-depth: 3
+    number-sections: true
+
+    # Tipografia
+    mainfont: "Times New Roman"
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Introdução e Justificativa
+
+Análise de sobrevivência é a expressão utilizada para designar a análise estatística de dados quando a variável resposta em estudo representa o tempo desde um instante inicial até a ocorrência de determinado evento de interesse. O evento de interesse pode ser, por exemplo, a morte de um paciente, a cura ou recidiva de uma doença ou a ocorrência de uma falha em um equipamento.
+
+Uma característica peculiar dos dados de sobrevivência é a presença de censura, caracterizada pela observação incompleta da variável de interesse para alguns indivíduos do estudo, seja por iniciativa dos mesmos em sair do estudo, perda de contato durante o acompanhamento, término do estudo sem a ocorrência do evento de interesse, etc. A censura pode ser classificada como: à direita, à esquerda e intervalar.
+
+Segundo 'kalb2002' e 'collett2015', entre outros, o tipo de censura à direita é o que ocorre com maior frequência em problemas práticos. No entanto, situações em que a censura é intervalar também ocorrem com bastante frequência, especialmente na área médica. 'peto73', por exemplo, relata dados de consultas anuais com 196 meninas, com o objetivo de avaliar o tempo até o desenvolvimento da maturidade sexual, registrado no momento de cada consulta. Outro exemplo consistiu no estudo de um tratamento de mulheres com câncer de mama, em que os retornos ao especialista ocorrem a cada quatro a seis meses e, durante as visitas, os médicos avaliam a aparência da paciente, principalmente a retração da mama, a qual apresenta um impacto negativo na aparência e estética geral da paciente, representando o evento de interesse a ser estudado [@finkelstein1985]. Mais exemplos podem ser encontrados em 'klein2003', @gomez2004, @sun2006 e @colosimo2006, entre outros.
+
+Um modelo semiparamétrico bastante popular em análise de sobrevivência é o modelo exponencial por partes (MEP). Este modelo, apesar de ser paramétrico em um senso estrito, não requer suposições quanto à forma da função risco, o que é considerado uma vantagem quando comparado a um modelo paramétrico que restringe a forma da função risco. Segundo 'ibrahim2001', o MEP é caracterizado pela aproximação da função risco por segmentos de retas constantes, cujos comprimentos são determinados por uma grade de pontos $\tau$ que divide o eixo dos tempos em um número finito de intervalos. A grade $\tau$ desempenha um papel fundamental nas estimativas dos parâmetros de interesse, bem como na qualidade do ajuste do modelo, uma vez que $\tau$ determina o número de intervalos para aproximação da função risco.
+
+A literatura relacionada ao MEP é bastante extensa. 'friedman1982' utiliza o MEP para modelar a função risco de base do modelo de 'cox1972', apresentando as condições de existência e a distribuição assintótica dos estimadores de máxima verossimilhança para as taxas de falha e coeficientes de regressão. Em 'kim1991', são apresentadas algumas vantagens do MEP, na ausência de covariáveis, comparativamente ao estimador limite produto da função de sobrevivência proposto por 'Kaplan1958'. No artigo de 'chen2001' é empregado o método da máxima verossimilhança para ajustar as taxas de falha do MEP na presença de dados faltantes e fração de curados.
+
+Apesar da popularidade do MEP, a literatura relacionada a esse modelo para o ajuste de dados de sobrevivência sujeitos a censura intervalar ainda é relativamente pequena. Um trabalho bastante citado é o artigo de 'lindsey1998', que apresentam um tutorial envolvendo modelos e métodos paramétricos e não paramétricos, em que o MEP é um dos modelos utilizados na modelagem dos dados de sobrevivência com censura intervalar.
+
+# Objetivos
+
+Os principais objetivos pretendidos com a execução deste plano de trabalho são:
+
+1. Apresentar uma revisão bibliográfica detalhada das principais abordagens frequentistas e Bayesianas existentes na literatura para a análise de sobrevivência com censura intervalar, visando fornecer ferramentas aos usuários que possibilitem a melhor utilização destes modelos para a solução de problemas reais, através do uso do exponencial por partes;
+
+2. Desenvolver extensões no MEP como visto em @santosjunior2016;
+
+3. Desenvolver um pacote estatístico, a ser disponibilizado em R ['RCoreTeam2022'], para o ajuste dos modelos propostos, bem como as principais abordagens discutidas no trabalho de revisão.
+
+# Metodologia
+
+Seja $T$ uma variável aleatória contínua e não negativa, correspondendo ao tempo até a ocorrência de um evento de interesse, com função densidade e função de distribuição acumulada denotadas, respectivamente, por $f(t)$ e $F(t)$. Uma das funções mais importantes em análise de sobrevivência, que fornece a probabilidade de um indivíduo sobreviver por mais que um tempo $t$, é chamada de função de sobrevivência, e é definida por:
+
+$$
+S(t) = 1-F(t)=P(T>t)=\int_{t}^{\infty}f(u)du.
+$$
+
+Outra função de grande importância em análise de sobrevivência é a função risco, que representa a taxa de falha instantânea no tempo $t$, e é definida da seguinte forma:
+
+$$
+h(t)=\lim_{\Delta t \to 0}\frac{P(t < T \leq t + \Delta t \mid T > t)}{\Delta t}.
+$$
+
+As funções $f(t)$, $S(t)$, $F(t)$ e $h(t)$, associadas à variável aleatória $T$, são matematicamente relacionadas, ou seja, para sabermos a distribuição de $T$ basta conhecermos a expressão de pelo menos uma delas. Dessa forma, usando a função em ref(eq:hazard-concept), tem-se:
+
+$$
+h(t)=\frac{f(t)}{S(t)}=-\frac{S'(t)}{S(t)}=-\frac{d}{dt}\log(S(t)),
+$$
+
+e a função de sobrevivência em ref(eq:surv-concept) pode ser expressa como:
+
+$$
+S(t)=\exp\left(-\int_{0}^{t}h(u)du\right)= \exp\left(-H(t)\right),
+$$
+
+em que $H(t)$ é a função risco acumulado. Assim, combinando as relações em ref(eq:relation-1) e ref(eq:relation-2), temos que a função densidade pode ser expressa em termos de $h(t)$ e $S(t)$ da seguinte forma:
+
+$$
+f(t)=-\frac{d}{dt}S(t)=h(t)S(t)=h(t)\exp\left(-H(t)\right).
+$$
+
+## Censura Intervalar {#sec-interval}
+
+Para dados sujeitos a censura intervalar, tem-se somente o conhecimento de que os tempos de falha $T$ não são mais observados de forma exata, ou seja, sabe-se somente que o evento de interesse ocorreu em algum momento de um intervalo de tempo do tipo $(L,R]$, em $L < T \leq R$. Quando $L=R$, observamos um tempo de falha de forma exata.
+
+Na prática, os valores de $L$ e $R$ referem-se a tempos de avaliação e, assim, para alguns indivíduos o evento poderá ocorrer após a última visita com o avaliador, caracterizando observações sujeitas a censura à direita e dessa forma o tempo de falha $T$ pode ocorrer no intervalo $(L,\infty)$. De maneira similar, para alguns indivíduos o evento de interesse pode ter ocorrido anteriormente à primeira avaliação, representando indivíduos sujeitos a censura à esquerda, ou seja, o intervalo observado é $(0, R]$ com $L=0$ que representa o início do estudo e $R$ o tempo decorrido desde o início até a primeira visita. Na Tabela ref(tab:tabela1) é apresentado um resumo sobre a estrutura de dados com censura intervalar e seus casos especiais.
+
+Table: (\#tab:tabela1) Resumo de cenários para dados censurados.
+
+| Tipo de Observação | Intervalo / Condição |
+| :--- | :--- |
+| Tempo de falha exato | $T = t$ |
+| Censurado à direita | $T \in (L, \infty)$ |
+| Censurado à esquerda | $T \in (0, R]$ |
+| Com tempo intervalar | $T \in (L, R]$ |
+
+@sun2006 apresenta diferentes estruturas dos dados de sobrevivência com censura intervalar e apresentamos a seguir alguns casos que geralmente ocorrem na prática.
+
+Agora, considerando uma amostra aleatória de $n$ indivíduos, referente aos intervalos de tempos de falha e de censura, denote por $[L_{i},R_{i}]$ para o $i$-ésimo indivíduo. De maneira geral, assumindo que o mecanismo gerador da censura é não informativo, a função de verossimilhança para dados com censura intervalar é dada por:
+
+$$
+L(\boldsymbol{\Theta}, \boldsymbol{\beta} \mid D) = \prod_{i=1}^{n}\left[S(l_{i}\mid\boldsymbol{\Theta},\boldsymbol{\beta},\mathbf{x}_{i})-S(r_{i}\mid\boldsymbol{\Theta},\boldsymbol{\beta},\mathbf{x}_{i})\right]^{\delta_{i}}\left[S(l_{i}\mid\boldsymbol{\Theta},\boldsymbol{\beta},\mathbf{x}_{i})\right]^{1-\delta_{i}}
+$$
+
+em que $D=\{(l_{i}, r_{i}, \delta_{i}, \mathbf{x}_{i}): i=1,2, \dots,n\}$ representa o conjunto dos dados observados, $S(\cdot\mid\boldsymbol{\Theta})$ é a função de sobrevivência e $\delta_{i}$ é o indicador de falha.
+
+# Referências
