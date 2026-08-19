@@ -6,6 +6,7 @@ format:
 ---
 
 ```{r pacotes}
+#| include: false
 library(microdatasus)
 library(dplyr)
 library(naniar)
@@ -18,6 +19,7 @@ library(ggplot2)
 ```
 
 ```{r tratamento}
+#| include: false
 # ----
 # sih_raw <- fetch_datasus(
 #   year_start = 2023,
@@ -67,10 +69,12 @@ df <- read.csv("chagas_sih_rd.csv") |>
 #
 
 ```{r visu-geo}
+#| message: false
+#| warning: false
+#| include: false
 # 1. Baixar as Regiões do Pará (Exemplo com Regiões Intermediárias do IBGE)
+pa_mun <- read_municipality(code_muni = "PA", year = 2020)
 regioes_pa <- read_intermediate_region(code_intermediate = "PA", year = 2020)
-
-# 2. Seu resumo por município
 res_mun_23 <- df |>
   filter(ANO_CMPT == "2023") |>
   group_by(munResNome) |>
@@ -80,7 +84,7 @@ res_mun_23 <- df |>
   )
 
 # 3. Junção do mapa de municípios com o seu resumo
-mapa_regioes_1 <- para_uf |>
+mapa_regioes_1 <- pa_mun |>
   left_join(
     res_mun_23,
     by = c("name_muni" = "munResNome")
@@ -95,15 +99,17 @@ res_mun_24 <- df |>
   )
 
 # 3. Junção do mapa de municípios com o seu resumo
-mapa_regioes_2 <- para_uf |>
+mapa_regioes_2 <- pa_mun |>
   left_join(
     res_mun_24,
     by = c("name_muni" = "munResNome")
   )
 
+
 ```
 
 ```{r graf-md}
+#| echo: false
 #| message: false
 #| fig-height: 7
 #| fig-width: 8

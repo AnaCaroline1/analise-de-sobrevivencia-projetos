@@ -1,9 +1,12 @@
 ---
 title: "banco_de_dados_sus_api"
-format: html
+format: 
+  html:
+    embed-resources: true
 ---
 
 ```{r pacotes}
+#| include: false
 library(microdatasus)
 library(dplyr)
 library(tidyverse)
@@ -14,6 +17,7 @@ library(gt)
 ```
 
 ```{r verif-origin}
+#| include: false
 # dados_brutos <- fetch_datasus(
 #   year_start = 2024,
 #   year_end = 2025,
@@ -57,6 +61,7 @@ colnames(chagas_sus)
 
 
 ```{r conjunto-para}
+#| echo: false
 # ----
 chagas_pa <- chagas_sus |> 
   filter(
@@ -97,19 +102,20 @@ chagas_pa <- chagas_sus |>
   ) |>
   select(-NU_IDADE_N,-unidade_tempo,-valor_idade) 
 
-head(chagas_pa$CRITERIO)
+head(chagas_pa)
 
 
 ```
 
 ```{r}
+#| echo: false
 freq_pa <- chagas_pa |>
   filter(!is.na(CLASSI_FIN)) |>
   count(CLASSI_FIN,EVOLUCAO,sort = TRUE) |>
   pivot_wider(names_from = EVOLUCAO, values_from = n, values_fill = 0) |>
   gt() |>
   tab_header(
-  title = "Evolução de casos pela Classifiação"
+  title = "Evolução de casos pela Classifiação no Pará"
   ) |>
   cols_label(
     CLASSI_FIN = "Classificação Final"
@@ -119,6 +125,9 @@ freq_pa
 
 
 ```{r}
+#| message: false
+#| warning: false
+#| echo: false
 
 # Limpeza do banco
 
@@ -141,39 +150,41 @@ table(chagas_pa$EVOLUCAO, useNA = "always")
 
 gg_miss_upset(chagas_pa)
 
-chagas_pa <- chagas_pa |>
-  mutate(
-    CS_ESCOL_N = fct_explicit_na(
-      factor(CS_ESCOL_N),
-      na_level = "Ignorado"
-    ),
-    SINTOMATIC = fct_explicit_na(
-      factor(SINTOMATIC),
-      na_level = "Ignorado"
-    )
-  )|>
-  filter(
-    !is.na(evento)
-  )
-chagas_pa <- chagas_pa |>
-  select(
-    -DT_OBITO,
-    -DT_ENCERRA,
-    -DT_SIN_PRI
-  )
-table(chagas_pa$EVOLUCAO, useNA = "always")
-sum(complete.cases(chagas_pa))
-nrow(chagas_pa)
-
-sapply(chagas_pa, function(x) sum(is.na(x)))
-sum(complete.cases(chagas_pa))
-table(chagas_pa$evento)
-
-gg_miss_upset(chagas_pa)
+# chagas_pa <- chagas_pa |>
+#   mutate(
+#     CS_ESCOL_N = fct_explicit_na(
+#       factor(CS_ESCOL_N),
+#       na_level = "Ignorado"
+#     ),
+#     SINTOMATIC = fct_explicit_na(
+#       factor(SINTOMATIC),
+#       na_level = "Ignorado"
+#     )
+#   )|>
+#   filter(
+#     !is.na(evento)
+#   )
+# chagas_pa <- chagas_pa |>
+#   select(
+#     -DT_OBITO,
+#     -DT_ENCERRA,
+#     -DT_SIN_PRI
+#   )
+# table(chagas_pa$EVOLUCAO, useNA = "always")
+# sum(complete.cases(chagas_pa))
+# nrow(chagas_pa)
+# 
+# sapply(chagas_pa, function(x) sum(is.na(x)))
+# sum(complete.cases(chagas_pa))
+# table(chagas_pa$evento)
+# 
+# gg_miss_upset(chagas_pa)
 ```
 
 
 ```{r}
+#| eval: false
+#| include: false
 validacao_sinan <- dados_processados |>
   summarise(
     notificacoes = n(),
@@ -195,20 +206,22 @@ validacao_sinaN
 ```
 
 ```{r}
+#| eval: false
+#| include: false
 
-chagas_vivos_sexo <- survfit(Surv(tempo, evento) ~ CS_SEXO, chagas_pa)
-summary(chagas_vivos)
-
-autoplot(chagas_vivos_sexo)+
-  labs(y = "Probabilidade de Sobrevivência", x = "Tempo (dias)",color = NULL,fill=NULL)+
-  theme_bw()
-```
-```{r}
-chagas_vivos_raca <- survfit(Surv(tempo, evento) ~ SINAIS_ICC, chagas_pa)
-
-autoplot(chagas_vivos_raca)+
-  labs(y = "Probabilidade de Sobrevivência", x = "Tempo (dias)",color = NULL,fill=NULL)+
-  theme_bw()
+# chagas_vivos_sexo <- survfit(Surv(tempo, evento) ~ CS_SEXO, chagas_pa)
+# summary(chagas_vivos)
+# 
+# autoplot(chagas_vivos_sexo)+
+#   labs(y = "Probabilidade de Sobrevivência", x = "Tempo (dias)",color = NULL,fill=NULL)+
+#   theme_bw()
+# ```
+# ```{r}
+# chagas_vivos_raca <- survfit(Surv(tempo, evento) ~ SINAIS_ICC, chagas_pa)
+# 
+# autoplot(chagas_vivos_raca)+
+#   labs(y = "Probabilidade de Sobrevivência", x = "Tempo (dias)",color = NULL,fill=NULL)+
+#   theme_bw()
 ```
 
 
