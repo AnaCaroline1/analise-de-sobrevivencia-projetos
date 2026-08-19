@@ -1,0 +1,248 @@
+---
+title: "Explorando Dados do Sistema de Informações Hospitalares do SUS - SIH-RD"
+format:
+  html:
+    embed-resources: true
+---
+
+```{r pacotes}
+library(microdatasus)
+library(dplyr)
+library(naniar)
+
+library(gt)
+library(lubridate)
+
+library(geobr)
+library(ggplot2)
+```
+
+```{r tratamento}
+# ----
+# sih_raw <- fetch_datasus(
+#   year_start = 2023,
+#   month_start = 1,
+#   year_end = 2024,
+#   month_end = 12,
+#   uf = "PA",
+#   information_system = "SIH-RD"
+# )
+# 2. Processar rótulos do SIH
+# sih_proc <- process_sih(sih_raw)
+# saveRDS(sih_proc, "sih_geral.rds")
+# sih_proc <- read_rds("sih_geral.rds")
+# Filtrar para Doença de Chagas (CID B57)
+# chagas <- sih_proc |>
+#   filter(substr(DIAG_PRINC, 1, 3) == "B57")|>
+#   select(
+#     # Datas para evolução dos casos:
+#     DT_INTER,DT_SAIDA,DIAS_PERM,ANO_CMPT,
+#     # Eventos:
+#     DIAG_PRINC, COBRANCA, MORTE,
+#     # Parte clínico e de Gravidade:
+#     DIAG_PRINC, DIAGSEC1,CAR_INT,CAR_INT,PROC_REA,
+#     # Covariáveis Demográficas:
+#     NASC,IDADE,SEXO,RACA_COR,NUM_FILHOS, DIAS_PERM,
+#     # Geográfica:
+#     MUNIC_MOV,MUNIC_RES,munResNome,munResLat,munResLon, munResAlt
+#   )
+# write.csv(chagas,file = "chagas_sih_rd.csv",row.names = F)
+# sih_proc <- read_rds("sih_geral.rds")
+
+# write_delim(sih_proc,file = "sih_geral.txt")
+df <- read.csv("chagas_sih_rd.csv") |>
+  mutate(across(starts_with("DT_"),ymd))
+```
+
+#
+| Código CID-10 | Desc. Clínica | Fase da Doença/Órgão Afetado |
+|----|----|----|
+| B57 | Doença de Chagas |  Categoria geral (sem sub.) |
+| B570 | Forma aguda da doença, com cmt. cardíaco | Fase Aguda I (complicação no coração) |
+| B571 | Forma aguda, sem cmt. cardíaco | Fase Aguda II (manifestação clínica geral, sem miocardite) |
+| B572 | Doença de Chagas crônica, com cmt. cardíaco | Fase Crônica I (cardiopatia chagásica a complicação mais grave) |
+| B573 | Doença de Chagas crônica, com cmt. do aparelho digestivo | Fase Crônica II (megaesôfago ou megacólon chagásico). |
+| B574 | Doença de Chagas crônica com cmt. do sistema nervoso | Fase Crônica III (afrontamento neurológico/sistema nervoso) |
+| B575 | Doença de Chagas crônica, com cmt. de outros órgãos | Fase Crônica IV (acomprometimento de outros sistemas) |
+#
+
+```{r visu-geo}
+# 1. Baixar as Regiões do Pará (Exemplo com Regiões Intermediárias do IBGE)
+regioes_pa <- read_intermediate_region(code_intermediate = "PA", year = 2020)
+
+# 2. Seu resumo por município
+res_mun_23 <- df |>
+  filter(ANO_CMPT == "2023") |>
+  group_by(munResNome) |>
+  summarise(
+    media_dias = round(mean(DIAS_PERM, na.rm = TRUE), 2),
+    casos = n()
+  )
+
+# 3. Junção do mapa de municípios com o seu resumo
+mapa_regioes_1 <- para_uf |>
+  left_join(
+    res_mun_23,
+    by = c("name_muni" = "munResNome")
+  )
+
+res_mun_24 <- df |>
+  filter(ANO_CMPT == "2024") |>
+  group_by(munResNome) |>
+  summarise(
+    media_dias = round(mean(DIAS_PERM, na.rm = TRUE), 2),
+    casos = n()
+  )
+
+# 3. Junção do mapa de municípios com o seu resumo
+mapa_regioes_2 <- para_uf |>
+  left_join(
+    res_mun_24,
+    by = c("name_muni" = "munResNome")
+  )
+
+```
+
+```{r graf-md}
+#| message: false
+#| fig-height: 7
+#| fig-width: 8
+
+# ----
+graf_dias_1 <- ggplot() +
+  
+  geom_sf(
+    data = mapa_regioes_1,
+    aes(fill = casos),
+    color = "grey80",     
+    linewidth = 0.15
+  ) +
+  geom_sf(
+    data = regioes_pa,
+    fill = NA,            # Transparente para não cobrir o preenchimento
+    color = "white",      # Linha escura de destaque
+    linewidth = 1.2       # Linha mais espessa que a dos municípios
+  ) +
+  scale_fill_viridis_c(
+    option = "plasma",
+    name = "Casos",
+    na.value = "black"   # Municípios sem casos ficam num cinza bem claro
+  ) +
+  
+  labs(
+    title = "Casos de internação por Doença de Chagas - Pará (2023)",
+    subtitle = "Contorno branco indica as Regiões Geográficas Intermediárias",
+    caption = "Fonte: Microdatasus (2023)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    panel.grid = element_blank(),
+    plot.title = element_text(face = "bold")
+  )
+graf_dias_1
+
+graf_dias_1_2 <- ggplot() +
+  
+  geom_sf(
+    data = mapa_regioes_1,
+    aes(fill = media_dias),
+    color = "grey80",     
+    linewidth = 0.15
+  ) +
+  geom_sf(
+    data = regioes_pa,
+    fill = NA,            # Transparente para não cobrir o preenchimento
+    color = "white",      # Linha escura de destaque
+    linewidth = 1.2       # Linha mais espessa que a dos municípios
+  ) +
+  scale_fill_viridis_c(
+    option = "plasma",
+    name = "Média de dias internados",
+    na.value = "black"   # Municípios sem casos ficam num cinza bem claro
+  ) +
+  
+  labs(
+    title = "Média de dias de internação por Doença de Chagas - Pará (2023)",
+    subtitle = "Contorno branco indica as Regiões Geográficas Intermediárias",
+    caption = "Fonte: Microdatasus (2023)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    panel.grid = element_blank(),
+    plot.title = element_text(face = "bold")
+  )
+graf_dias_1_2
+
+graf_dias_2 <- ggplot() +
+  
+  geom_sf(
+    data = mapa_regioes_2,
+    aes(fill = casos),
+    color = "grey80",     
+    linewidth = 0.15
+  ) +
+  geom_sf(
+    data = regioes_pa,
+    fill = NA,            # Transparente para não cobrir o preenchimento
+    color = "white",      # Linha escura de destaque
+    linewidth = 1.2       # Linha mais espessa que a dos municípios
+  ) +
+  scale_fill_viridis_c(
+    option = "plasma",
+    name = "Casos",
+    na.value = "black"   # Municípios sem casos ficam num cinza bem claro
+  ) +
+  
+  labs(
+    title = "Casos de internação por Doença de Chagas - Pará (2024)",
+    subtitle = "Contorno branco indica as Regiões Geográficas Intermediárias",
+    caption = "Fonte: Microdatasus (2024)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    panel.grid = element_blank(),
+    plot.title = element_text(face = "bold")
+  )
+graf_dias_2
+
+graf_dias_2_1 <- ggplot() +
+  
+  geom_sf(
+    data = mapa_regioes_2,
+    aes(fill = media_dias),
+    color = "grey80",     
+    linewidth = 0.15
+  ) +
+  geom_sf(
+    data = regioes_pa,
+    fill = NA,            # Transparente para não cobrir o preenchimento
+    color = "white",      # Linha escura de destaque
+    linewidth = 1.2       # Linha mais espessa que a dos municípios
+  ) +
+  scale_fill_viridis_c(
+    option = "plasma",
+    name = "Média de dias internados",
+    na.value = "black"   # Municípios sem casos ficam num cinza bem claro
+  ) +
+  
+  labs(
+    title = "Média de dias de internação por Doença de Chagas - Pará (2024)",
+    subtitle = "Contorno branco indica as Regiões Geográficas Intermediárias",
+    caption = "Fonte: Microdatasus (2024)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    panel.grid = element_blank(),
+    plot.title = element_text(face = "bold")
+  )
+graf_dias_2_1
+```
+
+
+# Referências
+
+E-book sobre os dados armazenados: 
+
+https://rfsaldanha.github.io/sis/sinan.html
+
+SALDANHA, Raphael de Freitas; BASTOS, Ronaldo Rocha; BARCELLOS, Christovam. Microdatasus: pacote para download e pré-processamento de microdados do Departamento de Informática do SUS (DATASUS). Cad. Saúde Pública, Rio de Janeiro , v. 35, n. 9, e00032419, 2019. Available from https://doi.org/10.1590/0102-311x00032419.

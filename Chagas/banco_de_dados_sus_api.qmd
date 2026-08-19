@@ -3,77 +3,118 @@ title: "banco_de_dados_sus_api"
 format: html
 ---
 
-```{r}
+```{r pacotes}
 library(microdatasus)
 library(dplyr)
 library(tidyverse)
 library(survival)
 library(lubridate)
 library(naniar)
+library(gt)
 ```
 
-```{r}
-dados_brutos <- fetch_datasus(
-  year_start = 2024,
-  year_end = 2025,
-  information_system = "SINAN-CHAGAS"
-)
-
-dados_processados <- process_sinan_chagas(dados_brutos)
+```{r verif-origin}
+# dados_brutos <- fetch_datasus(
+#   year_start = 2024,
+#   year_end = 2025,
+#   information_system = "SINAN-CHAGAS"
+# )
+# 
+# dados_processados <- process_sinan_chagas(dados_brutos)
 
 # Salvando um banco de dados de uma api
 #saveRDS(dados_processados, "dados_chagas_sus.rds")
 
 chagas_sus <- read_rds("dados_chagas_sus.rds")
 
-colSums(is.na(chagas_sus))
+freq_pa_m <- chagas_sus |>
+  filter(SG_UF == "Pará",substr(ID_MUNICIP,1,2) == "15") |>
+  count(ID_MUNICIP, sort = T) |>
+  gt() |>
+  tab_header(
+  title = "Frequência de casos por município do Pará"
+  )
 
-table(chagas_sus$CLASSI_FIN,chagas_sus$EVOLUCAO)
+freq_casos_ev <- chagas_sus |>
+  filter(!is.na(CLASSI_FIN)) |>
+  count(CLASSI_FIN,EVOLUCAO,sort = TRUE) |>
+  pivot_wider(names_from = EVOLUCAO, values_from = n, values_fill = 0) |>
+  gt() |>
+  tab_header(
+  title = "Frequência de Evolução de casos pela Classifiação"
+  ) |>
+  cols_label(
+    CLASSI_FIN = "Classificação Final"
+  )
+freq_casos_ev
 
-datas_cols <- chagas_sus |>
-select(starts_with("DT_"))
-
-cat("Variáveis 'datas' que podem ser úteis ou não:\n\n")
-colnames(datas_cols)
 
 cat("\n\nVariáveis que podem ser úteis ou não:\n\n")
 colnames(chagas_sus)
 
+
 ```
 
 
-```{r}
-head(chagas_sus)
-
+```{r conjunto-para}
+# ----
 chagas_pa <- chagas_sus |> 
   filter(
     SG_UF == "Pará",
     SG_UF_NOT == "Pará",
     CLASSI_FIN %in% c("Confirmado", "Descartado"),
-    EVOLUCAO %in% c("Óbito pelo agravo notificado", "Vivo")
-  )
+    substr(ID_MUNICIP,1,2) == "15"
+  ) |>
   select(
     # Datas de Coletas Sorológicas: confirmação laboratorial
     DT_COL_S1,DT_COL_S2,
     # Datas para evolução dos casos:
     DT_SIN_PRI,DT_NOTIFIC, DT_OBITO, DT_ENCERRA,
-    # Evento:
-    EVOLUCAO,
+    # Eventos:
+    CLASSI_FIN, EVOLUCAO,
     # Covariáveis Demográficas:
-    IDADEanos, CS_SEXO, CS_RACA, CS_ESCOL_N,CS_GESTANT,
+    NU_IDADE_N, CS_SEXO, CS_RACA, CS_ESCOL_N,CS_GESTANT,
     # Covariáveis clínicas (sinais/sintomas):
     FEBRE, EDEMA, HEPATOME, ESPLENOM, SINAIS_ICC,
     ARRITMIAS, CHAGOMA, MAECHAGA, MENINGOE, POLIADENO,
     ASTENIA, MICRO_HEMA, OUTRO_SIN,
     # Covariáveis Epidemiológicas/exposição:
-    HISTORIA, CON_TRIAT,CON_PROVAV, COUFINF, COPAISINF,
-    PARASITO, CRITERIO,
+    HISTORIA, CON_TRIAT,CON_PROVAV, CRITERIO,
     # Geográfica:
-    ID_MN_RESI
-  )
+    ID_MUNICIP
+  ) |>
+  mutate(
+    unidade_tempo = as.integer(substr(NU_IDADE_N, 1, 1)),
+    valor_idade   = as.integer(substr(NU_IDADE_N, 2, 4)),
+    idade_anos    = ifelse(unidade_tempo == 4, valor_idade, 0),
+    classe_idade  = cut(
+      idade_anos,
+      breaks = c(-1, 14, 29, 44, 59, 120),
+      labels = c("0 a 14 anos", "15 a 29 anos",
+                 "30 a 44 anos", "45 a 59 anos", "60 anos ou mais")
+    ),
+    across(starts_with("DT_"),ymd)
+  ) |>
+  select(-NU_IDADE_N,-unidade_tempo,-valor_idade) 
 
-datas_cols <- chagas_pa |>
-select(starts_with("DT_"))
+head(chagas_pa$CRITERIO)
+
+
+```
+
+```{r}
+freq_pa <- chagas_pa |>
+  filter(!is.na(CLASSI_FIN)) |>
+  count(CLASSI_FIN,EVOLUCAO,sort = TRUE) |>
+  pivot_wider(names_from = EVOLUCAO, values_from = n, values_fill = 0) |>
+  gt() |>
+  tab_header(
+  title = "Evolução de casos pela Classifiação"
+  ) |>
+  cols_label(
+    CLASSI_FIN = "Classificação Final"
+  )
+freq_pa
 ```
 
 
@@ -181,7 +222,6 @@ Data do Óbito | DT_OBITO
 Data de Sintoma Primário | DT_SIN_PRI
 
 Classificação Final | CLASSI_FIN
-
 
 
 # Referências
