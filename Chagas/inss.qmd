@@ -1,0 +1,18 @@
+---
+title: "inss"
+format: 
+  html:
+    embed-resources: true
+---
+# DADOS SOBRE O INSS ONDE TEM-SE AS COLUNAS DE DATAS: DIB, DDB E DCB
+
+DIB - DATA DE INICIO DO BENEFICIO: DATA RETROATIVA A QUAL O DIREITO AO BENEFÍCIO COMEÇA A CONTAR, GERALMENTE NO INÍCIO DO AFASTAMENTO.
+
+DCB - DATA CESSAÇÃO DO BENEFÍCIO: DATA LIMITE PREVISTA PARA ALTA MÉDICA.
+
+DDB - DATA DO DESPACHO DO BENEFÍCIO: DATA NA QUAL O INSS EFETIVA O PROCESSO E APROVA O BENEFÍCIO. 
+
+# Afastamento do inss por transtornos mentais, segundo o Ministério da Saúde:
+
+> "Consiste em todo caso de sofrimento emocional, em suas diversas formas de manifestação tais como: choro fácil, tristeza, medo excessivo, doenças psicossomáticas, agitação, irritação, nervosismo, ansiedade, taquicardia, sudorese, insegurança, entre outros sintomas que podem indicar o desenvolvimento ou agravo de transtornos mentais utilizando os CID - 10: Transtornos mentais e comportamentais (F00 a F99), Alcoolismo (Y90 e Y91), Síndrome de Burnout (Z73.0), Sintomas e sinais relativos à cognição, à percepção, ao estado emocional e ao comportamento (R40 a R46), Pessoas com riscos potenciais à saúde relacionados com circunstâncias socioeconômicas e psicossociais (Z55 a Z65), Circunstância relativa às condições de trabalho (Y96) e Lesão autoprovocada intencionalmente (X60 a X84), os quais têm como elementos causais fatores de risco relacionados ao trabalho, sejam resultantes da sua organização e gestão ou por exposição a determinados agentes tóxicos."
+
