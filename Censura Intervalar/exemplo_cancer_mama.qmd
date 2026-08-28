@@ -238,28 +238,41 @@ kable(tabela_lado_a_lado, format = "html", digits = 4,
   kable_styling(bootstrap_options = c("striped", "hover")) %>%
   add_header_above(c("ther = 1" = 2, "ther = 0" = 2))
 ```
+## Estimador de Turnbull desenvolvido
+
+A partir da fórmula para a verossimilhança geral:
+
+$$
+L(\theta) = \prod_{i=1}^{n} [S(l_{i})-S(U_{i})]^{\delta_{i}}
+$$
+Foi aplicada de forma que, em vez de assumir S(.) paramétrica, se modela como massas de probabilidade $p_{1},...,p_{m}$ em subintervalos $(\tau_{k-1},\tau_{k}]$. Portanto:
+
+$$
+S(l_{i})-S(U_{i}) = \sum_{k} A_{ik}p_{k} 
+$$
+onde $A_{ik} = 1$ se o subintervalo *k* está contido em $[L_{i},U_{i}]$. A verossimilhança vira $L(p) = \prod _{i}(Ap)_{i}$, e o estimador de máxima verossimilhança de Turnbull maximiza isto. Como a informação de Fisher do NPMLE (*Nonparametric Maximum Likelihood Estimation*) Estimador de Máxima Verossimilhança Não-Paramétrica^[Estima uma função de distribuição desconhecida maximizando a verossimilhança sem assumir uma forma parámétrica rígida(como uma Gaussiana pura (Fonte: [Self-regularizing Property of Nonparametric Maximum Likelihood Estimator in Mixture Models](https://arxiv.org/abs/2008.08244))], não tem forma fechada simples, se aplicou bootstrap padrão da literatura para estimar os std.err/IC.
+
+### Aplicação
+
+```{r}
+source("turnbull_estimator.R")
+
+# ajusta o Turnbull separadamente em cada grupo
+
+c_mama$right[is.na(c_mama$right)] <- Inf
+ 
+fit_1 <- turnbull_em(c_mama$left[c_mama$ther == "1"], c_mama$right[c_mama$ther == "1"])
+fit_0 <- turnbull_em(c_mama$left[c_mama$ther == "0"], c_mama$right[c_mama$ther == "0"])
+
+cat("\n--- Grupo 1 - Radioterapia ---\n");
+print(turnbull_table(fit_1))
+
+cat("\n--- Grupo 0 - Quimio+Rad. ---\n");
+print(turnbull_table(fit_0))
 
 
-<!-- ## Modelos paramétricos -->
 
-<!-- # Aplicação manual do estimador de Turnbull -->
 
-<!-- Estimador nao parametrico de Turnbull (NPMLE) para dados com censura intervalar - com ou sem grupos -->
 
-<!-- Baseado na verossimilhanca: -->
-
-<!-- $$ L(\theta) = \prod [S(l_i) - S(u_i)]^{\delta_{i}} \cdot [S(l_i)]^{(1-\delta_i)}$$ -->
-
-<!-- delta_i = 1 -> eventos observados em (L_i, U_i]  (U_i finito) -->
-<!-- delta_i = 0 -> censura a direita, U_i = Inf, contribuicao = S(l_i) -->
-
-<!-- A maximizacao de L(theta) sem forma fechada e feita pelo algoritmo -->
-<!-- de auto-consistencia (self-consistency / EM) de Turnbull (1976), -->
-<!-- que alterna entre: -->
-
-<!-- p_j = S(tau_{j-1}) - S(tau_j) -->
-<!-- d_j = soma_i [ alpha_ij p_j / soma_k alpha_ik p_k ] -->
-<!-- n_j = soma_{k=j}^{m} d_k                      (num. sob risco) -->
-<!-- S(tau_j) = prod_{k<=j} (1 - d_k/n_k)           (produto-limite) -->
-
+```
 

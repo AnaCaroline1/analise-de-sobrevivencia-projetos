@@ -16,3 +16,65 @@ DDB - DATA DO DESPACHO DO BENEFÍCIO: DATA NA QUAL O INSS EFETIVA O PROCESSO E A
 
 > "Consiste em todo caso de sofrimento emocional, em suas diversas formas de manifestação tais como: choro fácil, tristeza, medo excessivo, doenças psicossomáticas, agitação, irritação, nervosismo, ansiedade, taquicardia, sudorese, insegurança, entre outros sintomas que podem indicar o desenvolvimento ou agravo de transtornos mentais utilizando os CID - 10: Transtornos mentais e comportamentais (F00 a F99), Alcoolismo (Y90 e Y91), Síndrome de Burnout (Z73.0), Sintomas e sinais relativos à cognição, à percepção, ao estado emocional e ao comportamento (R40 a R46), Pessoas com riscos potenciais à saúde relacionados com circunstâncias socioeconômicas e psicossociais (Z55 a Z65), Circunstância relativa às condições de trabalho (Y96) e Lesão autoprovocada intencionalmente (X60 a X84), os quais têm como elementos causais fatores de risco relacionados ao trabalho, sejam resultantes da sua organização e gestão ou por exposição a determinados agentes tóxicos."
 
+# Sobre o órgão
+
+O INSS caracteriza-se como uma organização pública prestadora de serviços previdenciários para a sociedade brasileira. É nesse contexto e procurando preservar a integridade da qualidade do atendimento a esse público que o Instituto vem buscando alternativas de melhoria contínua, com programas de modernização e excelência operacional, ressaltando a otimização de resultados e de ferramentas que fundamentem o processo de atendimento ideal aos anseios dos cidadãos.
+
+# Sobre o banco
+
+Informações de competência da concessão, espécies, CID (código), CID-10 (nome), despacho, data de nascimento, sexo, clientela, município de residência, vínculo dependentes, forma de filiação, UF, quantidade de salários- mínimos na RMI, ramo de atividade, data de cessação do benefício – DCB, data de despacho do benefício – DDB, data de início do benefício – DIB e país do acordo internacional, classificador de PA (Pensão Alimentícia), extraídas do sistema Único de Informações de Benefícios - SUIBE.
+
+Esses termos são conceitos fundamentais do **SUIBE** (Sistema Único de Informações de Benefícios) do INSS, utilizados para categorizar e gerir os benefícios previdenciários no Brasil.
+
+---
+
+### **1. Competência da Concessão**
+
+Refere-se ao **mês e ano em que o benefício foi concedido ou processado** no sistema (no formato MM/AAAA).
+
+* Diferencia-se da Data de Início do Benefício (DIB), pois a concessão administrativa pode ocorrer em um mês posterior ao início do direito ao pagamento.
+
+### **2. Espécies**
+
+É o **código numérico que identifica o tipo específico de benefício** pago pelo INSS. Cada modalidade possui uma numeração (Espécie de Benefício - EB).
+
+* **Exemplos comuns:**
+* `B21`: Pensão por Morte Previdenciária
+* `B31`: Auxílio por Incapacidade Temporária (antigo Auxílio-Doença)
+* `B42`: Aposentadoria por Tempo de Contribuição
+* `B87`: Benefício de Prestação Continuada (BPC/LOAS) para pessoa com deficiência
+
+### **3. Despacho**
+
+É a **decisão administrativa** emitida pelo INSS referente ao pedido formulado pelo segurado.
+
+* **Tipos de despacho:** Concessão (pedido aprovado), Indeferimento (pedido negado), Cancelamento ou Cessação.
+* *Nota:* A Data de Despacho do Benefício (**DDB**) indica exatamente o dia em que essa decisão foi registrada.
+
+### **4. Clientela**
+
+Classifica a **origem da atividade laboral** do segurado no momento em que gerou o direito ao benefício:
+
+* **Urbana:** Segurados que trabalham ou trabalhavam no meio urbano (empregados formais, autônomos urbanos).
+* **Rural:** Trabalhadores rurais, segurados especiais (agricultores familiares, pescadores artesanais) que possuem regras diferenciadas de idade e comprovação.
+
+### **5. Forma de Filiação**
+
+Descreve a **categoria de enquadramento do segurado** perante a Previdência Social. Define como o trabalhador se vincula ao Regime Geral (RGPS):
+
+* **Empregado:** Com carteira assinada (CLT).
+* **Contribuinte Individual:** Autônomos e empresários.
+* **Trabalhador Avulso:** Presta serviços a diversas empresas sem vínculo empregatício (ex: portuários).
+* **Segurado Especial:** Trabalhador rural em regime de economia familiar.
+* **Segurado Facultativo:** Quem não possui renda própria, mas opta por contribuir (ex: estudantes, donas de casa).
+
+### **6. UF (Unidade da Federação)**
+
+Indica a **sigla do Estado** (ex: SP, PA, RJ, MG) associada ao endereço do segurado ou à Gerência Executiva do INSS responsável pela manutenção do benefício.
+
+### **7. Quantidade de Salários-Mínimos na RMI**
+
+Mede o valor da **Renda Mensal Inicial (RMI)** — que é o valor bruto inicial do benefício na data em que ele foi concedido — expressa em **múltiplos do salário-mínimo vigente naquela época**.
+
+* **Como funciona:** Se um benefício teve uma RMI de R$ 3.000,00 em um ano em que o salário-mínimo era R$ 1.500,00, a quantidade registrada nessa variável será **2,0 salários-mínimos**.
+* Essa métrica permite analisar o poder de compra inicial do benefício de forma padronizada ao longo do tempo.

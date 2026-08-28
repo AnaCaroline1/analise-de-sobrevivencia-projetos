@@ -2,8 +2,11 @@ library(readxl)
 library(tidyverse)
 library(janitor)
 library(lubridate)
+# TRATAMENTO BASE DOS DADOS SOBRE AFASTAMENTO POR TRANSTORNOS MENTAIS DO INSS, PEGANDO DO PERÍODO MAIS RECENTE, DE JANEIRO À DEZEMBRO DE 2025.
+# 
+# A BASE NÃO ESTÁ JUNTA, SÃO 12 PLANILHAS SEPARADAS PARA CADA MÊS. É PRECISO FILTRAR PELO ESTADO E DEPOIS JUNTAR.
 
-inss <- read_xlsx("GitHub/analise-de-sobrevivencia-projetos/Chagas/DADOS+ABERTOS_CONCEDIDOS_JANEIRO+2024.xlsx", skip = 1)
+inss <- read_excel("GitHub/analise-de-sobrevivencia-projetos/Chagas/DADOS+ABERTOS_CONCEDIDOS_JANEIRO+2024.xlsx", skip = 1, .name_repair = "unique") 
 
 pa <- inss |>
   filter(UF == "Pará",
