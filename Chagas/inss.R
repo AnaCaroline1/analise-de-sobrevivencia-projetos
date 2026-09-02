@@ -28,3 +28,16 @@ pa <- inss |>
   ) |>
   filter(tempo_dias > 0) |>
   select(-`País de Acordo Internacional`)
+
+
+# # Estados: cog, perc., emocional
+# CID...6 >= "R40" & CID...6 <= "R46"
+# # Circunstâncias socio/psicossociais
+# CID...6 >= "Z55" & CID...6 <= "Z65"
+# # Condições de trabalho
+# CID...6 == "Y96"
+
+# # Alcoolismo
+# str_detect(CID...6, "^Y[9]"),
+# # Lesões autoprovocadas
+# str_detect(CID...6, "^X[6-84]"),

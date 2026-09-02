@@ -23,5 +23,5 @@ df_cc_bx$idade <- round(runif(nrow(df_cc_bx),min = 20, max = 60))
 
 df_cc_bx
 #write_parquet(df_final, "df_srag_sg.parquet")
-
-dengue <- read_parquet("df_dengue_2025.parquet")
+# 
+# dengue <- read_parquet("df_dengue_2025.parquet")
