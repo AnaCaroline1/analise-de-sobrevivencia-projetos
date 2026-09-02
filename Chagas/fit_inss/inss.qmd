@@ -1,8 +1,10 @@
 ---
-title: "inss"
+title: "INSS - PARÁ - ANO 2025"
 format: 
   html:
     embed-resources: true
+    toc: true
+    code-fold: true
 ---
 # DADOS SOBRE O INSS ONDE TEM-SE AS COLUNAS DE DATAS: DIB, DDB E DCB
 
@@ -68,13 +70,29 @@ Descreve a **categoria de enquadramento do segurado** perante a Previdência Soc
 * **Segurado Especial:** Trabalhador rural em regime de economia familiar.
 * **Segurado Facultativo:** Quem não possui renda própria, mas opta por contribuir (ex: estudantes, donas de casa).
 
-### **6. UF (Unidade da Federação)**
 
-Indica a **sigla do Estado** (ex: SP, PA, RJ, MG) associada ao endereço do segurado ou à Gerência Executiva do INSS responsável pela manutenção do benefício.
-
-### **7. Quantidade de Salários-Mínimos na RMI**
+### **6. Quantidade de Salários-Mínimos na RMI**
 
 Mede o valor da **Renda Mensal Inicial (RMI)** — que é o valor bruto inicial do benefício na data em que ele foi concedido — expressa em **múltiplos do salário-mínimo vigente naquela época**.
 
 * **Como funciona:** Se um benefício teve uma RMI de R$ 3.000,00 em um ano em que o salário-mínimo era R$ 1.500,00, a quantidade registrada nessa variável será **2,0 salários-mínimos**.
 * Essa métrica permite analisar o poder de compra inicial do benefício de forma padronizada ao longo do tempo.
+
+# Observando os dados 
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 4
+#| fig-width: 10
+source("leituras.R")
+ggplotly(p_cid, tooltip = "text")
+ggplotly(p_idade)
+ggplotly(p_duracao_cid)
+ggplotly(p_salario)
+ggplotly(p_ramo)
+ggplotly(p_mun)
+
+```
+
