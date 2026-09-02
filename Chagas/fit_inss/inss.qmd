@@ -71,7 +71,7 @@ Descreve a **categoria de enquadramento do segurado** perante a Previdência Soc
 * **Segurado Facultativo:** Quem não possui renda própria, mas opta por contribuir (ex: estudantes, donas de casa).
 
 
-### **6. Quantidade de Salários-Mínimos na RMI**
+### **6 . Quantidade de Salários-Mínimos na RMI**
 
 Mede o valor da **Renda Mensal Inicial (RMI)** — que é o valor bruto inicial do benefício na data em que ele foi concedido — expressa em **múltiplos do salário-mínimo vigente naquela época**.
 
