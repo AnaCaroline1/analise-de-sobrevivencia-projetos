@@ -11,6 +11,7 @@ library(scales)
 cov_data <- function(x) {
   x <- trimws(x)
   case_when(
+    # Serial do Excel: só dígitos, faixa plausível (evita casar yyyymmdd)
     grepl("^[0-9]{4,6}$", x) & as.numeric(x) < 60000 ~ 
       janitor::excel_numeric_to_date(as.numeric(x)),
     # Qualquer outro formato de data textual: tenta múltiplas ordens
@@ -59,6 +60,18 @@ p_sexo
 p_idade <- ggplot(inss, aes(x = idade_concessao, fill = sexo)) +
   geom_histogram(binwidth = 5, alpha = 0.7, position = "identity") +
   labs(title = "Idade na concessão do benefício", x = "Idade (anos)", y = "Frequência") +
+  theme_minimal()
+
+
+
+# --- 5. Duração do benefício (dib -> dcb ou hoje) ---
+p_duracao <- ggplot(inss, aes(x = duracao_beneficio_dias / 30, fill = status_beneficio)) +
+  geom_histogram(binwidth = 3, alpha = 0.7, position = "identity") +
+  labs(
+    title = "Duração do benefício (em meses)",
+    subtitle = "Casos ativos: duração observada até a data atual (não é tempo até evento)",
+    x = "Meses", y = "Frequência", fill = "Status"
+  ) +
   theme_minimal()
 
 

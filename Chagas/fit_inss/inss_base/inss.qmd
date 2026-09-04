@@ -14,7 +14,7 @@ library(dplyr)
 library(knitr)
 library(arrow)
 
-inss <- read_parquet("inss_base/inss_pa.parquet")
+inss <- read_parquet("inss_pa.parquet")
 ```
 
 ## 1. Fonte dos dados
@@ -74,7 +74,7 @@ A base **não contém a CBO** (Classificação Brasileira de Ocupações), o que
 #| warning: false
 #| fig-height: 4
 #| fig-width: 10
-source("inss_base/leituras.R")
+source("leituras.R")
 
 ggplotly(p_cid, tooltip = "text")
 ggplotly(p_idade)

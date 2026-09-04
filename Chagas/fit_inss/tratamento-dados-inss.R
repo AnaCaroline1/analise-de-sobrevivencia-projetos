@@ -195,3 +195,26 @@ write_parquet(jul_1, "jul_fit.parquet")
 # inss_pa <- bind_rows(lista_bases)
 
 #write_parquet(inss_pa, "inss_pa.parquet")
+
+
+# inss_pa <- read_parquet("inss_pa.parquet")
+# 
+# 
+# inss_out <- read_parquet("out_fit.parquet")
+# 
+# fit_t <- inss_pa |>
+#   mutate(
+#       CID = if_else(
+#         `Competência concessão` == "202510" & (is.na(CID) | CID == ""),
+#         str_extract(str_trim(CID_1), "^[A-Z][0-9]{2}(\\.[0-9]{1,2})?"),
+#         CID
+#       )
+#   ) |>
+#     filter(
+#            # Transtornos mentais e comportamentais
+#            str_detect(CID, "^F[0-9]") |
+#              # Síndrome de Burnout
+#              str_detect(CID, "^Z73")
+#     )
+  
+#write_parquet(fit_t, "inss_pa.parquet")

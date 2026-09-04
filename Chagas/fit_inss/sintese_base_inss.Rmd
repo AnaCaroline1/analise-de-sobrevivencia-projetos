@@ -1,20 +1,26 @@
 ---
 title: "Base de Dados INSS — Afastamentos por Transtornos Mentais"
-format: 
-  html:
-    embed-resources: true
-    toc: true
-    code-fold: true
+subtitle: "`r paste0(ncol(inss), ' variáveis disponíveis na base')`"
+author: "Seu Nome"
+date: "`r format(Sys.Date(), '%d/%m/%Y')`"
+output:
+  html_document:
+    toc: false
     df_print: kable
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 library(dplyr)
 library(knitr)
-library(arrow)
 
-inss <- read_parquet("inss_base/inss_pa.parquet")
+# --- AJUSTE AQUI ---
+# Carregue sua base geral (já tratada, com CIDs e datas corrigidos) no objeto `inss`.
+# Exemplo:
+# inss <- readRDS("caminho/para/base_tratada.rds")
+# ou
+# inss <- read.csv("caminho/para/base_tratada.csv")
 ```
 
 ## 1. Fonte dos dados
@@ -33,27 +39,25 @@ Conforme classificação do Ministério da Saúde para afastamentos relacionados
 - **Y96** — Circunstância relativa às condições de trabalho
 - **X60–X84** — Lesão autoprovocada intencionalmente
 
-Da base disponível, os códigos **F00–F99** e **Z73.0** foram identificados e tratados (extração do código a partir da coluna de descrição, nos casos em que a coluna de CID estava sem preenchimento). Os demais grupos (Y90/Y91, R40–R46, Z55–Z65, Y96, X60–X84) foram verificados, no entanto não foram identificados para compor a base.
+Da base disponível, os códigos **F00–F99** e **Z73.0** foram identificados e tratados (extração do código a partir da coluna de descrição, nos casos em que a coluna de CID estava sem preenchimento). Os demais grupos (Y90/Y91, R40–R46, Z55–Z65, Y96, X60–X84) ainda não foram verificados na base e devem ser checados antes da consolidação final do critério de inclusão.
 
 ## 3. Estrutura da base
 
-A base contém **`r ncol(inss)` variáveis**, entre elas informações de identificação do benefício (aps, espécie, CID), datas do processo (DIB, DDB, DCB), características do segurado e do vínculo empregatício (forma de filiação, ramo de atividade, CNAE, grau de instrução, anos de contribuição).
+A base contém **`r ncol(inss)` variáveis**, entre elas informações de identificação do benefício (aps, espécie, CID), datas do processo (DIB, DDB, DCB), características do segurado e do vínculo empregatício (forma de filiação, ramo de atividade, CNAE, grau de instrução), e variáveis derivadas de tempo (duração do benefício em dias, status do benefício, idade na concessão, anos de contribuição).
 
 ## 4. Quantidade de observações por mês
 
 A tabela abaixo apresenta a quantidade de registros disponíveis por mês de referência (`ano_mes_dib`), com o total geral ao final.
 
 ```{r tabela-meses}
-#| fig-height: 5
-#| fig-width: 10
 tabela_meses <- inss %>%
-  count(`Competência concessão`, name = "observacoes") %>%
-  arrange(`Competência concessão`)
+  count(ano_mes_dib, name = "observacoes") %>%
+  arrange(ano_mes_dib)
 
 total_geral <- sum(tabela_meses$observacoes)
 
 tabela_meses %>%
-  bind_rows(tibble::tibble(`Competência concessão` = "Total", observacoes = total_geral)) %>%
+  bind_rows(tibble::tibble(ano_mes_dib = "Total", observacoes = total_geral)) %>%
   kable(
     col.names = c("Mês de referência", "Observações"),
     align = c("l", "r")
@@ -64,28 +68,9 @@ A base totaliza **`r format(total_geral, big.mark = ".")` observações** distri
 
 ## 5. Limitações identificadas
 
-A base **não contém a CBO** (Classificação Brasileira de Ocupações), o que impede a análise por cargo/função específica. As variáveis `forma_filiacao` e `ramo_atividade` estão disponíveis como possíveis variáveis substitutas de vínculo e setor de atividade, em nível mais agregado.
+- A base **não contém a CBO** (Classificação Brasileira de Ocupações), o que impede a análise por cargo/função específica. As variáveis `forma_filiacao` e `ramo_atividade` estão disponíveis como possíveis proxies de vínculo e setor de atividade, em nível mais agregado.
+- Os grupos de CID complementares à classificação de saúde mental (Y90/Y91, R40–R46, Z55–Z65, Y96, X60–X84) ainda precisam ser conferidos na base.
 
-# Observando os dados 
+## 6. Direcionamento proposto
 
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-#| fig-height: 4
-#| fig-width: 10
-source("inss_base/leituras.R")
-
-ggplotly(p_cid, tooltip = "text")
-ggplotly(p_idade)
-ggplotly(p_duracao_cid)
-ggplotly(p_salario)
-ggplotly(p_ramo)
-ggplotly(p_mun)
-
-View(inss)
-
-
-```
-
-> Os municípios a que se referidos são de residência do beneficiário.
+Diante da disponibilidade de datas de início (DIB) e cessação (DCB) do benefício, e das variáveis já derivadas `duracao_beneficio_dias` e `status_beneficio`, propõe-se avaliar a viabilidade de uma **análise de sobrevivência** sobre o tempo de afastamento por transtornos mentais, comparando curvas por CID, ramo de atividade e forma de filiação, com os casos ainda ativos tratados como censura à direita.
