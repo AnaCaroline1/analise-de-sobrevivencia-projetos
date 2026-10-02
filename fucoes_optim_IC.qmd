@@ -515,3 +515,59 @@ lines(t_grid, st_gg, col = "cyan", lwd = 2)
 
 
 
+```{r}
+library(gt)
+library(dplyr)
+
+resultados <- tibble::tibble(
+  Modelo = c("Exponencial", "Weibull", "Log-normal", "Log-logístico", "Gama", "Gama Generalizada"),
+  AIC    = c(aic_exp, aic_weibull, aic_ln, aic_ll, aic_g, aic_gg),
+  BIC    = c(bic_exp, bic_weibull, bic_ln, bic_ll, bic_g, bic_gg),
+  HQ     = c(hq_exp, hq_weibull, hq_ln, hq_ll, hq_g, hq_gg)
+) %>%
+  arrange(AIC) %>%
+  mutate(Rank_AIC = row_number())
+
+tabela_gt <- resultados %>%
+  gt() %>%
+  tab_header(
+    title = "Comparação de Modelos de Sobrevivência",
+    subtitle = "Critérios de informação: AIC, BIC e HQ"
+  ) %>%
+  fmt_number(
+    columns = c(AIC, BIC, HQ),
+    decimals = 2
+  ) %>%
+  cols_label(
+    Modelo = "Distribuição",
+    AIC = "AIC",
+    BIC = "BIC",
+    HQ = "HQ",
+    Rank_AIC = "Ranking (AIC)"
+  ) %>%
+  data_color(
+    columns = c(AIC, BIC, HQ),
+    colors = scales::col_numeric(
+      palette = c("#2E7D32", "#FFF9C4", "#C62828"),
+      domain = NULL
+    )
+  ) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#2E7D60"),
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(rows = Rank_AIC == 1)
+  ) %>%
+  tab_source_note(
+    source_note = "Menores valores de AIC, BIC e HQ indicam melhor ajuste."
+  ) %>%
+  tab_options(
+    heading.align = "center",
+    table.font.size = px(13)
+  )
+
+tabela_gt
+
+```
+

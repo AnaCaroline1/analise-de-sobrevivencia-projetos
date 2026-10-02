@@ -1,0 +1,51 @@
+---
+title: "Orientação sobre o afastamento por transtos mentais - base do INSS (2025)"
+lang: pt-Br
+format: 
+  html:
+    embed-resources: true
+
+---
+
+Existem diversos estudos nacionais e internacionais de grande impacto que utilizam a análise de sobrevivência para avaliar o tempo de afastamento por transtornos mentais.
+Nesse contexto, o "evento de interesse" (ou falha) costuma ser o Retorno ao Trabalho (RTW - Return to Work), e o tempo de sobrevivência é a duração da licença médica. Quem permanece afastado até o fim da pesquisa ou se aposenta por invalidez é tratado como censura.
+
+Os principais trabalhos aplicados nessa área dividem-se entre dados epidemiológicos de seguradoras/governo e ensaios clínicos:
+
+# 1. Cenário Nacional (Brasil)
+
+•	Estudo: "Return to Work After a Disabling Mental Disorder" (Publicado no PubMed / Journal of Occupational Rehabilitation).
+
+O que analisou: Um estudo longitudinal que acompanhou trabalhadores afastados por transtornos mentais em São Paulo. 
+
+O objetivo foi estimar a taxa e o tempo até o retorno ao trabalho.
+
+Resultados e Estatísticas: A média de afastamento foi de 163 dias. O modelo de sobrevivência identificou que o perfil com menor chance de retornar ao trabalho no prazo (maior tempo de sobrevivência no afastamento) incluía: trabalhadores que lidam diretamente com o público, obesos, tabagistas e indivíduos com baixa percepção de autoeficácia. [1, 2]
+
+•	Estudo de Coorte em Servidores: "Mental disorders in judicial workers: analysis of sickness absence in a cohort study" (Disponível no ResearchGate).
+
+O que analisou: Avaliou uma coorte retrospectiva de servidores públicos do poder judiciário da Bahia afastados por transtornos mentais e comportamentais. Analisou variáveis de cargos, gênero e diagnóstico (como episódios depressivos e de ansiedade) para mensurar o absenteísmo de longo prazo. [1]
+
+# 2. Cenário Internacional
+
+•	Uso de Aplicativos e Coordenação de Retorno: "Reduction of sick leave duration and relapse" (Publicado na BMC Public Health).
+
+O que analisou: Utilizou análise de sobrevivência para comparar o tempo de afastamento por Transtornos Mentais Comuns (CMDs) entre um grupo que usou uma ferramenta digital de coordenação de retorno (PRATICAdr) e um grupo de controle tradicional.
+
+Aplicação estatística: Os gráficos de Kaplan-Meier e o modelo de Cox provaram que o grupo com intervenção digital teve um tempo médio de afastamento quase 3 meses menor do que o grupo convencional. [1]
+
+Análise de Desempenho Médico no Afastamento: "Variation in mental health-related sickness absence duration" (Publicado na PLOS ONE).
+
+O que analisou: Um banco de dados massivo com mais de 30.000 casos de afastamento por saúde mental. O estudo aplicou modelos multinível baseados em tempo de sobrevivência para avaliar se o médico responsável pelo caso influenciava a velocidade de recuperação.
+
+Resultados: Descobriu-se que provedores de saúde de alto desempenho conseguiam obter o retorno ao trabalho com uma mediana de 18 semanas ou menos, enquanto outros chegavam a registrar 28 semanas ou mais para o mesmo tipo de transtorno. [1]
+
+# Termos técnicos recomendados para sua busca
+
+Se você estiver coletando bibliografia internacional para justificar o seu modelo, os termos mais aceitos e indexados são:
+
+•	Survival analysis for mental health sick leave
+
+•	Time-to-event return to work (RTW) mental disorders
+
+•	Sickness absence duration for psychiatric conditions

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>7&nbsp; Modelo tempo de vida acelerado exponencial – Análise de sobrevivência aplicado a dados epidemiológicos</title>
+<title>10&nbsp; Censura intervalar e dados grupados – Análise de sobrevivência aplicado a dados epidemiológicos</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -33,8 +33,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./modelo_atf_weibull.html" rel="next">
-<link href="./modelos_de_regressao_parametrico.html" rel="prev">
+<link href="./modelos_atf.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -280,7 +279,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./modelo_atf_exponencial.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelo tempo de vida acelerado exponencial</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./censura_intervalar_cap_8.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Censura intervalar e dados grupados</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -352,7 +351,7 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./modelo_atf_exponencial.html" class="sidebar-item-text sidebar-link active">
+  <a href="./modelo_atf_exponencial.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelo tempo de vida acelerado exponencial</span></span></a>
   </div>
 </li>
@@ -370,7 +369,7 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./censura_intervalar_cap_8.html" class="sidebar-item-text sidebar-link">
+  <a href="./censura_intervalar_cap_8.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Censura intervalar e dados grupados</span></span></a>
   </div>
 </li>
@@ -384,7 +383,23 @@ window.Quarto = {
     <h2 id="toc-title">Sumário</h2>
    
   <ul>
-  <li><a href="#log-verossimilhança" id="toc-log-verossimilhança" class="nav-link active" data-scroll-target="#log-verossimilhança"><span class="header-section-number">7.1</span> Log-verossimilhança</a></li>
+  <li><a href="#censuras" id="toc-censuras" class="nav-link active" data-scroll-target="#censuras"><span class="header-section-number">10.1</span> Censuras</a>
+  <ul class="collapse">
+  <li><a href="#censuras-à-direita" id="toc-censuras-à-direita" class="nav-link" data-scroll-target="#censuras-à-direita"><span class="header-section-number">10.1.1</span> Censuras à direita</a></li>
+  <li><a href="#censuras-à-esquerda" id="toc-censuras-à-esquerda" class="nav-link" data-scroll-target="#censuras-à-esquerda"><span class="header-section-number">10.1.2</span> Censuras à esquerda</a></li>
+  <li><a href="#evento-exato" id="toc-evento-exato" class="nav-link" data-scroll-target="#evento-exato"><span class="header-section-number">10.1.3</span> Evento exato</a></li>
+  <li><a href="#dados-grupados" id="toc-dados-grupados" class="nav-link" data-scroll-target="#dados-grupados"><span class="header-section-number">10.1.4</span> Dados grupados</a></li>
+  </ul></li>
+  <li><a href="#estimador-não-paramétrico-de-turnbull" id="toc-estimador-não-paramétrico-de-turnbull" class="nav-link" data-scroll-target="#estimador-não-paramétrico-de-turnbull"><span class="header-section-number">10.2</span> Estimador não paramétrico de Turnbull</a>
+  <ul class="collapse">
+  <li><a href="#processo-de-estimação-iterativo-de-turnbull" id="toc-processo-de-estimação-iterativo-de-turnbull" class="nav-link" data-scroll-target="#processo-de-estimação-iterativo-de-turnbull"><span class="header-section-number">10.2.1</span> Processo de estimação iterativo de Turnbull</a></li>
+  </ul></li>
+  <li><a href="#modelos-paramétricos" id="toc-modelos-paramétricos" class="nav-link" data-scroll-target="#modelos-paramétricos"><span class="header-section-number">10.3</span> Modelos paramétricos</a></li>
+  <li><a href="#resíduos-para-os-modelos-paramétricos" id="toc-resíduos-para-os-modelos-paramétricos" class="nav-link" data-scroll-target="#resíduos-para-os-modelos-paramétricos"><span class="header-section-number">10.4</span> Resíduos para os modelos paramétricos</a></li>
+  <li><a href="#resíduos-de-cox-snell" id="toc-resíduos-de-cox-snell" class="nav-link" data-scroll-target="#resíduos-de-cox-snell"><span class="header-section-number">10.5</span> Resíduos de Cox-Snell</a>
+  <ul class="collapse">
+  <li><a href="#ausência-de-censura-intervalar" id="toc-ausência-de-censura-intervalar" class="nav-link" data-scroll-target="#ausência-de-censura-intervalar"><span class="header-section-number">10.5.1</span> Ausência de censura intervalar</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -394,7 +409,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelo tempo de vida acelerado exponencial</span></h1>
+<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Censura intervalar e dados grupados</span></h1>
 </div>
 
 
@@ -411,23 +426,132 @@ window.Quarto = {
 </header>
 
 
-<p>O modelo de distribuição exponencia para variável <span class="math inline">\(T\)</span> produz o modelo de regressão mais simples e bastante utilizado na literatura. Para <span class="math inline">\(\sigma = 1\)</span> e a distribuição para erro <span class="math inline">\(\epsilon\)</span> é a exponencial com média unitária, em que <span class="math inline">\(f(\epsilon) = exp(-\epsilon)\)</span>. O modelo de regressão é dado por</p>
-<p><span class="math display">\[T = exp(\beta_0 + \beta'x)\epsilon\]</span></p>
-<p>ou, equivalente,</p>
-<p><span class="math display">\[Y = log(T) = \beta_0 + \beta'x + \nu\]</span></p>
-<p><span class="math inline">\(\nu = log(\epsilon) \rightarrow\)</span> segue distribuição valor extremo padrão, sendo a função densidade dada por <span class="math inline">\(f(\nu) = exp[\nu - exp(\nu)]\)</span>.</p>
-<p>Para o modelo, a função de sobrevivência para <span class="math inline">\(T\)</span> é dado por</p>
-<p><span class="math display">\[S(t | x) = exp \left[- \frac{t}{exp(\beta_0 + \beta'x)} \right]\]</span> e, para <span class="math inline">\(Y\)</span>, por <span class="math inline">\(S(y | x) = exp[-exp[y-(\beta_0 + \beta'x)]]\)</span></p>
-<p>A função taxa de falha para o modelo tempo de vida acelerado, expresso por</p>
-<p><span class="math display">\[\lambda(t | x ) = exp(-\beta'x)\lambda_0[t/exp(\beta'x)]\]</span> onde <span class="math inline">\(\lambda_0(t) = 1/\alpha\)</span>, como <span class="math inline">\(\alpha = exp(\beta_0)\)</span>.</p>
-<p><span class="math display">\[\lambda_{0} = 1/exp(\beta_0) = exp(-\beta_{0})\]</span> Como a função de risco base não depende do <span class="math inline">\(t\)</span>, temos que a taxa de risco base é constante ao longo do tempo, logo:</p>
-<p><span class="math display">\[\lambda_{0} \cdot\left[ t/exp(\beta'x) \right] = exp(-\beta_{0})\]</span> Sendo a taxa de falha para o modelo atf exponencial, dado por:</p>
-<p><span class="math display">\[\lambda(t | x ) = exp(-\beta'x) \cdot exp(-\beta_{0}) = exp(-(\beta'x+\beta_{0}))\]</span></p>
-<section id="log-verossimilhança" class="level2" data-number="7.1">
-<h2 data-number="7.1" class="anchored" data-anchor-id="log-verossimilhança"><span class="header-section-number">7.1</span> Log-verossimilhança</h2>
-<p><span class="math display">\[\log L = \sum_{i=1}^{n} \left[ \delta_{i} [-(\beta_{0}+\beta'x)] - \frac{t_{i}}{\exp(\beta_{0}+\beta' x_{i})} \right]\]</span></p>
+<section id="censuras" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="censuras"><span class="header-section-number">10.1</span> Censuras</h2>
+<section id="censuras-à-direita" class="level3" data-number="10.1.1">
+<h3 data-number="10.1.1" class="anchored" data-anchor-id="censuras-à-direita"><span class="header-section-number">10.1.1</span> Censuras à direita</h3>
+<p>São caracterizadas por situações em que o evento de interesse não ocorreu até a última visita e, sendo assim, se assume que <span class="math inline">\(T\)</span> pertence ao intervalo (L, <span class="math inline">\(\infty\)</span>), com <span class="math inline">\(L\)</span> o tempo decorrido desde o início do estudo até a última visita e <span class="math inline">\(U = \infty\)</span>.</p>
+</section>
+<section id="censuras-à-esquerda" class="level3" data-number="10.1.2">
+<h3 data-number="10.1.2" class="anchored" data-anchor-id="censuras-à-esquerda"><span class="header-section-number">10.1.2</span> Censuras à esquerda</h3>
+<p>São caracterizadas por aquelas situações em que o evento de interesse ocorreu anterior à primeira visita. Nesses casos, se assume que <span class="math inline">\(T\)</span> ocorreu no intervalo (0,U], com L= 0 representando o inicío do estudo e <span class="math inline">\(U\)</span> o tempo decorrido desde o início do estudo até a primeir a visita.</p>
+</section>
+<section id="evento-exato" class="level3" data-number="10.1.3">
+<h3 data-number="10.1.3" class="anchored" data-anchor-id="evento-exato"><span class="header-section-number">10.1.3</span> Evento exato</h3>
+<p>Chamado também de tempo exato de falha, se tem o evento de interesse que ocorreu exatamente no momento de uma das visita (no caso clínico, agropecuário etc.), onde se considera que T = L = U.</p>
+<p>Em resumo, esses são casos particulares de dados de sobrevivência intervalar, em que dados de sobrevivência intervalar generalizam qualquer situação em que pode ocorrer combinações de tempos de falh (exatos ou intervalares) e censuras à direita e à esquerda.</p>
+</section>
+<section id="dados-grupados" class="level3" data-number="10.1.4">
+<h3 data-number="10.1.4" class="anchored" data-anchor-id="dados-grupados"><span class="header-section-number">10.1.4</span> Dados grupados</h3>
+<p>Ocorre quando todas as unidades amostrais são monitoradas nos mesmos instantes, existindo periodicidade. No entanto, uma parte das unidades amostrais pode ter sido monitorada em outro intervalo e outra também em outro intervalo, exemplo: acada cinco dias, e outro a cada sete dias. Nesse caso, temos dados de censura intervalar e não grupados.</p>
+<p>Dados grupados são frequentemente associados às situações com excesso de empates. Se destaca que o termo “empate” tem sentido apenas para dados grupados, em que todas unidades amostrais são monitoradas exatamente nos mesmos tempos.</p>
+</section>
+</section>
+<section id="estimador-não-paramétrico-de-turnbull" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="estimador-não-paramétrico-de-turnbull"><span class="header-section-number">10.2</span> Estimador não paramétrico de Turnbull</h2>
+<p>Proposto por Turnbull (1976) para estimar função de sobrevivência em contexto intervalar, o estimador não possui forma analítica fechada, se baseando em procedimento iterativo e consistindo em modificar o estimador de Kaplan-Meier.</p>
+<p>Em situações que o tempo exato é desconhecido, mas se sabe que <span class="math inline">\(T_{i} \in (L_{i},U_{i}]\)</span> ou uma sequência de tempos que inclui todos os limites <span class="math inline">\(L_{i} \; e \; U_{i}\)</span> ou <span class="math inline">\(T_{i} \in (L_{i}, \infty), i = 1,..,n,\)</span> considerando 0 = <span class="math inline">\(\tau_{0} &lt; ... &lt; \tau_{m}\)</span> uma sequência de tempos que inclui todos os limites <span class="math inline">\(L_{i} \; e \; U_{i}\)</span>.</p>
+<p>Para i-éssima observação, i = 1,…,n, se define um peso <span class="math inline">\(\alpha_{ij}\)</span> o qual assume valor 1, se o intervalo (<span class="math inline">\(\tau_{j-1},\tau{j}\)</span>] está contido no intervalo <span class="math inline">\((L_{i},U_{i}]\)</span>, e valor zero, caso contrário, onde <span class="math inline">\(\alpha_{ij}\)</span> indica se o evento que ocorreu no intervalo <span class="math inline">\((L_{i},U_{i}]\)</span> poderia ter ocorrido em <span class="math inline">\(\tau{j}\)</span>.</p>
+<section id="processo-de-estimação-iterativo-de-turnbull" class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="processo-de-estimação-iterativo-de-turnbull"><span class="header-section-number">10.2.1</span> Processo de estimação iterativo de Turnbull</h3>
+<ol type="1">
+<li><p>Assumindo valores iniciais para <span class="math inline">\(S(\tau_{j}), \; j = 0,...,m\)</span>;</p></li>
+<li><p>Calcular a probalidade de um evento ocorrer no tempo <span class="math inline">\(\tau_{j}\)</span> por:</p></li>
+</ol>
+<p><span class="math display">\[p_{j} = S(\tau_{j-1}) - S(\tau_{j}), \;  j = 1,...,m.\]</span></p>
+<ol start="3" type="1">
+<li>Estimar o número de eventos ocorridos em <span class="math inline">\(\tau_{j}\)</span> por:</li>
+</ol>
+<p><span class="math display">\[d_{j}= \sum_{i=1}^{n} \frac{\alpha_{ij}p_{j}}{\sum_{k=1}^{m} \alpha_{ij}p_{j}}, \;  j = 1,..., m.\]</span></p>
+<ol start="4" type="1">
+<li>Obter o número estimado de indivíduos sob risco <span class="math inline">\(\tau_{j}\)</span> por:</li>
+</ol>
+<p><span class="math display">\[n_{j} = \sum_{k=1}^{m} d_{k}\]</span></p>
+<ol start="4" type="1">
+<li>Atualizar o estimador produto-limite utilizando os resultados obtidos em 3 e 4.</li>
+</ol>
+<section id="estimador-kaplan-meier-produto-limite" class="level4" data-number="10.2.1.1">
+<h4 data-number="10.2.1.1" class="anchored" data-anchor-id="estimador-kaplan-meier-produto-limite"><span class="header-section-number">10.2.1.1</span> Estimador Kaplan-Meier (produto-limite)</h4>
+<div id="eq-Estimador-Kaplan-Meier">
+<p><span class="math display">\[\hat{S}(t) = \prod_{t_j \le t} \left( \frac{n_j - d_j}{n_j} \right) = \prod_{t_j \le t} \left( 1 - \frac{d_j}{n_j} \right)\]</span></p>
+<p><strong>Onde:</strong></p>
+<p><span class="math inline">\(d_j\)</span>: total de falhas em cada intervalo.</p>
+<p><span class="math inline">\(n_j\)</span>: total de indivíduos sob risco.</p>
+</div>
+<p>Se a estimativa atualizada de <span class="math inline">\(S(\tau_{j})\)</span> estiver próxima da anterior para todo <span class="math inline">\(\tau_{j}\)</span>, encerre o processo iterativo, caso contrário, repetir os passos 2 a 4 utilizando as estimativas atualizadas de <span class="math inline">\(S(\tau_{j})\)</span>.</p>
+<p>O autor enfatiza que não ter algoritmo disponível em geral nos software estatísticos, sendo implementado no R pelos autores, utilizando estimador de Kaplan-Meier, em que os valores de <span class="math inline">\(\tau_{j}\)</span> assumi os tempos observados de falha.</p>
+</section>
+</section>
+</section>
+<section id="modelos-paramétricos" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="modelos-paramétricos"><span class="header-section-number">10.3</span> Modelos paramétricos</h2>
+<p>Em contexto de sobrevivência intervalar e sob o método de estimação visto, a natureza dos intervalos dados precisa considerar a construção da função de verossimilhança.</p>
+<table class="caption-top table">
+<caption>Nota: T = tempo até a ocorrência do evento de interesse.</caption>
+<colgroup>
+<col style="width: 31%">
+<col style="width: 28%">
+<col style="width: 39%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Indivíduo</th>
+<th>T</th>
+<th>Contribuição</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Com tempo exto de falha</td>
+<td><span class="math display">\[T = t\]</span></td>
+<td><span class="math display">\[f(t)\]</span></td>
+</tr>
+<tr class="even">
+<td>Censurado à direita</td>
+<td><span class="math display">\[T \in (L,\infty)\]</span></td>
+<td><span class="math display">\[S(l) - S(\infty) = S(l) \]</span></td>
+</tr>
+<tr class="odd">
+<td>Censura à esquerda</td>
+<td><span class="math display">\[T \in (0,U]\]</span></td>
+<td><span class="math display">\[S(0) - S(u) = 1 - S(u)\]</span></td>
+</tr>
+<tr class="even">
+<td>Com tempo intervalar</td>
+<td><span class="math display">\[T \in (L,U]\]</span></td>
+<td><span class="math display">\[F(u) - S(l) = S(l) - S(u)\]</span></td>
+</tr>
+</tbody>
+</table>
+<p>A função de verossimilhança <span class="math inline">\(L(\theta)\)</span> para <span class="math inline">\(T_{i} \in (L_{i}, U_{i}] \; ou \; T_{i} \in (L_{i}, \infty)\)</span>, fica expresso por:</p>
+<p><span class="math display">\[L(\theta) = \prod_{i=1}^{n} [S(l_{i} | x_{i}) - S(u_{i} | x_{i})]^{\delta_{i}}[S(l_{i} | x_{i})]^{(1-\delta_{i})}\]</span></p>
+<p><strong>Onde:</strong></p>
+<p><span class="math inline">\(x_{i}\)</span>: é o vetor de covariáveis associado ao i-ésimo paciente;</p>
+<p><span class="math inline">\(\delta_{i} = 1\)</span>: se o evento ocorreu em (<span class="math inline">\(L_{i},U_{i}\)</span>) e 0 se não ocorreu até <span class="math inline">\(L_{I}\)</span>.</p>
+<p>Após especificar o modelo paramétrico a função <span class="math inline">\(L(\theta)\)</span> fica determinada. Posteriormente, os estimadores de máxima verossimilhança são obtidos, com as estatísticas assintóticas ( Wald e razão de verossimilhaças) possibilitando a realização de inferências sobre <span class="math inline">\(\theta\)</span>.</p>
+</section>
+<section id="resíduos-para-os-modelos-paramétricos" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="resíduos-para-os-modelos-paramétricos"><span class="header-section-number">10.4</span> Resíduos para os modelos paramétricos</h2>
+<p>Para a avaliação de adequação de modelos paramétricos para análise de dados, os resíduos continuam sendo fundamentais para verificação das suposições de modelos paramétricos tendo no caso a presença de censura intervalar.Farrington apresenta alguns tipos de resíduos utilizados para verificar a adequação do modelo ajustado e a forma funcional de covariáveis contínuas.</p>
+<blockquote class="blockquote">
+<p>O livro diz que não software estatístico que implemente esses resíduos, não sendo fácil implementar na prática.</p>
+</blockquote>
+<p>Como os resíduos de Cox-Snell podem ser obtidos pela implementação de um código simples de softwar R, são então eles, abordados.</p>
+</section>
+<section id="resíduos-de-cox-snell" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="resíduos-de-cox-snell"><span class="header-section-number">10.5</span> Resíduos de Cox-Snell</h2>
+<section id="ausência-de-censura-intervalar" class="level3" data-number="10.5.1">
+<h3 data-number="10.5.1" class="anchored" data-anchor-id="ausência-de-censura-intervalar"><span class="header-section-number">10.5.1</span> Ausência de censura intervalar</h3>
+<p>Na ausência de censura intervalar os resíduos são baseados em uma v.a. <em>T</em> com função de sobrevivência <em>S(t),</em> a v.a. <em>-log[S(T)]</em> segue uma distribuição exponencial com média 1. Para uma amostra de observações com censura intervalar (<span class="math inline">\(l_1\)</span>,<span class="math inline">\(u_1\)</span>,…,(<span class="math inline">\(l_n\)</span>,<span class="math inline">\(u_n\)</span>], em que <span class="math inline">\(u_i =\infty\)</span> para censura à direita, e função de sobrevivência estimada <span class="math inline">\(\hat{S}_{i}(.)\)</span>, segue que o conjunto de intervalos, corresponde uma amostra de observações com censura intervalar, que devem seguir aproximadamente uma distribuição exponencial com média 1 para que o modelo seja considerado adequado.</p>
+<p>O processo para verificar a adequação do modelo paramétrico ajustado, segue os seguintes passos:</p>
+<ol type="1">
+<li>Ajuste de um modelo paramétrico aos dados, obtendo os resíduos de Cox-Snell;</li>
+<li>Para os resíduos de Cox-Snell (isto é, os <em>n</em> intervalor obtidos no passo 1), utilizar o estimado não paramétrico de Turnbull para obter as estimativas.</li>
+<li>Construir o gráfico dos conjuntos de intervalos <em>versus</em> a sequência de tempos que inclui os limites <span class="math inline">\(L_i\)</span> e <span class="math inline">\(U_i\)</span> que deve seguir uma exponencial padrão, isto é, passar pela origem e apresentar inclinação 1, para o modelo ajustado seja considerado adequado.</li>
+</ol>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -846,14 +970,11 @@ window.Quarto = {
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./modelos_de_regressao_parametrico.html" class="pagination-link" aria-label="Modelos de Regressão Paramétrico">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelos de Regressão Paramétrico</span></span>
+      <a href="./modelos_atf.html" class="pagination-link" aria-label="Aplicação: Modelos de Tempo de Vida Acelerados">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Aplicação: Modelos de Tempo de Vida Acelerados</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./modelo_atf_weibull.html" class="pagination-link" aria-label="Modelo tempo de vida acelerado acelerado Weibull">
-        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modelo tempo de vida acelerado acelerado Weibull</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

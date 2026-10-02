@@ -374,6 +374,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Aplicação: Modelos de Tempo de Vida Acelerados</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./censura_intervalar_cap_8.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Censura intervalar e dados grupados</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -1160,6 +1166,580 @@ AIC = 137.3815</code></pre>
 <figure class="figure">
 <p><img src="fucoes_optim_IC_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>resultados <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Modelo =</span> <span class="fu">c</span>(<span class="st">"Exponencial"</span>, <span class="st">"Weibull"</span>, <span class="st">"Log-normal"</span>, <span class="st">"Log-logístico"</span>, <span class="st">"Gama"</span>, <span class="st">"Gama Generalizada"</span>),</span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">AIC    =</span> <span class="fu">c</span>(aic_exp, aic_weibull, aic_ln, aic_ll, aic_g, aic_gg),</span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">BIC    =</span> <span class="fu">c</span>(bic_exp, bic_weibull, bic_ln, bic_ll, bic_g, bic_gg),</span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">HQ     =</span> <span class="fu">c</span>(hq_exp, hq_weibull, hq_ln, hq_ll, hq_g, hq_gg)</span>
+<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb65-10"><a href="#cb65-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(AIC) <span class="sc">%&gt;%</span></span>
+<span id="cb65-11"><a href="#cb65-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Rank_AIC =</span> <span class="fu">row_number</span>())</span>
+<span id="cb65-12"><a href="#cb65-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-13"><a href="#cb65-13" aria-hidden="true" tabindex="-1"></a>tabela_gt <span class="ot">&lt;-</span> resultados <span class="sc">%&gt;%</span></span>
+<span id="cb65-14"><a href="#cb65-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb65-15"><a href="#cb65-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(</span>
+<span id="cb65-16"><a href="#cb65-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Comparação de Modelos de Sobrevivência"</span>,</span>
+<span id="cb65-17"><a href="#cb65-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Critérios de informação: AIC, BIC e HQ"</span></span>
+<span id="cb65-18"><a href="#cb65-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb65-19"><a href="#cb65-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_number</span>(</span>
+<span id="cb65-20"><a href="#cb65-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(AIC, BIC, HQ),</span>
+<span id="cb65-21"><a href="#cb65-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">decimals =</span> <span class="dv">2</span></span>
+<span id="cb65-22"><a href="#cb65-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb65-23"><a href="#cb65-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(</span>
+<span id="cb65-24"><a href="#cb65-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">Modelo =</span> <span class="st">"Distribuição"</span>,</span>
+<span id="cb65-25"><a href="#cb65-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">AIC =</span> <span class="st">"AIC"</span>,</span>
+<span id="cb65-26"><a href="#cb65-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">BIC =</span> <span class="st">"BIC"</span>,</span>
+<span id="cb65-27"><a href="#cb65-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">HQ =</span> <span class="st">"HQ"</span>,</span>
+<span id="cb65-28"><a href="#cb65-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">Rank_AIC =</span> <span class="st">"Ranking (AIC)"</span></span>
+<span id="cb65-29"><a href="#cb65-29" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb65-30"><a href="#cb65-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_color</span>(</span>
+<span id="cb65-31"><a href="#cb65-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(AIC, BIC, HQ),</span>
+<span id="cb65-32"><a href="#cb65-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">colors =</span> scales<span class="sc">::</span><span class="fu">col_numeric</span>(</span>
+<span id="cb65-33"><a href="#cb65-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#2E7D32"</span>, <span class="st">"#FFF9C4"</span>, <span class="st">"#C62828"</span>),</span>
+<span id="cb65-34"><a href="#cb65-34" aria-hidden="true" tabindex="-1"></a>      <span class="at">domain =</span> <span class="cn">NULL</span></span>
+<span id="cb65-35"><a href="#cb65-35" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb65-36"><a href="#cb65-36" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb65-37"><a href="#cb65-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_style</span>(</span>
+<span id="cb65-38"><a href="#cb65-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="fu">list</span>(</span>
+<span id="cb65-39"><a href="#cb65-39" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_fill</span>(<span class="at">color =</span> <span class="st">"#2E7D60"</span>),</span>
+<span id="cb65-40"><a href="#cb65-40" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_text</span>(<span class="at">weight =</span> <span class="st">"bold"</span>)</span>
+<span id="cb65-41"><a href="#cb65-41" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb65-42"><a href="#cb65-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">locations =</span> <span class="fu">cells_body</span>(<span class="at">rows =</span> Rank_AIC <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb65-43"><a href="#cb65-43" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb65-44"><a href="#cb65-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(</span>
+<span id="cb65-45"><a href="#cb65-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">source_note =</span> <span class="st">"Menores valores de AIC, BIC e HQ indicam melhor ajuste."</span></span>
+<span id="cb65-46"><a href="#cb65-46" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb65-47"><a href="#cb65-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_options</span>(</span>
+<span id="cb65-48"><a href="#cb65-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">heading.align =</span> <span class="st">"center"</span>,</span>
+<span id="cb65-49"><a href="#cb65-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">table.font.size =</span> <span class="fu">px</span>(<span class="dv">13</span>)</span>
+<span id="cb65-50"><a href="#cb65-50" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb65-51"><a href="#cb65-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-52"><a href="#cb65-52" aria-hidden="true" tabindex="-1"></a>tabela_gt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="kovzhddvrm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#kovzhddvrm table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#kovzhddvrm thead, #kovzhddvrm tbody, #kovzhddvrm tfoot, #kovzhddvrm tr, #kovzhddvrm td, #kovzhddvrm th {
+  border-style: none;
+}
+
+#kovzhddvrm p {
+  margin: 0;
+  padding: 0;
+}
+
+#kovzhddvrm .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 13px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#kovzhddvrm .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#kovzhddvrm .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#kovzhddvrm .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#kovzhddvrm .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#kovzhddvrm .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#kovzhddvrm .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#kovzhddvrm .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#kovzhddvrm .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#kovzhddvrm .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#kovzhddvrm .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#kovzhddvrm .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#kovzhddvrm .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#kovzhddvrm .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#kovzhddvrm .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#kovzhddvrm .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#kovzhddvrm .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#kovzhddvrm .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#kovzhddvrm .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#kovzhddvrm .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#kovzhddvrm .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#kovzhddvrm .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#kovzhddvrm .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#kovzhddvrm .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#kovzhddvrm .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#kovzhddvrm .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#kovzhddvrm .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#kovzhddvrm .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#kovzhddvrm .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#kovzhddvrm .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#kovzhddvrm .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#kovzhddvrm .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#kovzhddvrm .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#kovzhddvrm .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#kovzhddvrm .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#kovzhddvrm .gt_left {
+  text-align: left;
+}
+
+#kovzhddvrm .gt_center {
+  text-align: center;
+}
+
+#kovzhddvrm .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#kovzhddvrm .gt_font_normal {
+  font-weight: normal;
+}
+
+#kovzhddvrm .gt_font_bold {
+  font-weight: bold;
+}
+
+#kovzhddvrm .gt_font_italic {
+  font-style: italic;
+}
+
+#kovzhddvrm .gt_super {
+  font-size: 65%;
+}
+
+#kovzhddvrm .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#kovzhddvrm .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#kovzhddvrm .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#kovzhddvrm .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#kovzhddvrm .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#kovzhddvrm .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#kovzhddvrm .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#kovzhddvrm .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#kovzhddvrm div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="5" class="gt_heading gt_title gt_font_normal">Comparação de Modelos de Sobrevivência</td>
+</tr>
+<tr class="gt_heading even">
+<td colspan="5" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">Critérios de informação: AIC, BIC e HQ</td>
+</tr>
+<tr class="gt_col_headings header">
+<th id="Modelo" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Distribuição</th>
+<th id="AIC" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">AIC</th>
+<th id="BIC" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">BIC</th>
+<th id="HQ" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">HQ</th>
+<th id="Rank_AIC" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Ranking (AIC)</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="Modelo" style="background-color: #2E7D60; font-weight: bold">Log-normal</td>
+<td class="gt_row gt_right" headers="AIC" style="background-color: #2E7D60; color: #FFFFFF; font-weight: bold">135.48</td>
+<td class="gt_row gt_right" headers="BIC" style="background-color: #2E7D60; color: #FFFFFF; font-weight: bold">137.47</td>
+<td class="gt_row gt_right" headers="HQ" style="background-color: #2E7D60; color: #FFFFFF; font-weight: bold">135.87</td>
+<td class="gt_row gt_right" headers="Rank_AIC" style="background-color: #2E7D60; font-weight: bold">1</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Modelo">Gama</td>
+<td class="gt_row gt_right" headers="AIC" style="background-color: #4F8E45; color: #FFFFFF">135.70</td>
+<td class="gt_row gt_right" headers="BIC" style="background-color: #508F46; color: #FFFFFF">137.69</td>
+<td class="gt_row gt_right" headers="HQ" style="background-color: #518F47; color: #FFFFFF">136.08</td>
+<td class="gt_row gt_right" headers="Rank_AIC">2</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Modelo">Log-logístico</td>
+<td class="gt_row gt_right" headers="AIC" style="background-color: #80AB67; color: #FFFFFF">136.06</td>
+<td class="gt_row gt_right" headers="BIC" style="background-color: #84AE6A; color: #FFFFFF">138.05</td>
+<td class="gt_row gt_right" headers="HQ" style="background-color: #85AE6A; color: #FFFFFF">136.45</td>
+<td class="gt_row gt_right" headers="Rank_AIC">3</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Modelo">Weibull</td>
+<td class="gt_row gt_right" headers="AIC" style="background-color: #9BBC7A; color: #000000">136.27</td>
+<td class="gt_row gt_right" headers="BIC" style="background-color: #A1BF7E; color: #000000">138.26</td>
+<td class="gt_row gt_right" headers="HQ" style="background-color: #A2C07F; color: #000000">136.66</td>
+<td class="gt_row gt_right" headers="Rank_AIC">4</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Modelo">Gama Generalizada</td>
+<td class="gt_row gt_right" headers="AIC" style="background-color: #F8CA9B; color: #000000">137.39</td>
+<td class="gt_row gt_right" headers="BIC" style="background-color: #C62828; color: #FFFFFF">140.37</td>
+<td class="gt_row gt_right" headers="HQ" style="background-color: #EDA077; color: #000000">137.97</td>
+<td class="gt_row gt_right" headers="Rank_AIC">5</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Modelo">Exponencial</td>
+<td class="gt_row gt_right" headers="AIC" style="background-color: #C62828; color: #FFFFFF">138.55</td>
+<td class="gt_row gt_right" headers="BIC" style="background-color: #EFA67D; color: #000000">139.54</td>
+<td class="gt_row gt_right" headers="HQ" style="background-color: #C62828; color: #FFFFFF">138.74</td>
+<td class="gt_row gt_right" headers="Rank_AIC">6</td>
+</tr>
+</tbody><tfoot>
+<tr class="gt_sourcenotes odd">
+<td colspan="5" class="gt_sourcenote">Menores valores de AIC, BIC e HQ indicam melhor ajuste.</td>
+</tr>
+</tfoot>
+
+</table>
+
 </div>
 </div>
 </div>

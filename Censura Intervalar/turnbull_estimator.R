@@ -162,7 +162,21 @@ turnbull_boot_ci <- function(L, U, B = 500, conf.level = 0.95, times = NULL) {
   )
 }
 
-
+processar_turnbull <- function(L, U, grupo_nome, conf.level = 0.95) {
+  fit <- turnbull_em(L, U)
+  tabela <- turnbull_table(fit, conf.level = conf.level)
+  
+  # Adicionar coluna de grupo e calcular pontos médios
+  tabela <- tabela %>%
+    mutate(
+      grupo = grupo_nome,
+      tempo_meio = (p + q) / 2,  # Ponto médio do intervalo
+      tempo_fim = p              # Usar o limite superior do intervalo
+    ) %>%
+    arrange(tempo_fim)
+  
+  return(tabela)
+}
 ### NOTA — encaixando o modelo S(t) = S0(t)^exp(x'beta) (Cox) da sua folha
 ### ==========================================================================
 ## O que está acima é a parte NÃO-PARAMÉTRICA (estima S0 livre, sem covariável).

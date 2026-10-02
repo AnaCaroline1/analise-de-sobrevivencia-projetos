@@ -1,5 +1,6 @@
 ---
 title: "Estudo envolvendo câncer de mama"
+lang: pt-Br
 format: 
   html:
     embed-resources: true
@@ -7,7 +8,7 @@ format:
 
 # Sobre o estudo
 
-O exmplo se baseia em estudo clínico retrospectivo que acompanhou 94 mulheres tratadas de câncer de mama. O objetivo do estudo era compara o impacto de dois esquemas terapeêuticos na estética das pacientes após o tratamento.
+O exmplo se baseia em estudo clínico retrospectivo que acompanhou 94 mulheres tratadas de câncer de mama. O objetivo do estudo era compara o impacto de dois esquemas terapêuticos na estética das pacientes após o tratamento.
 
 As pacientes foram divididas em dois grupos:
 
@@ -15,7 +16,7 @@ Grupo 1 (Radioterapia): 46 mulheres que receberam apenas radioterapia.
 
 Grupo 2 (Radioterapia + Quimioterapia): 48 mulheres que receberam o tratamento combinado.
 
-**Evento de interesse:** A primeira ocorrência (seja moderada ou severa) de retração da mama. Se trata de um efeito colateral que altera a parência física de mama afetada. Logo, neste estudo, a função de sobrevivência *S(t)* mede a probabilidade de a paciente continuar livre desse efeito colateral ao longo do tempo.
+**Evento de interesse:** A primeira ocorrência (seja moderada ou severa) de retração da mama. Se trata de um efeito colateral que altera aparência física de mama afetada. Logo, neste estudo, a função de sobrevivência $S(t)$ mede a probabilidade de a paciente continuar livre desse efeito colateral ao longo do tempo.
 
 
 # Censura intervalar
@@ -94,17 +95,17 @@ visu_tab <- kable(tab_est,
 visu_tab
 ```
 
-Tempo de acompanhamento (em meses): Para o grupo 1 (Ther=1)- Radioterapia, foram 44 meses de acompanhamento, já o grupo 2 (Ther=0) - Radioterapia + Quimioterapia, foram 36 meses.
+Tempo de acompanhamento (em meses): Para o grupo 1 (Ther=1)- Radioterapia, foram 44 meses de acompanhamento, já o grupo 2 (Ther=0) - Radioterapia + Quimioterapia, foram 37 meses.
 
 <!-- Número estimado de paciente sob risco no tempo *t* de pacientes entre os intervalos em que a falha pode ter ocorrido. -->
 
 <!-- Número estimado de eventos (ocorrência de retração mamária moderada ou severa), atribuído àquele instante. -->
 
-Estimativa da função de sobrevivência $S(t)$, que indica a probabilidade de a paciente continuar sem retração mamária no mês *t*. 
+## Estimativa da função de sobrevivência $S(t)$, que indica a probabilidade de a paciente continuar sem retração mamária no mês *t*. 
 
 Para o grupo 1 (Ther=1) - Radioterapia, a probabilidade de permanecer livre da retração aos 17 meses é de 71% e se mantém em 51,6% aos 36 meses, convertendo em anos, após um ano e seis meses, uma paciente continua sem qualquer retração mamária e mesmo após três anos de acompanhamento, a probabilidade de continuar sem retração mamária é alta.
 
-Para o grupo 2 (Ther=2) - Radio+Quimio, a probabilidade de permanecer livre da retração mamária em 12 meses é de 72,75% e após 35 meses, passa para 16,27% para 7,78%, em termos de anos, em apenas um ano de acompanhamento para este grupo, se observa o evento de retração mamária, e após quase 4 anos de acompanhamento a probabilidade de uma paciente continuar livre de retração mamária é baixíssima, indicando que a quimioterapia acelera a ocorrencia desse evento.
+Para o grupo 2 (Ther=2) - Radio+Quimio, a probabilidade de permanecer livre da retração mamária em 12 meses é de 72,75% e após 35 meses, passa de 16,27% para 7,78%, em termos de anos, em apenas um ano de acompanhamento para este grupo, se observa o evento de retração mamária, e após quase 4 anos de acompanhamento a probabilidade de uma paciente continuar livre de retração mamária é baixíssima, indicando que a quimioterapia acelera a ocorrencia desse evento.
 
 <!-- Erro padrão da estimativa da probabilidade de sobrevivência $\hat{S}(t)$. -->
 
@@ -186,7 +187,7 @@ ggplot(df_plot, aes(x = time, y = estimate, color = Grupo, linetype = Metodo)) +
   )
 ```
 
-As curvas apresentam comportamento similar em vários tempos, mas outros tendem a ser diferente,onde se espera que conforme haja maior amplitude dos intervalos essas diferenças se tornem maiores. Os autores destacam que quando se tem censura intervalar, o mais indica é analisar com base nos próprios intervalos registrados.
+As curvas apresentam comportamento similar em vários tempos, mas outros tendem a ser diferente,onde se espera que conforme haja maior amplitude dos intervalos essas diferenças se tornem maiores. Os autores destacam que quando se tem censura intervalar, o mais indicado é analisar com base nos próprios intervalos registrados.
 
 # Comparando com o resultado do livro
 
@@ -238,6 +239,7 @@ kable(tabela_lado_a_lado, format = "html", digits = 4,
   kable_styling(bootstrap_options = c("striped", "hover")) %>%
   add_header_above(c("ther = 1" = 2, "ther = 0" = 2))
 ```
+
 ## Estimador de Turnbull desenvolvido
 
 A partir da fórmula para a verossimilhança geral:
@@ -262,17 +264,92 @@ source("turnbull_estimator.R")
 c_mama$right[is.na(c_mama$right)] <- Inf
  
 fit_1 <- turnbull_em(c_mama$left[c_mama$ther == "1"], c_mama$right[c_mama$ther == "1"])
+tab_1 <- turnbull_table(fit_1)
+tab_1$grupo <- "Grupo 1"
 fit_0 <- turnbull_em(c_mama$left[c_mama$ther == "0"], c_mama$right[c_mama$ther == "0"])
+tab_0 <- turnbull_table(fit_0)
+tab_0$grupo <- "Grupo 2"
 
-cat("\n--- Grupo 1 - Radioterapia ---\n");
-print(turnbull_table(fit_1))
+# Aplicar para cada grupo
+fit_1 <- processar_turnbull(
+  c_mama$left[c_mama$ther == "1"], c_mama$right[c_mama$ther == "1"], 
+  "Grupo 1: Radioterapia"
+)
+ 
+fit_0 <- processar_turnbull(
+  c_mama$left[c_mama$ther == "0"], c_mama$right[c_mama$ther == "0"], 
+  "Grupo 0: Quimio+Rad"
+)
 
-cat("\n--- Grupo 0 - Quimio+Rad. ---\n");
-print(turnbull_table(fit_0))
+ 
+# Visualizar os resultados
+# cat("\n=== GRUPO 1 - RADIOTERAPIA ===\n")
+# print(fit_1 %>% select(q, p, survival, lower95, upper95))
+#  
+# cat("\n=== GRUPO 0 - QUIMIO+RAD ===\n")
+# print(fit_0 %>% select(q, p, survival, lower95, upper95))
+
+ggplot(tab_0, aes(x = p, y = survival)) + 
+  geom_step(direction = "hv") # Esse plota certinho
+
+ggplot(tab_0, aes(x = p, y = survival)) +
+  # IC como fita (ANTES da linha, para ficar "atrás")
+  geom_ribbon(aes(ymin = lower95, ymax = upper95), 
+              alpha = 0.2, color = NA, fill = "blue") +
+  # Linha por cima
+  geom_step(direction = "hv", color = "black", size = 1) # plotou
+
+# Usar bootstrap para IC mais robustos
+boot_ci0 <- turnbull_boot_ci(c_mama$left[c_mama$ther == "0"], c_mama$right[c_mama$ther == "0"], B = 1000, conf.level = 0.95)
+
+# Depois combine:
+tab_com_boot0 <- tab_0 %>%
+  left_join(
+    boot_ci0 %>% select(time, lower, upper),
+    by = c("p" = "time")
+  ) %>%
+  mutate(
+    lower95 = lower,  # Sobrescrever com valores bootstrap
+    upper95 = upper
+  )
+boot_ci1 <- turnbull_boot_ci(c_mama$left[c_mama$ther == "1"], c_mama$right[c_mama$ther == "1"], B = 1000, conf.level = 0.95)
+
+# Depois combine:
+tab_com_boot0 <- tab_1 %>%
+  left_join(
+    boot_ci1 %>% select(time, lower, upper),
+    by = c("p" = "time")
+  ) %>%
+  mutate(
+    lower95 = lower,  # Sobrescrever com valores bootstrap
+    upper95 = upper
+  )
+
+# Combinar resultados
+resultados <- bind_rows(tab_1, tab_0)
 
 
+ggplot(resultados, aes(x = p, y = survival, 
+                             color = grupo, fill = grupo)) +
+  geom_ribbon(aes(ymin = lower95, ymax = upper95), alpha = 0.2) +
+  geom_step(direction = "hv", size = 1) +
+  scale_color_manual(values = c("Grupo 1" = "blue", "Grupo 2" = "red"))
+
+# Salvar tabela
+#write.csv(resultados, "resultados_turnbull.csv", row.names = FALSE)
+```
 
 
+```{r}
+# 
+# cat("\n--- Grupo 1 - Radioterapia ---\n");
+# print(turnbull_table(fit_1))
+# 
+# cat("\n--- Grupo 0 - Quimio+Rad. ---\n");
+# print(turnbull_table(fit_0))
+
+kable(resultados, format = "html", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
 
 ```
 

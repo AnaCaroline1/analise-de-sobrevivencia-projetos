@@ -1,0 +1,64 @@
+/* estilos.css */
+/* Padrão para slides claros */
+.reveal section h1,
+.reveal section h2,
+.reveal section h3{
+  color: Black
+}
+
+/* Inverte automaticamente quando o slide tiver um fundo escuro */
+.reveal section.has-dark-background h1,
+.reveal section.has-dark-background h2,
+.reveal section.has-dark-background h3,
+.reveal section.has-dark-background p{
+  color: #ffffff;
+}
+
+
+/* 4. AJUSTE DE COR DOS TEXTOS NA CAPA PARA GARANTIR CONTRASTE COM O GRADIENTE */
+#title-slide .title,
+#title-slide .subtitle,
+#title-slide .quarto-title-author-name,
+#title-slide .quarto-title-affiliation{
+  color: #ffffff !important;
+  text-shadow: 0 5px 6px rgba(0,0,0.9,0.4);
+}
+
+.reveal .footer{
+  color:#C0C0C0;
+}
+.reveal .slide-number{
+  color:#C0C0C0;
+}
+
+/* Espaçamento (respiro) abaixo da imagem do QR Code */
+.qr-card img {
+  max-width: 65%;
+  height: auto;
+  margin: 0 auto 2px auto;
+  display: block;
+}
+
+/* Legenda com mais respiro e destaque */
+.qr-label {
+  font-size: 0.2em;
+  font-weight: bold;
+  color: #363636;
+  margin-top: 6px;
+  line-height: 1.3;
+}
+
+
+/* ==========================================================================
+   AUMENTAR TAMANHO DO LOGO E AJUSTE DE CONTROLES
+   ========================================================================== */
+.reveal .slide-logo {
+  max-height: 70px !important; /* Aumenta a altura máxima do logo (padrão é ~60px) */
+  height: 75px !important;
+}
+
+/* Estilização da Barra de Progresso */
+.reveal .progress {
+  height: 8px !important; /* Deixa a barra levemente mais espessa */
+  color: #B0C4DE;
+}

@@ -22,6 +22,7 @@ book:
     - modelo_atf_exponencial.qmd
     - modelo_atf_weibull.qmd
     - modelos_atf.qmd
+    - censura_intervalar_cap_8.qmd
     
 format:
   html:

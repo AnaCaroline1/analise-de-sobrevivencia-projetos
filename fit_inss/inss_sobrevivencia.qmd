@@ -1,0 +1,45 @@
+---
+title: "Base de Dados INSS — Afastamentos por Transtornos Mentais"
+format: 
+  html:
+    embed-resources: true
+    toc: true
+    code-fold: true
+    df_print: kable
+---
+
+# Ideas de do que responder sobre os dados
+
+1.  Tempo até a primeira recaída: Para trabalhadores que retornaram ao trabalho, qual o tempo sob censura intervalar até o surgimento de um novo requerimento de benefício por diagnóstico psiquiátrico correlato?
+
+> No banco foi contatado 1856 casos de indivíduos que fizeram um novo requerimento no ano de 2025.
+
+2.  Tempo até o retorno efetivo ao trabalho: Qual a duração real da incapacidade temporária quando o encerramento do sintoma ocorreu em algum momento entre a última data de pagamento e o retorno registrado?
+
+3.  Probabilidade de alta médica em janelas de tempo: Qual é a função de sobrevivência estimada (via estimador de Turnbull) para a recuperação de trabalhadores com transtornos ansiosos (CID F41) versus episódios depressivos (CID F32)?
+
+## O que fazer primeiramente?
+
+A Análise do 1º Afastamento (Conjunto Geral)
+
+Medir o tempo até o encerramento do primeiro benefício, usando a base completa.
+
+### Sobre o icenReg
+
++---------------------+-------------------------------+---------------------------------------------------------------------+
+| Modelos             | model (par)                   | type (par)                                                          |
++=====================+===============================+=====================================================================+
+| NPMLE               | ic_np                         |                                                                     |
++---------------------+-------------------------------+---------------------------------------------------------------------+
+| M. semi-parametrico | ic_sp                         | "po" & "ph" - razão de chances proporcionais e riscos proporcionais |
++---------------------+-------------------------------+---------------------------------------------------------------------+
+| M. parametrico      | ic_par ou ic_bayes(bayesiano) | "po" & "ph" & "aft" - tempos de falha acelerado.                    |
+|                     |                               |                                                                     |
+|                     |                               | "dist" - distribuições da exponencial à gama generalizada           |
++---------------------+-------------------------------+---------------------------------------------------------------------+
+
+Para plot tem 2: um que apresenta o diagnóstico base de distribuição e o outro sobre os efeitos das covariáveis (diag_baseline & diag_covar);
+
+$$\text{DIB} \le \text{DCB} < \text{DDB}$$
+
+Significa simplesmente: **"Este benefício foi concedido com pagamento retroativo após a pessoa já ter se recuperado."**

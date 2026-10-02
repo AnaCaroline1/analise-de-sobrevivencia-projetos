@@ -1,0 +1,140 @@
+---
+title: "Base de Dados INSS — Afastamentos por Transtornos Mentais"
+format: 
+  html:
+    embed-resources: true
+    toc: true
+    code-fold: true
+    df_print: kable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(dplyr)
+library(knitr)
+library(arrow)
+
+inss <- read_parquet("inss_pa.parquet")
+```
+
+## 1. Fonte dos dados
+
+A base utilizada é proveniente do **Sistema Único de Informações de Benefícios (SUIBE)**, sistema administrado pelo INSS para gestão e controle dos benefícios previdenciários concedidos no Brasil. As informações extraídas contemplam competência da concessão, espécie de benefício, CID (código e descrição), datas do processo (DIB, DDB, DCB), características sociodemográficas do segurado (sexo, data de nascimento, município e UF de residência), características do vínculo (forma de filiação, ramo de atividade, CNAE), valor da renda mensal inicial em salários-mínimos, além de variáveis já derivadas como duração do benefício em dias e status do benefício.
+
+## 2. Critério de seleção dos CIDs de saúde mental
+
+Conforme classificação do Ministério da Saúde para afastamentos relacionados a transtornos mentais associados ao trabalho, os grupos de CID-10 de interesse incluem:
+
+- **F00–F99** — Transtornos mentais e comportamentais
+- **Y90 e Y91** — Alcoolismo
+- **Z73.0** — Síndrome de Burnout
+- **R40–R46** — Sintomas e sinais relativos à cognição, percepção, estado emocional e comportamento
+- **Z55–Z65** — Riscos potenciais à saúde relacionados a circunstâncias socioeconômicas e psicossociais
+- **Y96** — Circunstância relativa às condições de trabalho
+- **X60–X84** — Lesão autoprovocada intencionalmente
+
+Da base disponível, os códigos **F00–F99** e **Z73.0** foram identificados e tratados (extração do código a partir da coluna de descrição, nos casos em que a coluna de CID estava sem preenchimento). Os demais grupos (Y90/Y91, R40–R46, Z55–Z65, Y96, X60–X84) foram verificados, no entanto não foram identificados para compor a base.
+
+## 3. Estrutura da base
+
+A base contém **`r ncol(inss)` variáveis**, entre elas informações de identificação do benefício (aps, espécie, CID), datas do processo (DIB, DDB, DCB), características do segurado e do vínculo empregatício (forma de filiação, ramo de atividade, CNAE, grau de instrução, anos de contribuição).
+
+## 4. Quantidade de observações por mês
+
+A tabela abaixo apresenta a quantidade de registros disponíveis por mês de referência (`ano_mes_dib`), com o total geral ao final.
+
+```{r tabela-meses}
+#| fig-height: 5
+#| fig-width: 10
+tabela_meses <- inss |>
+  count(`Competência concessão`, name = "observacoes") |>
+  arrange(`Competência concessão`)
+
+total_geral <- sum(tabela_meses$observacoes)
+
+tabela_meses |>
+  bind_rows(tibble::tibble(`Competência concessão` = "Total", observacoes = total_geral)) |>
+  kable(
+    col.names = c("Mês de referência", "Observações"),
+    align = c("l", "r")
+  )
+```
+
+A base totaliza **`r format(total_geral, big.mark = ".")` observações** distribuídas ao longo dos meses do ano de referência, com **`r ncol(inss)` variáveis** disponíveis para análise.
+
+## 5. Limitações identificadas
+
+A base **não contém a CBO** (Classificação Brasileira de Ocupações), o que impede a análise por cargo/função específica. As variáveis `forma_filiacao` e `ramo_atividade` estão disponíveis como possíveis variáveis substitutas de vínculo e setor de atividade, em nível mais agregado.
+
+# Observando os dados 
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 4
+#| fig-width: 10
+source("leituras.R")
+
+ggplotly(p_cid, tooltip = "text")
+ggplotly(p_idade)
+ggplotly(p_duracao_cid)
+ggplotly(p_salario)
+ggplotly(p_ramo)
+ggplotly(p_mun)
+
+View(inss)
+
+
+```
+
+> Os municípios a que se referidos são de residência do beneficiário.
+
+## Indivíduos que receberam mais de uma vez no ano investigado
+
+Se levantou a hipótese, através de discussões, sobre haver indivíduos que receberam mais de um benefício no ano 2025. O que é totalmente compreensível, se tratando de conjuntos como o INSS, onde não há restrição para um mesmo beneficiário receber auxílio. 
+
+A princípio, a ideia para tentar identificar ester indivíduos, consiste em agrupar colunas de variáveis altamente identificadoras, na chamada 'chave composta', uma vez que não temos os dados de cada indivíduo, o que violaria a LGPD nesse sentido. Partindo desse *assinatura*, através de variáveis como data de nascimento, nome do município de residencia e sexo, se pode identifar 1860 observações de indivídos, que no ano de 2025 obtiveram mais de um benefício. E para ententer quem seriam esse indivíduos, tento aqui identificar como feito anteriormente com o conjunto geral para ter uma noção de quais meses é mais frequente, se entre homens e mulheres existe mais ou menos casos, desses casos, quais são os afastamentos mais frequentes.
+
+Abaixo, se pode observar as frequencias em cada mês, sendo os meses de maio, setembro e agosto os que mais concentram indivíduos que receberam mais de um benefício ao longo do ano:
+
+# ```{r}
+# #| echo: false
+# #| message: false
+# #| warning: false
+# #| fig-height: 4
+# #| fig-width: 10
+# source("leituras.R")
+# 
+# tab_meses <- recorrente |>
+#   count(competencia_concessao , name = "observacoes") |>
+#   arrange(competencia_concessao )
+# 
+# t_geral <- sum(tab_meses$observacoes)
+# 
+# tab_meses |>
+#   bind_rows(tibble::tibble(competencia_concessao  = "Total", observacoes = t_geral)) |>
+#   kable(
+#     col.names = c("Mês de referência", "Observações"),
+#     align = c("l", "r")
+#   )
+# ```
+
+Em relação a quantidade de vezes em meses ao longo do ano corrente em que houve concessão de benefífico, como se pode perceber no histograma, a maioria dos caso, são de indivíduos que reberam benefícios 2 vezes no ano, logo após, de forma decrescente, ocorreram casos de 3 e no máximo 6 vezes no ano.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 4
+#| fig-width: 10
+p_dist_r
+p_sexo_r
+p_mun_r
+p_cid_r
+```
+
+Em relação a distribuição por sexo, a maioria dos beneficiários são do sexo feminino com 63.9% dos casos. Concentrando mais de 250 casos, o município de residência Belém, concentra a grande maioria dos casos (653). E por fim, dos transtornos mais frequentes associados, os 3 principais são: Ansiedade Generalizada, Transtornos mistos Anisoso e Depressivo e Graves Episódios Depressivos.
+
+> Seria uma boa trabalhar em comparação com essas informações para entender mais ou menos os dados na hora de trabalhar com sobrevivência. Uma vez que o mesmo indivíduos será trabalhado duas vezes, podendo influenciar a análise, então separar essas informações do conjunto principal, comparar as curvas (que eu não sei o que abordar no momento) já pode indicar algum comportamento nessas informações.
+
